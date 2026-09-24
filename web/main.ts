@@ -1,8 +1,13 @@
+/// <reference types="vite/client" />
 /**
  * Webové zobrazenie stromu potravín. Číta priamo src/data/strom.ts.
+ *
+ * Dev server (npm run dev) beží v edit móde: klik na štítok dostupnosti ho posunie
+ * (bežné → menej bežné → exotické → bežné) a zapíše zmenu do src/data/strom.ts. Build (npm run build) je len na prezeranie.
  */
 import { strom } from "../src/data/strom";
-import { DOSTUPNOST, UROVNE, ZNACKY } from "../src/strom.types";
+import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
+import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
 
 type Dost = "vsetko" | List;
@@ -22,12 +27,14 @@ interface Uzol {
 interface VUzol {
   readonly u: Uzol;
   readonly deti: readonly VUzol[];
-  readonly bezne: number;
-  readonly exoticke: number;
+  /** Počet potravín v podstrome podľa dostupnosti. */
+  readonly pocty: Pocty;
   readonly zhoda: boolean;
   /** Predkovia zlúčení do tohto riadku (reťaz uzlov s jediným dieťaťom), od najvyššieho. */
   readonly retazec: readonly Uzol[];
 }
+
+type Pocty = Readonly<Record<List, number>>;
 
 interface Nastavenia {
   dost: Dost;
@@ -37,6 +44,12 @@ interface Nastavenia {
 const SEP = "␟";
 const ZNACKY_SET = new Set<string>(Object.values(ZNACKY));
 const RISE = ["rastliny", "huby", "živočíchy"];
+
+/** CSS trieda pre každú dostupnosť. */
+const TRIEDA: Readonly<Record<List, string>> = { bežné: "bezne", "menej bežné": "menej", exotické: "exoticke" };
+
+const nulovePocty = (): Record<List, number> => ({ bežné: 0, "menej bežné": 0, exotické: 0 });
+const sucet = (p: Pocty): number => DOSTUPNOSTI.reduce((a, d) => a + p[d], 0);
 
 const norm = (s: string): string => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
 
@@ -56,7 +69,9 @@ function postav(obj: { readonly [k: string]: unknown }, uroven: number, rodic: s
   });
 }
 
-const koren: readonly Uzol[] = postav(strom as unknown as Strom, 0, "");
+let koren: readonly Uzol[] = postav(strom as unknown as Strom, 0, "");
+
+const EDIT = import.meta.env.DEV;
 
 function* vsetky(uzly: readonly Uzol[]): Generator<Uzol> {
   for (const u of uzly) {
@@ -98,8 +113,7 @@ function zobraz(u: Uzol, pokryte: boolean, ploche: boolean): VUzol[] {
   const pok = pokryte || zhoda || nast.q === "";
   if (u.dostupnost) {
     if (!pok || (nast.dost !== "vsetko" && u.dostupnost !== nast.dost)) return [];
-    const b = u.dostupnost === "bežné" ? 1 : 0;
-    return [{ u, deti: [], bezne: b, exoticke: 1 - b, zhoda, retazec: [] }];
+    return [{ u, deti: [], pocty: { ...nulovePocty(), [u.dostupnost]: 1 }, zhoda, retazec: [] }];
   }
   const deti = u.deti.flatMap((d) => zobraz(d, pok, ploche || u.uroven >= DRUH));
   if (deti.length === 0) return [];
@@ -110,13 +124,9 @@ function zobraz(u: Uzol, pokryte: boolean, ploche: boolean): VUzol[] {
   if (jedine && !jedine.u.dostupnost && u.uroven > 0) {
     return [{ ...jedine, zhoda: zhoda || jedine.zhoda, retazec: [u, ...jedine.retazec] }];
   }
-  let bezne = 0;
-  let exoticke = 0;
-  for (const d of deti) {
-    bezne += d.bezne;
-    exoticke += d.exoticke;
-  }
-  return [{ u, deti, bezne, exoticke, zhoda, retazec: [] }];
+  const pocty = nulovePocty();
+  for (const d of deti) for (const k of DOSTUPNOSTI) pocty[k] += d.pocty[k];
+  return [{ u, deti, pocty, zhoda, retazec: [] }];
 }
 
 // ---------- DOM ----------
@@ -161,13 +171,27 @@ function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
 }
 
 function pocetEl(v: VUzol): HTMLElement {
-  const spolu = v.bezne + v.exoticke;
+  const { pocty } = v;
+  const spolu = sucet(pocty);
   const p = el("span", "pocet");
-  p.title = `${spolu} potravín: ${v.bezne} bežných, ${v.exoticke} exotických`;
+  p.title = `${spolu} ${sklon(spolu)}: ${pocty["bežné"]} bežné, ${pocty["menej bežné"]} menej bežné, ${pocty["exotické"]} exotické`;
   const bar = el("i");
-  bar.style.setProperty("--b", `${(v.bezne / spolu) * 100}%`);
+  bar.style.setProperty("--b", `${(pocty["bežné"] / spolu) * 100}%`);
+  bar.style.setProperty("--m", `${((pocty["bežné"] + pocty["menej bežné"]) / spolu) * 100}%`);
   p.append(el("b", undefined, String(spolu)), bar);
   return p;
+}
+
+function dostupnostEl(id: string, d: List): HTMLElement {
+  const chip = el(EDIT ? "button" : "span", `chip ${TRIEDA[d]}`, d);
+  chip.title = DOSTUPNOST[d];
+  if (chip instanceof HTMLButtonElement) {
+    chip.type = "button";
+    chip.dataset["id"] = id;
+    chip.dataset["z"] = d;
+    chip.title += ` – klik prepne na ${dalsia(d)} a zapíše to do src/data/strom.ts`;
+  }
+  return chip;
 }
 
 function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
@@ -175,9 +199,7 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
   if (u.dostupnost) {
     const row = el("div", "list");
     row.append(el("span", "bod"), nazovEl(u, v.zhoda));
-    const chip = el("span", `chip ${u.dostupnost === "bežné" ? "bezne" : "exoticke"}`, u.dostupnost);
-    chip.title = DOSTUPNOST[u.dostupnost];
-    row.append(chip);
+    row.append(dostupnostEl(u.id, u.dostupnost));
     return row;
   }
   const d = el("details");
@@ -208,7 +230,7 @@ function vykresli(): void {
   const zb = aktivneZbalene();
   stromEl.replaceChildren(...pohlad.map((v) => uzolEl(v, zb)));
 
-  const spolu = pohlad.reduce((a, v) => a + v.bezne + v.exoticke, 0);
+  const spolu = pohlad.reduce((a, v) => a + sucet(v.pocty), 0);
   if (pohlad.length === 0) {
     infoEl.textContent = nast.q
       ? `Pre „${hladatEl.value.trim()}“ sa nenašla žiadna potravina ani taxón.`
@@ -225,28 +247,26 @@ const sklon = (n: number): string => (n === 1 ? "potravina" : n >= 2 && n <= 4 ?
 
 function statistiky(): void {
   const dl = $<HTMLDListElement>("#statistiky");
-  let bezne = 0;
-  let exoticke = 0;
+  const pocty = nulovePocty();
   let uzly = 0;
   for (const u of vsetky(koren)) {
     uzly++;
-    if (u.dostupnost === "bežné") bezne++;
-    else if (u.dostupnost === "exotické") exoticke++;
+    if (u.dostupnost) pocty[u.dostupnost]++;
   }
-  const polozky: [string, string][] = [
-    ["potraviny", String(bezne + exoticke)],
-    ["bežné", String(bezne)],
-    ["exotické", String(exoticke)],
+  /** [názov, hodnota, CSS trieda] */
+  const polozky: [string, string, string?][] = [
+    ["potraviny", String(sucet(pocty))],
+    ...DOSTUPNOSTI.map((d): [string, string, string] => [d, String(pocty[d]), TRIEDA[d]]),
     ["uzly stromu", uzly.toLocaleString("sk-SK")],
   ];
-  for (const r of koren) {
+  koren.forEach((r, i) => {
     let n = 0;
     for (const u of vsetky([r])) if (u.dostupnost) n++;
-    polozky.push([r.nazov, String(n)]);
-  }
+    polozky.push([r.nazov, String(n), `risa risa-${i}${i === 0 ? " prva-risa" : ""}`]);
+  });
   dl.replaceChildren(
-    ...polozky.map(([k, h], i) => {
-      const w = el("div", i === 2 ? "exot" : i >= 4 ? `risa risa-${i - 4}` : undefined);
+    ...polozky.map(([k, h, trieda]) => {
+      const w = el("div", trieda);
       w.append(el("dt", undefined, k), el("dd", undefined, h));
       return w;
     }),
@@ -284,6 +304,7 @@ const bublina = el("div", "bublina");
 bublina.hidden = true;
 bublina.setAttribute("role", "tooltip");
 document.body.append(bublina);
+const editPasik = (): number => document.querySelector<HTMLElement>(".edit-mod-pasik")?.offsetHeight ?? 0;
 const bezPohybu = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 stromEl.addEventListener("click", (e) => {
@@ -291,7 +312,7 @@ stromEl.addEventListener("click", (e) => {
   if (!c) return;
   const summary = c.parentElement?.previousElementSibling;
   if (!(summary instanceof HTMLElement)) return;
-  const top = summary.getBoundingClientRect().top + window.scrollY - nastrojeEl.offsetHeight - 8;
+  const top = summary.getBoundingClientRect().top + window.scrollY - nastrojeEl.offsetHeight - editPasik() - 8;
   window.scrollTo({ top, behavior: bezPohybu.matches ? "auto" : "smooth" });
   summary.classList.remove("ciel");
   void summary.offsetWidth;
@@ -387,6 +408,49 @@ dostTlacidla.forEach((b) =>
   }),
 );
 
+// ---------- edit mód (len dev server) ----------
+
+if (EDIT) {
+  const pasik = el("div", "edit-mod-pasik");
+  pasik.append(el("b", undefined, "EDIT MÓD"), el("span", undefined, "klik na štítok: bežné → menej bežné → exotické, zapíše sa do src/data/strom.ts"));
+  document.body.prepend(pasik);
+  document.documentElement.classList.add("edit-mod");
+
+  stromEl.addEventListener("click", async (e) => {
+    const chip = (e.target as Element).closest<HTMLButtonElement>("button.chip[data-id]");
+    if (!chip || chip.disabled) return;
+    const id = chip.dataset["id"] ?? "";
+    const z = chip.dataset["z"] as List;
+    chip.disabled = true;
+    try {
+      const odpoved = await fetch("/__edit/prepni", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cesta: id.split(SEP), z }),
+      });
+      const telo = (await odpoved.json()) as { dostupnost?: List; chyba?: string };
+      if (!odpoved.ok || !telo.dostupnost) throw new Error(telo.chyba ?? `HTTP ${odpoved.status}`);
+      // Kým nepríde HMR s novým stromom, ukáž novú hodnotu aspoň na štítku.
+      const novy = dostupnostEl(id, telo.dostupnost);
+      chip.replaceWith(novy);
+      novy.focus();
+    } catch (err) {
+      chip.disabled = false;
+      infoEl.textContent = `Zmenu sa nepodarilo zapísať: ${err instanceof Error ? err.message : String(err)}`;
+      infoEl.hidden = false;
+    }
+  });
+
+  // Po zmene src/data/strom.ts (klikom aj ručnou úpravou) sa strom prekreslí bez straty stavu.
+  import.meta.hot?.accept("../src/data/strom", (m) => {
+    if (!m) return;
+    const fokus = document.activeElement instanceof HTMLElement ? document.activeElement.dataset["id"] : undefined;
+    koren = postav((m as unknown as { strom: Strom }).strom, 0, "");
+    statistiky();
+    vykresli();
+    if (fokus) stromEl.querySelector<HTMLButtonElement>(`button.chip[data-id="${CSS.escape(fokus)}"]`)?.focus();
+  });
+}
 
 // ---------- štart ----------
 

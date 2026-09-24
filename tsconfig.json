@@ -12,6 +12,7 @@
   "include": [
     "src",
     "test",
-    "web"
+    "web",
+    "vite.config.ts"
   ]
 }

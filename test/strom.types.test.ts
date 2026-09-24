@@ -7,6 +7,7 @@ import type { strom } from "../src/data/strom";
 
 // --- správne ---
 export const ok1: U17_Potravina = { "jablko": "bežné" };
+export const okMenej: U17_Potravina = { "egreš": "menej bežné" };
 export const okExoticke: U17_Potravina = { "liči": "exotické" };
 export const ok2: U16_JedlaCast = { "plod": { "jablko": "bežné" } };
 export const ok3: Potravina<typeof strom> = "brokolica";
@@ -19,7 +20,7 @@ export const plytky: U16_JedlaCast = { "plod": "bežné" };
 // @ts-expect-error objekt na úrovni 17
 export const hlboky: U17_Potravina = { "jablko": { "navyse": "bežné" } };
 
-// --- list musí byť "bežné" alebo "exotické" ---
+// --- list musí byť "bežné", "menej bežné" alebo "exotické" ---
 // @ts-expect-error pôvodná číselná hodnota
 export const zlaHodnota: U17_Potravina = { "jablko": 0 };
 // @ts-expect-error neznáma kategória

@@ -8,9 +8,12 @@
   --accent: #1f5d6b;
   --bezne: #a9b5ad;
   --bezne-ink: #4d5a53;
-  --exot: #c2601d;
-  --exot-bg: #f7e3d3;
-  --exot-ink: #9a4712;
+  --menej: #c2601d;
+  --menej-bg: #f7e3d3;
+  --menej-ink: #9a4712;
+  --exot: #c42b2b;
+  --exot-bg: #f9dcda;
+  --exot-ink: #a21f1f;
   --tbd: #93720a;
   --mark: #f3dd8a;
   --risa-rastliny: #2f7560;
@@ -33,9 +36,12 @@
     --accent: #72b6c4;
     --bezne: #56645c;
     --bezne-ink: #b3beb7;
-    --exot: #e7894a;
-    --exot-bg: #3b2415;
-    --exot-ink: #f0a877;
+    --menej: #e7894a;
+    --menej-bg: #3b2415;
+    --menej-ink: #f0a877;
+    --exot: #ee5f5a;
+    --exot-bg: #421a19;
+    --exot-ink: #f79590;
     --tbd: #d8b545;
     --mark: #5c4c14;
     --risa-rastliny: #6db59a;
@@ -54,9 +60,12 @@
   --accent: #72b6c4;
   --bezne: #56645c;
   --bezne-ink: #b3beb7;
-  --exot: #e7894a;
-  --exot-bg: #3b2415;
-  --exot-ink: #f0a877;
+  --menej: #e7894a;
+  --menej-bg: #3b2415;
+  --menej-ink: #f0a877;
+  --exot: #ee5f5a;
+  --exot-bg: #421a19;
+  --exot-ink: #f79590;
   --tbd: #d8b545;
   --mark: #5c4c14;
   --risa-rastliny: #6db59a;
@@ -119,9 +128,10 @@ kbd {
   color: var(--muted);
 }
 .statistiky dd { margin: 0; font: 600 26px/1.1 var(--serif); }
-.statistiky .exot dd { color: var(--exot); }
+.statistiky .menej dd { color: var(--menej); }
+.statistiky .exoticke dd { color: var(--exot); }
 .statistiky .risa dd { color: var(--risa); }
-.statistiky > div:nth-child(5) { margin-left: auto; }
+.statistiky .prva-risa { margin-left: auto; }
 .statistiky .risa { padding-left: 10px; border-left: 2px solid var(--risa); }
 
 /* ---------- nástroje ---------- */
@@ -161,6 +171,7 @@ select { padding-right: 8px; cursor: pointer; }
 .segment button { border: 0; border-radius: 0; height: 32px; }
 .segment button + button { border-left: 1px solid var(--line); }
 .segment button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.segment button[data-dost="menej bežné"][aria-pressed="true"] { background: var(--menej); color: #fff; }
 .segment button[data-dost="exotické"][aria-pressed="true"] { background: var(--exot); color: #fff; }
 .prepinac { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; cursor: pointer; user-select: none; }
 .prepinac input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
@@ -268,7 +279,12 @@ summary.ciel { animation: ciel 1.4s ease-out; }
   width: 38px;
   height: 5px;
   border-radius: 3px;
-  background: linear-gradient(to right, var(--bezne) var(--b), var(--exot) var(--b));
+  background: linear-gradient(
+    to right,
+    var(--bezne) var(--b),
+    var(--menej) var(--b) var(--m),
+    var(--exot) var(--m)
+  );
 }
 .znacka-uzol > summary .nazov { display: inline-flex; align-items: baseline; gap: 6px; }
 .znak { font: 600 16px var(--mono); color: var(--muted); }
@@ -299,6 +315,7 @@ summary.ciel { animation: ciel 1.4s ease-out; }
   white-space: nowrap;
 }
 .chip.bezne { color: var(--bezne-ink); border-color: var(--line); }
+.chip.menej { background: var(--menej-bg); color: var(--menej-ink); }
 .chip.exoticke { background: var(--exot-bg); color: var(--exot-ink); }
 .chip.tbd { color: var(--tbd); border-color: currentColor; }
 mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
@@ -320,11 +337,12 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 }
 .legenda > div { display: inline-flex; align-items: center; gap: 8px; }
 .legenda .pocet { margin: 0; }
+.menej-text { color: var(--menej); }
 .exot-text { color: var(--exot); }
 
 @media (max-width: 560px) {
   .stranka { padding-inline: 16px; }
-  .statistiky > div:nth-child(5) { margin-left: 0; }
+  .statistiky .prva-risa { margin-left: 0; }
   .uroven { display: none; }
   .deti { margin-left: 9px; padding-left: 8px; }
 }
@@ -332,3 +350,28 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
   .caret, .deti > .ciara::before { transition: none; }
   summary.ciel { animation: none; }
 }
+
+/* ---------- edit mód (len dev server) ---------- */
+.edit-mod { --edit-h: 30px; }
+.edit-mod .nastroje { top: calc(env(safe-area-inset-top, 0px) + var(--edit-h)); }
+.edit-mod-pasik {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: var(--edit-h);
+  padding-inline: 16px;
+  background: var(--exot);
+  color: var(--bg);
+  font: 500 12px var(--mono);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.edit-mod-pasik b { font-weight: 600; letter-spacing: 0.14em; }
+.edit-mod-pasik span { overflow: hidden; text-overflow: ellipsis; }
+button.chip { height: auto; background: none; }
+button.chip:hover { border-color: currentColor; }
+button.chip:disabled { opacity: 0.5; cursor: progress; }

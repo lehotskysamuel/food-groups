@@ -8,9 +8,19 @@ vlastného jedálnička: čím širšie pokrytie stromu, tým diverzifikovanejš
 ```
 npm install          # jednorazovo
 npm run typecheck    # overí typy, strom aj mapovanie zdrojov (tsc --noEmit)
-npm run dev          # web: rozbaľovací strom na http://localhost:5173 (číta src/data/strom.ts)
-npm run build        # statický web do dist/ (npm run preview ho spustí)
+npm run dev          # web v edit móde na http://localhost:5173 (číta aj zapisuje src/data/strom.ts)
+npm run build        # web vo view móde: jeden súbor dist/index.html, otvorí sa aj bez servera
+npm run preview      # dist/ cez lokálny server (nepovinné)
 ```
+
+### Módy webu
+
+- **View mód** (`npm run build`) – len prezeranie. Výsledok je jediný `dist/index.html` so zabudovaným
+  JS, CSS aj dátami, takže stačí ho otvoriť dvojklikom (písma sa načítajú z Google Fonts, ak je sieť).
+- **Edit mód** (`npm run dev`) – navrchu stránky je pás **EDIT MÓD**. Klik na štítok dostupnosti ho posunie
+  v poradí `bežné` → `menej bežné` → `exotické` → `bežné` a zmenu zapíše priamo do `src/data/strom.ts` (mení sa len hodnota toho listu).
+  Strom sa hneď prekreslí bez straty rozbalenia a filtra, rovnako aj pri ručnej úprave súboru.
+  Zápis prijíma len dev server a len požiadavky z tohto počítača; do buildu sa edit kód nedostane.
 
 ## Štruktúra
 
@@ -21,19 +31,26 @@ npm run build        # statický web do dist/ (npm run preview ho spustí)
   a potraviny zo stromu, na ktoré sa mapujú. Typecheck overí, že každá potravina v strome existuje.
 - `src/data/zdroje/kosik-2026-09-24.ts` – 483 produktov z Košík.sk (Ovocie, Zelenina, Huby,
   Bylinky a korenie) a ich mapovanie na potraviny, rovnako overené typecheckom.
+- `src/uprava.ts` – prepnutie jedného listu v texte `strom.ts` (používa ho edit mód, `vite.config.ts`)
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
-  rozbalenie po zvolenú úroveň, hľadanie, filter bežné/exotické, skrytie značiek `-`, `*`, `TBD`
+  rozbalenie po zvolenú úroveň, hľadanie, filter bežné / menej bežné / exotické, skrytie značiek `-`, `*`, `TBD`
 - `test/strom.types.test.ts` – typové testy: overujú, že typy odmietnu chybný strom
 
 ## Model
 
 Strom je jeden vnorený objekt s pevnou hĺbkou 17. Kľúč = názov uzla, hodnota =
 uzly nasledujúcej úrovne. Hodnota listu (úroveň 17) hovorí, či je potravina na slovenskom
-trhu **`"bežné"`** alebo **`"exotické"`**. Rank uzla vyplýva z hĺbky.
+trhu **`"bežné"`**, **`"menej bežné"`** alebo **`"exotické"`**. Rank uzla vyplýva z hĺbky.
+
+- **bežné** (sivé) – kúpi sa v bežnom supermarkete,
+- **menej bežné** (oranžové) – dá sa kúpiť, ale nie v každom obchode alebo nie vždy (napr. egreš).
+  Ide o dostupnosť, nie o pôvod, patria sem aj domáce potraviny, ktoré sa ťažko zháňajú,
+- **exotické** (červené) – exotické, na slovenskom trhu ťažko dostupné.
 
 **Verzia 1 je heuristika:** čo má Tesco v kategórii Ovocie, zelenina (vrátane pôvodnej ukážky),
 je `"bežné"` (156 potravín); čo pribudlo až z Košíka, je `"exotické"` (118). Predpoklad: ak to
-Tesco nemá, je to pravdepodobne exotické. Kategóriu treba ručne prejsť a opraviť podľa skúsenosti.
+Tesco nemá, je to pravdepodobne exotické. Kategóriu treba ručne prejsť a opraviť podľa skúsenosti
+(úroveň `"menej bežné"` pribudla neskôr, heuristika ju nepriraďuje).
 Povolené hodnoty sú v `DOSTUPNOST` v `src/strom.types.ts`.
 
 | # | Úroveň | Príklad (brokolica) |
@@ -115,7 +132,7 @@ v náleve a čokoládové polevy ignorujeme.
 
 ## Manuálne overenie
 
-`npm run typecheck` stráži **tvar** stromu (hĺbka 17, list = `"bežné"` / `"exotické"`, značka nie je názvom
+`npm run typecheck` stráži **tvar** stromu (hĺbka 17, list = `"bežné"` / `"menej bežné"` / `"exotické"`, značka nie je názvom
 potraviny) a to, že mapovanie zdrojov odkazuje len na existujúce potraviny. Nasledujúce veci
 typy nezachytia a **pri každej zmene dát ich treba overiť manuálne**:
 
@@ -128,7 +145,7 @@ typy nezachytia a **pri každej zmene dát ich treba overiť manuálne**:
 6. **Jedlá časť je skutočná časť** rastliny/huby/živočícha (plod, súkvetie, hlávka, svalovina…),
    nie spôsob úpravy.
 7. **Mapovanie zdrojov** priradilo produkt k správnym potravinám.
-8. **Kategória bežné / exotické** zodpovedá realite (verzia 1 je len heuristika podľa Tesca).
+8. **Kategória bežné / menej bežné / exotické** zodpovedá realite (verzia 1 je len heuristika podľa Tesca).
 
 ### Otvorené body na overenie
 

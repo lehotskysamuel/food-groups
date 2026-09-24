@@ -3,7 +3,7 @@
  *
  * Strom má pevnú hĺbku 17 úrovní. Kľúč objektu je názov uzla na danej úrovni,
  * hodnota je objekt s uzlami nasledujúcej úrovne. Hodnota listu (úroveň 17) hovorí,
- * či je potravina na slovenskom trhu bežná alebo exotická (pozri DOSTUPNOST).
+ * aká dostupná je potravina na slovenskom trhu: bežná, menej bežná alebo exotická (pozri DOSTUPNOST).
  * Z hĺbky uzla vyplýva jeho rank, preto ho netreba ukladať.
  *
  * Názvy uzlov: slovensky > česky > latinsky.
@@ -25,17 +25,23 @@ export type Znacka = (typeof ZNACKY)[keyof typeof ZNACKY];
 type Uzly<Dalsia> = { readonly [nazov: string]: Dalsia };
 
 /**
- * Hodnoty listu: bežnosť potraviny na slovenskom trhu.
+ * Hodnoty listu: dostupnosť potraviny na slovenskom trhu, v poradí od najdostupnejšej.
+ * „Menej bežné“ hovorí o dostupnosti (dá sa kúpiť, ale nie všade a nie vždy, napr. egreš),
+ * nie o pôvode, patria sem aj domáce potraviny, ktoré sa ťažko zháňajú.
  * Verzia 1 je heuristika: čo má Tesco (Ovocie, zelenina) = bežné, čo pribudlo až z Košíka = exotické.
  * Určené na ručnú revíziu.
  */
 export const DOSTUPNOST = {
   bežné: "bežne dostupné na slovenskom trhu",
-  exotické: "exotické / ťažšie dostupné",
+  "menej bežné": "dá sa kúpiť, ale nie v každom obchode alebo nie vždy",
+  exotické: "exotické, na slovenskom trhu ťažko dostupné",
 } as const;
 
-/** Hodnota listu: bežnosť potraviny. */
+/** Hodnota listu: dostupnosť potraviny. */
 export type List = keyof typeof DOSTUPNOST;
+
+/** Hodnoty listu v poradí bežné → menej bežné → exotické. */
+export const DOSTUPNOSTI = Object.keys(DOSTUPNOST) as readonly List[];
 
 /** 17 – potravina (list). Názov musí byť skutočná potravina, nie značka. */
 export type U17_Potravina = Uzly<List> & { readonly [Z in Znacka]?: never };
