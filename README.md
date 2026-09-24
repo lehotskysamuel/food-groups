@@ -98,8 +98,30 @@ Všetky tri značky môžu mať súrodencov. Napr. pod „pravé dvojklíčnolis
 ### Názvy
 
 Poradie preferencie: **slovensky > česky > latinsky**. Latinský názov len vtedy,
-keď spoľahlivý slovenský ani český neexistuje. Zdroje na overenie: BioLib.cz
-(slovenské a české názvy), POWO / APG IV (botanika), FishBase (ryby), Index Fungorum (huby).
+keď spoľahlivý slovenský ani český neexistuje. Slovenské a české názvy sa overujú v BioLib.cz.
+
+### Zdroj taxonómie
+
+Platné mená a zaradenie sa riadia **jedným zdrojom pre každú ríšu**:
+
+| Ríša | Zdroj | Čo z neho berieme |
+|---|---|---|
+| rastliny | **WCVP** – World Checklist of Vascular Plants (Kew), na webe ako [POWO](https://powo.science.kew.org/) | druh, rod, čeľaď |
+| rastliny, vyššie úrovne | **APG IV** | rad, klady (úrovne 5–8) |
+| huby | **Species Fungorum / Index Fungorum** (Kew) | druh, rod, čeľaď, rad |
+| živočíchy | zatiaľ nevybraný (ryby podľa FishBase) | – |
+
+Podčeľade a tribusy WCVP neuvádza, preberajú sa z fylogenetických štúdií.
+
+Keď zdroj presunie druh do iného rodu, druh si ponechá zaužívaný slovenský názov:
+rozmarín lekársky v rode šalvia, hrach siaty v rode hrachor (*Lathyrus oleraceus*),
+hadomor španielsky v rode *Pseudopodospermum*, valeriánka poľná v rode valeriána.
+
+Keď zdroj zlúči kultúrne rastliny do jedného druhu, rozlišujú sa na úrovni 14 ako skupiny odrôd
+alebo variety: pomaranč a grapefruit v *Citrus × aurantium*, citrón a bergamot v *C. × limon*,
+kiwi a kiwi Gold ako variety *deliciosa* a *chinensis* aktinídie čínskej. Reďkev je
+*Raphanus raphanistrum* subsp. *sativus* (reďkev ohnicová). Poddruh sa nevypisuje, lebo iný
+v strome nie je, a úroveň 14 nesie skupiny odrôd (reďkovka, reďkev čierna, daikon).
 
 ### Mimo stromu
 
@@ -147,6 +169,9 @@ typy nezachytia a **pri každej zmene dát ich treba overiť manuálne**:
 7. **Mapovanie zdrojov** priradilo produkt k správnym potravinám.
 8. **Kategória bežné / menej bežné / exotické** zodpovedá realite (verzia 1 je len heuristika podľa Tesca).
 
+Body 1–4 sú prejdené pre celý strom (274 potravín) k 24. 9. 2026. Platnosť mien druhov
+a čeľade sú porovnané s WCVP (rastliny) a Species Fungorum (huby), cez ich kópie na GBIF.
+
 ### Otvorené body na overenie
 
 - **Česky, lebo slovenský názov nepoznáme:** superrosidy, superasteridy, rosidy, asteridy,
@@ -163,7 +188,8 @@ typy nezachytia a **pri každej zmene dát ich treba overiť manuálne**:
 - **Latinsky:** podčeľade a tribusy, rod *Citrus* a jeho druhy, *Musa acuminata* (banán),
   *Selenicereus* (dračie ovocie), *Averrhoa carambola*, *Euterpe oleracea* (acai),
   *Vigna radiata* / *angularis* (mungo, azuki), *Hypsizygus tessulatus* (shimeji),
-  *Thymus × citriodorus*, vyššie taxóny a niektoré čeľade húb a rýb.
+  *Thymus × citriodorus*, *Pseudopodospermum* (čierny koreň), variety *deliciosa* / *chinensis*
+  (kiwi), vyššie taxóny a niektoré čeľade húb a rýb.
 - **Taxonomické neistoty:** rukola (rod *Eruca* alebo *Diplotaxis*, preto `TBD`);
   grapefruit Sweetie je kríženec pomela a grapefruitu, zaradený pod grapefruit;
   jarná cibuľka môže byť aj *Allium fistulosum*; melón gália zaradený do skupiny Reticulatus;

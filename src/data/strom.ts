@@ -466,7 +466,7 @@ export const strom = {
                         }
                       },
                       "Fabeae": {
-                        "hrach": {
+                        "hrachor": {
                           "hrach siaty": {
                             "*": {
                               "*": {
@@ -949,7 +949,7 @@ export const strom = {
                           }
                         },
                         "reďkev": {
-                          "reďkev siata": {
+                          "reďkev ohnicová": {
                             "reďkovka": {
                               "červená": {
                                 "koreň": {
@@ -1091,7 +1091,7 @@ export const strom = {
                       "Aurantieae": {
                         "Citrus": {
                           "Citrus × limon": {
-                            "*": {
+                            "citrón": {
                               "*": {
                                 "plod": {
                                   "citrón": "bežné"
@@ -1105,10 +1105,17 @@ export const strom = {
                                   "citrón Primofiori": "exotické"
                                 }
                               }
+                            },
+                            "bergamot": {
+                              "*": {
+                                "plod": {
+                                  "bergamot": "exotické"
+                                }
+                              }
                             }
                           },
-                          "Citrus × sinensis": {
-                            "*": {
+                          "Citrus × aurantium": {
+                            "pomaranč": {
                               "*": {
                                 "plod": {
                                   "pomaranč": "bežné"
@@ -1122,19 +1129,8 @@ export const strom = {
                                   "pomaranč krvavý": "exotické"
                                 }
                               }
-                            }
-                          },
-                          "Citrus reticulata": {
-                            "*": {
-                              "*": {
-                                "plod": {
-                                  "mandarínka": "bežné"
-                                }
-                              }
-                            }
-                          },
-                          "Citrus × paradisi": {
-                            "*": {
+                            },
+                            "grapefruit": {
                               "červený": {
                                 "plod": {
                                   "grapefruit červený": "bežné"
@@ -1148,6 +1144,15 @@ export const strom = {
                               "*": {
                                 "plod": {
                                   "grapefruit": "bežné"
+                                }
+                              }
+                            }
+                          },
+                          "Citrus reticulata": {
+                            "*": {
+                              "*": {
+                                "plod": {
+                                  "mandarínka": "bežné"
                                 }
                               }
                             }
@@ -1193,16 +1198,7 @@ export const strom = {
                               }
                             }
                           },
-                          "Citrus bergamia": {
-                            "*": {
-                              "*": {
-                                "plod": {
-                                  "bergamot": "exotické"
-                                }
-                              }
-                            }
-                          },
-                          "Citrus junos": {
+                          "Citrus × junos": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -1378,7 +1374,7 @@ export const strom = {
                   },
                   "stavikrvovité": {
                     "Polygonoideae": {
-                      "Rheeae": {
+                      "Rumiceae": {
                         "rebarbora": {
                           "*": {
                             "*": {
@@ -1478,17 +1474,15 @@ export const strom = {
                     "-": {
                       "-": {
                         "aktinídia": {
-                          "aktinídia lahodná": {
-                            "*": {
+                          "aktinídia čínska": {
+                            "deliciosa": {
                               "*": {
                                 "plod": {
                                   "kiwi": "bežné"
                                 }
                               }
-                            }
-                          },
-                          "aktinídia čínska": {
-                            "*": {
+                            },
+                            "chinensis": {
                               "*": {
                                 "plod": {
                                   "kiwi Gold": "exotické"
@@ -1976,7 +1970,7 @@ export const strom = {
                             }
                           }
                         },
-                        "hadomor": {
+                        "Pseudopodospermum": {
                           "hadomor španielsky": {
                             "*": {
                               "*": {
@@ -2050,7 +2044,7 @@ export const strom = {
                   "zemolezovité": {
                     "Valerianoideae": {
                       "TBD": {
-                        "valeriánka": {
+                        "valeriána": {
                           "valeriánka poľná": {
                             "*": {
                               "*": {
@@ -2689,7 +2683,7 @@ export const strom = {
             "-": {
               "-": {
                 "kuriatkotvaré": {
-                  "kuriatkovité": {
+                  "jelenkovité": {
                     "-": {
                       "-": {
                         "kuriatko": {
