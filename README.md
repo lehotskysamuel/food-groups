@@ -33,7 +33,9 @@ npm run preview      # dist/ cez lokálny server (nepovinné)
   Bylinky a korenie) a ich mapovanie na potraviny, rovnako overené typecheckom.
 - `src/uprava.ts` – prepnutie jedného listu v texte `strom.ts` (používa ho edit mód, `vite.config.ts`)
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
-  rozbalenie po zvolenú úroveň, hľadanie, filter bežné / menej bežné / exotické, skrytie značiek `-`, `*`, `TBD`
+  rozbalenie po zvolenú úroveň, hľadanie, filter bežné / menej bežné / exotické. Predvolený je jednoduchý
+  pohľad (preskočí uzly `-`, druh `*` a úrovne pod druhom, zlúči reťaze uzlov s jediným dieťaťom),
+  prepínač **Detailný pohľad** zobrazí celý strom bez skrývania
 - `test/strom.types.test.ts` – typové testy: overujú, že typy odmietnu chybný strom
 
 ## Model

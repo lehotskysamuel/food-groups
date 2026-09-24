@@ -39,6 +39,8 @@ type Pocty = Readonly<Record<List, number>>;
 interface Nastavenia {
   dost: Dost;
   q: string;
+  /** Detailný pohľad: nič sa nepreskakuje ani nezlučuje (pozri zobraz). */
+  detail: boolean;
 }
 
 const SEP = "␟";
@@ -85,7 +87,7 @@ function* vsetky(uzly: readonly Uzol[]): Generator<Uzol> {
 /** Index úrovne „druh“. Pod druhom sa zobrazujú priamo potraviny (listy). */
 const DRUH = UROVNE.indexOf("druh");
 
-const nast: Nastavenia = { dost: "vsetko", q: "" };
+const nast: Nastavenia = { dost: "vsetko", q: "", detail: false };
 /** Zbalené uzly. Predvolene je celý strom rozbalený. */
 let zbalene = new Set<string>();
 /** Počas hľadania sa používa samostatná množina, výsledky sú rozbalené. */
@@ -102,11 +104,14 @@ function vnutorne(hranica: number): Set<string> {
 // ---------- pohľad (len prezentácia, dáta sa nemenia) ----------
 
 /**
+ * Jednoduchý pohľad (predvolený):
  * - uzly „-“ sa preskočia, ich potomkovia sa zobrazia o úroveň vyššie,
  * - pod druhom sa zobrazia priamo potraviny (varieta, kultivar a jedlá časť sa preskočia),
  * - druh „*“ sa preskočí, potraviny sa zobrazia priamo pod rodom,
  * - reťaz uzlov, kde každý má jediné dieťa, sa zlúči do jedného riadku s názvom najspodnejšieho
  *   (okrem ríše, tá zostáva vždy samostatne).
+ *
+ * Detailný pohľad zobrazí všetky uzly tak, ako sú v dátach (filter a hľadanie platia v oboch).
  */
 function zobraz(u: Uzol, pokryte: boolean, ploche: boolean): VUzol[] {
   const zhoda = nast.q !== "" && u.hladat.includes(nast.q);
@@ -117,12 +122,14 @@ function zobraz(u: Uzol, pokryte: boolean, ploche: boolean): VUzol[] {
   }
   const deti = u.deti.flatMap((d) => zobraz(d, pok, ploche || u.uroven >= DRUH));
   if (deti.length === 0) return [];
-  const skryty =
-    ploche || u.nazov === ZNACKY.NEEXISTUJE || (u.uroven === DRUH && u.nazov === ZNACKY.NEROZLISENE);
-  if (skryty) return deti;
-  const jedine = deti.length === 1 ? deti[0] : undefined;
-  if (jedine && !jedine.u.dostupnost && u.uroven > 0) {
-    return [{ ...jedine, zhoda: zhoda || jedine.zhoda, retazec: [u, ...jedine.retazec] }];
+  if (!nast.detail) {
+    const skryty =
+      ploche || u.nazov === ZNACKY.NEEXISTUJE || (u.uroven === DRUH && u.nazov === ZNACKY.NEROZLISENE);
+    if (skryty) return deti;
+    const jedine = deti.length === 1 ? deti[0] : undefined;
+    if (jedine && !jedine.u.dostupnost && u.uroven > 0) {
+      return [{ ...jedine, zhoda: zhoda || jedine.zhoda, retazec: [u, ...jedine.retazec] }];
+    }
   }
   const pocty = nulovePocty();
   for (const d of deti) for (const k of DOSTUPNOSTI) pocty[k] += d.pocty[k];
@@ -360,12 +367,17 @@ $<HTMLButtonElement>("#rozbalit-vsetko").addEventListener("click", () => nastavV
 $<HTMLButtonElement>("#zbalit-vsetko").addEventListener("click", () => nastavVsetky(false));
 
 const poEl = $<HTMLSelectElement>("#rozbalit-po");
-UROVNE.forEach((nazov, i) => {
-  if (i === 0 || (i > DRUH && nazov !== "potravina")) return;
-  const o = el("option", undefined, nazov);
-  o.value = String(i);
-  poEl.append(o);
-});
+const poVyzva = poEl.options[0] as HTMLOptionElement;
+/** Jednoduchý pohľad nezobrazuje úrovne medzi druhom a potravinou, preto ich neponúka. */
+function naplnUrovne(): void {
+  poEl.replaceChildren(poVyzva);
+  UROVNE.forEach((nazov, i) => {
+    if (i === 0 || (!nast.detail && i > DRUH && nazov !== "potravina")) return;
+    const o = el("option", undefined, nazov);
+    o.value = String(i);
+    poEl.append(o);
+  });
+}
 poEl.addEventListener("change", () => {
   const hranica = Number(poEl.value);
   poEl.value = "";
@@ -407,6 +419,13 @@ dostTlacidla.forEach((b) =>
     vykresli();
   }),
 );
+
+const detailEl = $<HTMLInputElement>("#detailny");
+detailEl.addEventListener("change", () => {
+  nast.detail = detailEl.checked;
+  naplnUrovne();
+  vykresli();
+});
 
 // ---------- edit mód (len dev server) ----------
 
@@ -454,6 +473,8 @@ if (EDIT) {
 
 // ---------- štart ----------
 
+detailEl.checked = nast.detail;
+naplnUrovne();
 oznacDost();
 statistiky();
 vykresli();
