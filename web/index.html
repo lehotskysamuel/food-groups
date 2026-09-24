@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Strom potravín</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<!--obsah-->
+<div class="stranka">
+  <header class="hlavicka">
+    <p class="eyebrow">food-groups · 17 taxonomických úrovní</p>
+    <h1>Strom potravín</h1>
+    <p class="podtitul">Klik na uzol ho zbalí alebo rozbalí, so <kbd>Shift</kbd> celý podstrom.</p>
+    <dl class="statistiky" id="statistiky"></dl>
+  </header>
+
+  <div class="nastroje" role="toolbar" aria-label="Ovládanie stromu">
+    <div class="skupina">
+      <button type="button" id="rozbalit-vsetko">Rozbaliť všetko</button>
+      <button type="button" id="zbalit-vsetko">Zbaliť všetko</button>
+      <select id="rozbalit-po" aria-label="Rozbaliť po úroveň">
+        <option value="">Rozbaliť po úroveň…</option>
+      </select>
+    </div>
+    <input type="search" id="hladat" class="hladat" placeholder="Hľadať potravinu alebo taxón…" autocomplete="off" aria-label="Hľadať">
+    <div class="skupina">
+      <div class="segment" role="group" aria-label="Dostupnosť">
+        <button type="button" data-dost="vsetko" aria-pressed="true">Všetko</button>
+        <button type="button" data-dost="bežné" aria-pressed="false">Bežné</button>
+        <button type="button" data-dost="exotické" aria-pressed="false">Exotické</button>
+      </div>
+    </div>
+  </div>
+
+  <p id="info" class="info" aria-live="polite"></p>
+  <div id="strom" class="strom"></div>
+
+  <footer class="legenda">
+    <div><span class="chip tbd">TBD</span> úroveň existuje, ešte nie je doplnená</div>
+    <div><span class="pocet"><b>12</b><i style="--b:66%"></i></span> počet potravín, pomer bežné / <span class="exot-text">exotické</span></div>
+  </footer>
+</div>
+<!--/obsah-->
+<script type="module" src="./main.ts"></script>
+</body>
+</html>
