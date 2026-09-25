@@ -19,6 +19,8 @@
   --risa-rastliny: #2f7560;
   --risa-huby: #8a5a3c;
   --risa-zivocichy: #9b3d4a;
+  --risa-chromisty: #6b6a1e;
+  --risa-bakterie: #3f5f8c;
   --risa: var(--accent);
   --serif: "Spectral", Georgia, "Times New Roman", serif;
   --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -47,6 +49,8 @@
     --risa-rastliny: #6db59a;
     --risa-huby: #c9986f;
     --risa-zivocichy: #d77c89;
+    --risa-chromisty: #b7b45f;
+    --risa-bakterie: #86a8d8;
   }
 }
 :root[data-theme="dark"] {
@@ -71,6 +75,8 @@
   --risa-rastliny: #6db59a;
   --risa-huby: #c9986f;
   --risa-zivocichy: #d77c89;
+  --risa-chromisty: #b7b45f;
+  --risa-bakterie: #86a8d8;
 }
 
 * { box-sizing: border-box; }
@@ -323,6 +329,8 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 .risa-0 { --risa: var(--risa-rastliny); }
 .risa-1 { --risa: var(--risa-huby); }
 .risa-2 { --risa: var(--risa-zivocichy); }
+.risa-3 { --risa: var(--risa-chromisty); }
+.risa-4 { --risa: var(--risa-bakterie); }
 
 /* ---------- legenda ---------- */
 .legenda {

@@ -45,7 +45,7 @@ interface Nastavenia {
 
 const SEP = "␟";
 const ZNACKY_SET = new Set<string>(Object.values(ZNACKY));
-const RISE = ["rastliny", "huby", "živočíchy"];
+const RISE = ["rastliny", "huby", "živočíchy", "chromisty", "baktérie"];
 
 /** CSS trieda pre každú dostupnosť. */
 const TRIEDA: Readonly<Record<List, string>> = { bežné: "bezne", "menej bežné": "menej", exotické: "exoticke" };
@@ -269,7 +269,7 @@ function statistiky(): void {
   koren.forEach((r, i) => {
     let n = 0;
     for (const u of vsetky([r])) if (u.dostupnost) n++;
-    polozky.push([r.nazov, String(n), `risa risa-${i}${i === 0 ? " prva-risa" : ""}`]);
+    polozky.push([r.nazov, String(n), `risa risa-${Math.max(0, RISE.indexOf(r.nazov))}${i === 0 ? " prva-risa" : ""}`]);
   });
   dl.replaceChildren(
     ...polozky.map(([k, h, trieda]) => {

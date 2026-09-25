@@ -1372,6 +1372,21 @@ export const strom = {
                         }
                       }
                     },
+                    "Salicornioideae": {
+                      "Salicornieae": {
+                        "slanorožec": {
+                          "slanorožec bylinný": {
+                            "*": {
+                              "*": {
+                                "výhonok": {
+                                  "slanorožec": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
                     "Chenopodioideae": {
                       "Anserineae": {
                         "špenát": {
@@ -2655,6 +2670,68 @@ export const strom = {
           }
         }
       }
+    },
+    "červené riasy": {
+      "Eurhodophytina": {
+        "Bangiophyceae": {
+          "Bangiophycidae": {
+            "-": {
+              "-": {
+                "Bangiales": {
+                  "Bangiaceae": {
+                    "-": {
+                      "-": {
+                        "Pyropia": {
+                          "Pyropia yezoensis": {
+                            "*": {
+                              "*": {
+                                "stielka": {
+                                  "nori": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "zelené riasy": {
+      "Chlorophytina": {
+        "Trebouxiophyceae": {
+          "-": {
+            "-": {
+              "-": {
+                "Chlorellales": {
+                  "Chlorellaceae": {
+                    "-": {
+                      "-": {
+                        "chlorela": {
+                          "Chlorella vulgaris": {
+                            "*": {
+                              "*": {
+                                "*": {
+                                  "chlorella": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "huby": {
@@ -2907,6 +2984,15 @@ export const strom = {
                                 "hlava": {
                                   "bravčová hlava": "bežné"
                                 },
+                                "líčka": {
+                                  "bravčové líčka": "menej bežné"
+                                },
+                                "lalok": {
+                                  "bravčový lalok": "menej bežné"
+                                },
+                                "jazyk": {
+                                  "bravčový jazyk": "menej bežné"
+                                },
                                 "tuk": {
                                   "bravčový tuk": "bežné"
                                 },
@@ -2919,6 +3005,9 @@ export const strom = {
                                 "srdce": {
                                   "bravčové srdce": "bežné"
                                 },
+                                "črevo": {
+                                  "bravčové črevá": "menej bežné"
+                                },
                                 "kosť": {
                                   "bravčové kosti": "bežné"
                                 }
@@ -2926,6 +3015,26 @@ export const strom = {
                               "mangalica": {
                                 "*": {
                                   "mäso z mangalice": "bežné"
+                                }
+                              },
+                              "iberico": {
+                                "*": {
+                                  "bravčové mäso iberico": "menej bežné"
+                                }
+                              }
+                            }
+                          },
+                          "diviak lesný": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "diviačie mäso": "menej bežné"
+                                },
+                                "plece": {
+                                  "diviačie plece": "menej bežné"
+                                },
+                                "chrbát": {
+                                  "diviačí chrbát": "menej bežné"
                                 }
                               }
                             }
@@ -2968,11 +3077,40 @@ export const strom = {
                                 "nožina": {
                                   "hovädzia nožina": "bežné"
                                 },
+                                "bok": {
+                                  "hovädzí bok": "menej bežné"
+                                },
+                                "chvost": {
+                                  "hovädzí chvost": "menej bežné"
+                                },
+                                "líčka": {
+                                  "hovädzie líčka": "menej bežné"
+                                },
+                                "jazyk": {
+                                  "hovädzí jazyk": "menej bežné"
+                                },
+                                "srdce": {
+                                  "hovädzie srdce": "menej bežné"
+                                },
+                                "pečeň": {
+                                  "hovädzia pečeň": "menej bežné"
+                                },
+                                "žalúdok": {
+                                  "hovädzie držky": "bežné"
+                                },
+                                "semenníky": {
+                                  "býčie žľazy": "exotické"
+                                },
                                 "kosť": {
                                   "hovädzie kosti": "bežné"
                                 },
                                 "mlieko": {
                                   "kravské mlieko": "bežné"
+                                }
+                              },
+                              "wagyu": {
+                                "*": {
+                                  "hovädzie mäso wagyu": "exotické"
                                 }
                               }
                             }
@@ -2986,6 +3124,15 @@ export const strom = {
                           "ovca domáca": {
                             "-": {
                               "*": {
+                                "plece": {
+                                  "jahňacie plece": "menej bežné"
+                                },
+                                "karé": {
+                                  "jahňacie karé": "menej bežné"
+                                },
+                                "črevo": {
+                                  "baranie črevá": "menej bežné"
+                                },
                                 "mlieko": {
                                   "ovčie mlieko": "bežné"
                                 }
@@ -3016,6 +3163,65 @@ export const strom = {
                               "*": {
                                 "*": {
                                   "jelenie mäso": "bežné"
+                                },
+                                "stehno": {
+                                  "jelenie stehno": "menej bežné"
+                                },
+                                "plece": {
+                                  "jelenie plece": "menej bežné"
+                                },
+                                "krk": {
+                                  "jelení krk": "menej bežné"
+                                },
+                                "chrbát": {
+                                  "jelení chrbát": "menej bežné"
+                                },
+                                "nožina": {
+                                  "jelenia nožina": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "daniel": {
+                          "daniel škvrnitý": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "danielie mäso": "menej bežné"
+                                },
+                                "stehno": {
+                                  "danielie stehno": "menej bežné"
+                                },
+                                "plece": {
+                                  "danielie plece": "menej bežné"
+                                },
+                                "chrbát": {
+                                  "danielí chrbát": "menej bežné"
+                                },
+                                "sviečkovica": {
+                                  "danielia sviečkovica": "menej bežné"
+                                },
+                                "nožina": {
+                                  "danielia nožina": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Capreolinae": {
+                      "Capreolini": {
+                        "srnec": {
+                          "srnec lesný": {
+                            "-": {
+                              "*": {
+                                "stehno": {
+                                  "srnčie stehno": "menej bežné"
+                                },
+                                "chrbát": {
+                                  "srnčí chrbát": "menej bežné"
                                 }
                               }
                             }
@@ -3040,6 +3246,9 @@ export const strom = {
                                 },
                                 "stehno": {
                                   "králičie stehno": "bežné"
+                                },
+                                "chrbát": {
+                                  "králičí chrbát": "menej bežné"
                                 }
                               }
                             }
@@ -3103,6 +3312,22 @@ export const strom = {
                           }
                         }
                       },
+                      "Phasianini": {
+                        "bažant": {
+                          "bažant obyčajný": {
+                            "-": {
+                              "*": {
+                                "prsia": {
+                                  "bažantie prsia": "menej bežné"
+                                },
+                                "stehno": {
+                                  "bažantie stehná": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
                       "TBD": {
                         "moriak": {
                           "moriak divý": {
@@ -3125,6 +3350,9 @@ export const strom = {
                                 },
                                 "srdce": {
                                   "morčacie srdcia": "bežné"
+                                },
+                                "žalúdok": {
+                                  "morčacie žalúdky": "menej bežné"
                                 }
                               }
                             }
@@ -3231,6 +3459,23 @@ export const strom = {
                         }
                       }
                     }
+                  },
+                  "Alosidae": {
+                    "-": {
+                      "-": {
+                        "sardinka": {
+                          "sardinka európska": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "sardinka": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -3270,6 +3515,59 @@ export const strom = {
                       }
                     }
                   }
+                },
+                "sumcotvaré": {
+                  "sumcovité": {
+                    "-": {
+                      "-": {
+                        "sumec": {
+                          "sumec veľký": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "sumec": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "keříčkovcovití": {
+                    "-": {
+                      "-": {
+                        "Clarias": {
+                          "sumček africký": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "sumček africký": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "pangasovití": {
+                    "-": {
+                      "-": {
+                        "pangas": {
+                          "pangas spodnooký": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "pangasius": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -3298,6 +3596,27 @@ export const strom = {
                               "*": {
                                 "svalovina": {
                                   "pstruh dúhový": "bežné"
+                                },
+                                "ikry": {
+                                  "pstruhové ikry": "menej bežné"
+                                }
+                              }
+                            }
+                          },
+                          "losos keta": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "losos keta": "menej bežné"
+                                }
+                              }
+                            }
+                          },
+                          "*": {
+                            "-": {
+                              "*": {
+                                "ikry": {
+                                  "lososie ikry": "menej bežné"
                                 }
                               }
                             }
@@ -3321,6 +3640,26 @@ export const strom = {
                               "*": {
                                 "svalovina": {
                                   "treska aljašská": "bežné"
+                                }
+                              }
+                            }
+                          },
+                          "treska škvrnitá": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "treska škvrnitá": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Pollachius": {
+                          "treska tmavá": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "treska tmavá": "bežné"
                                 }
                               }
                             }
@@ -3360,6 +3699,17 @@ export const strom = {
                             }
                           }
                         },
+                        "tuniak": {
+                          "tuniak žltoplutvý": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "tuniak žltoplutvý": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        },
                         "*": {
                           "*": {
                             "-": {
@@ -3374,6 +3724,15 @@ export const strom = {
                       },
                       "Scombrini": {
                         "makrela": {
+                          "makrela atlantická": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "makrela atlantická": "bežné"
+                                }
+                              }
+                            }
+                          },
                           "*": {
                             "-": {
                               "*": {
@@ -3405,6 +3764,174 @@ export const strom = {
                         }
                       }
                     }
+                  },
+                  "obloplutváčovité": {
+                    "-": {
+                      "-": {
+                        "Cyclopterus": {
+                          "hranáč sivý": {
+                            "-": {
+                              "*": {
+                                "ikry": {
+                                  "ikry hranáča": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "platesotvaré": {
+                  "platýsovití": {
+                    "Pleuronectinae": {
+                      "Pleuronectini": {
+                        "platesa": {
+                          "platesa obyčajná": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "platesa": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "Hippoglossini": {
+                        "Hippoglossus": {
+                          "halibut atlantický": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "halibut atlantický": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Reinhardtius": {
+                          "halibut grónsky": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "halibut grónsky": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "pakambalovití": {
+                    "-": {
+                      "-": {
+                        "pakambala": {
+                          "kambala veľká": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "kambala veľká": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "čertotvaré": {
+                  "čertovité": {
+                    "-": {
+                      "-": {
+                        "čert": {
+                          "čert obyčajný": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "čert morský": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "Carangiformes": {
+                  "mečúňovité": {
+                    "-": {
+                      "-": {
+                        "mečúň": {
+                          "mečúň obyčajný": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "mečúň": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "-": {
+                  "mořčákovití": {
+                    "-": {
+                      "-": {
+                        "Dicentrarchus": {
+                          "okúň branzino": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "morský vlk": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Latidae": {
+                    "-": {
+                      "-": {
+                        "Lates": {
+                          "ostriež nílsky": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "ostriež nílsky": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "zubaticovité": {
+                    "-": {
+                      "-": {
+                        "pražma": {
+                          "pražma zlatá": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "pražma": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 },
                 "Cichliformes": {
@@ -3429,10 +3956,103 @@ export const strom = {
               }
             }
           }
+        },
+        "chrupkokostnaté": {
+          "-": {
+            "-": {
+              "-": {
+                "jeseterotvaré": {
+                  "jeseterovité": {
+                    "Acipenserinae": {
+                      "-": {
+                        "jeseter": {
+                          "jeseter sibírsky": {
+                            "-": {
+                              "*": {
+                                "ikry": {
+                                  "jeseterový kaviár": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "článkonožce": {
+      "kôrovce": {
+        "rakovce": {
+          "Eumalacostraca": {
+            "Eucarida": {
+              "-": {
+                "desaťnožce": {
+                  "Penaeidae": {
+                    "-": {
+                      "-": {
+                        "Penaeus": {
+                          "kreveta bielonohá": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "krevety vannamei": "bežné"
+                                }
+                              }
+                            }
+                          },
+                          "Penaeus monodon": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "tigrie krevety": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Metapenaeus": {
+                          "Metapenaeus monoceros": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "Metapenaeus monoceros": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Lithodidae": {
+                    "-": {
+                      "-": {
+                        "Paralithodes": {
+                          "krab kamčatský": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "kamčatský krab": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "šesťnôžky": {
         "hmyz": {
           "Pterygota": {
@@ -3448,6 +4068,353 @@ export const strom = {
                               "*": {
                                 "med": {
                                   "med": "bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mäkkýše": {
+      "-": {
+        "lastúrniky": {
+          "Autobranchia": {
+            "vláskožiabrovce": {
+              "-": {
+                "Mytilida": {
+                  "Mytilidae": {
+                    "Mytilinae": {
+                      "-": {
+                        "slávka": {
+                          "slávka jedlá": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "slávka jedlá": "bežné"
+                                }
+                              }
+                            }
+                          },
+                          "slávka stredomorská": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "slávka stredomorská": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "Ostreida": {
+                  "ústřicovití": {
+                    "Ostreinae": {
+                      "-": {
+                        "ustrica": {
+                          "ustrica jedlá": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "ustrica jedlá": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Crassostreinae": {
+                      "-": {
+                        "Magallana": {
+                          "Magallana gigas": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "Magallana gigas": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "Pectinida": {
+                  "Pectinidae": {
+                    "Palliolinae": {
+                      "Palliolini": {
+                        "Placopecten": {
+                          "Placopecten magellanicus": {
+                            "-": {
+                              "*": {
+                                "svalovina": {
+                                  "hrebenatka": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Heteroconchia": {
+              "Imparidentia": {
+                "Venerida": {
+                  "Veneridae": {
+                    "Tapetinae": {
+                      "-": {
+                        "Ruditapes": {
+                          "Ruditapes decussatus": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "vongole": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "bezzámkovky": {
+                  "Pharidae": {
+                    "Cultellinae": {
+                      "-": {
+                        "pošvica": {
+                          "pošvica americká": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "britvovka": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hlavonožce": {
+          "dvojžiabrovce": {
+            "desaťramenné dvojžiabrovce": {
+              "-": {
+                "Oegopsida": {
+                  "gordanovité": {
+                    "Ommastrephinae": {
+                      "-": {
+                        "Dosidicus": {
+                          "kalmár peruánsky": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "kalmár peruánsky": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Illicinae": {
+                      "-": {
+                        "Illex": {
+                          "Illex argentinus": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "Illex argentinus": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Todarodinae": {
+                      "-": {
+                        "gordan": {
+                          "Todarodes pacificus": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "Todarodes pacificus": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "Myopsida": {
+                  "kalmarovité": {
+                    "-": {
+                      "-": {
+                        "kalmár": {
+                          "kalmár obyčajný": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "kalmár obyčajný": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "sépie": {
+                  "sépiovité": {
+                    "-": {
+                      "-": {
+                        "sépia": {
+                          "*": {
+                            "-": {
+                              "*": {
+                                "atrament": {
+                                  "sépiový atrament": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "osemramenné dvojžiabrovce": {
+              "-": {
+                "-": {
+                  "osmonohovité": {
+                    "-": {
+                      "-": {
+                        "osmonoh": {
+                          "osmonoh obyčajný": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "chobotnica": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Amphioctopus": {
+                          "Amphioctopus membranaceus": {
+                            "-": {
+                              "*": {
+                                "*": {
+                                  "baby chobotnica": "exotické"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "chromisty": {
+    "Ochrophyta": {
+      "-": {
+        "hnedé riasy": {
+          "Fucophycidae": {
+            "-": {
+              "-": {
+                "Laminariales": {
+                  "Alariaceae": {
+                    "-": {
+                      "-": {
+                        "Undaria": {
+                          "Undaria pinnatifida": {
+                            "*": {
+                              "*": {
+                                "stielka": {
+                                  "wakame": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Laminariaceae": {
+                    "-": {
+                      "-": {
+                        "Saccharina": {
+                          "manitolka japonská": {
+                            "*": {
+                              "*": {
+                                "stielka": {
+                                  "kombu": "menej bežné"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "baktérie": {
+    "sinice": {
+      "-": {
+        "Cyanophyceae": {
+          "Oscillatoriophycidae": {
+            "-": {
+              "-": {
+                "Oscillatoriales": {
+                  "Microcoleaceae": {
+                    "-": {
+                      "-": {
+                        "Arthrospira": {
+                          "Arthrospira platensis": {
+                            "*": {
+                              "*": {
+                                "*": {
+                                  "spirulina": "menej bežné"
                                 }
                               }
                             }
