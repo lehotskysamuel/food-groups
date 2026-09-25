@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p ."
+    "typecheck": "tsc --noEmit -p .",
+    "kontrola": "node scripts/kontrola.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",

@@ -8,6 +8,7 @@ vlastného jedálnička: čím širšie pokrytie stromu, tým diverzifikovanejš
 ```
 npm install          # jednorazovo
 npm run typecheck    # overí typy a tvar stromu (tsc --noEmit)
+npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni
 npm run dev          # web v edit móde na http://localhost:5173 (číta aj zapisuje src/data/strom.ts)
 npm run build        # web vo view móde: jeden súbor dist/index.html, otvorí sa aj bez servera
 npm run preview      # dist/ cez lokálny server (nepovinné)
@@ -27,6 +28,7 @@ npm run preview      # dist/ cez lokálny server (nepovinné)
 - `src/strom.types.ts` – typy pre 17 úrovní stromu (`U01_Risa` … `U17_Potravina`), značky,
   názvy úrovní a typ `Potravina<T>` (zjednotenie názvov všetkých listov stromu)
 - `src/data/strom.ts` – samotný strom (`as const satisfies Strom`), zdroj pravdy
+- `src/kontrola.ts` – kontroly, ktoré typy nezachytia (`npm run kontrola` cez `scripts/kontrola.mjs`)
 - `src/uprava.ts` – prepnutie jedného listu v texte `strom.ts` (používa ho edit mód, `vite.config.ts`)
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
   rozbalenie po zvolenú úroveň, hľadanie, filter bežné / menej bežné / exotické. Predvolený je jednoduchý
@@ -206,7 +208,10 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 ## Manuálne overenie
 
 `npm run typecheck` stráži **tvar** stromu (hĺbka 17, list = `"bežné"` / `"menej bežné"` / `"exotické"`, značka nie je názvom
-potraviny). Ručne treba ešte prejsť **dostupnosť**: kategória bežné / menej bežné / exotické
+potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
+potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
+úrovni (napr. tribus -eae nie je v slote podčeľade). Obe kontroly bežia aj v CI pred nasadením.
+Ručne treba ešte prejsť **dostupnosť**: kategória bežné / menej bežné / exotické
 musí zodpovedať realite. Zatiaľ je to len heuristika. Ovocie a zelenina: čo má Tesco, je
 `"bežné"`, čo pribudlo až z Košíka, je `"exotické"`. Ďalších 83 potravín (ostatné rastliny a prvé
 živočíchy) má `"bežné"`, lebo sú v Tescu. 77 živočíšnych potravín z Košíka (mäkkýše, kôrovce,
