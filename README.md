@@ -223,11 +223,15 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
 potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
 úrovni (napr. tribus -eae nie je v slote podčeľade). Obe kontroly bežia aj v CI pred nasadením.
-**Dostupnosť** sa ručne reviduje podľa [pravidiel](#model) (25. 9. 2026). Pôvodná heuristika
-(čo má Tesco v ovocí a zelenine, je bežné, čo pribudlo až z Košíka, je exotické) mala systematické
-chyby: sušené bylinky, chren, sterilizovaná kukurica, dyňa či zelená paprika boli exotické, lebo
-chýbali v čerstvom sortimente Tesca. Všetky potraviny z Košíka sa dajú kúpiť online, takže podľa
-definície sú aspoň menej bežné. Revízia hraničných prípadov (bežné vs. menej bežné) ešte prebieha.
+**Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (25. 9. 2026): 255 bežné, 181 menej
+bežné, 4 exotické. Každá potravina bola vyhľadaná na Košíku (čo tam je, je aspoň menej bežné).
+Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland, Billa, Tesco, Coop Jednota)
+a cez sortiment Metra. Pôvodná heuristika (čo má Tesco v ovocí a zelenine, je bežné, čo pribudlo až
+z Košíka, je exotické) mala systematické chyby. Sušené bylinky, chren, sterilizovaná kukurica, dyňa
+či zelená paprika boli exotické, lebo chýbali v čerstvom sortimente Tesca. Naopak, bežné boli aj
+potraviny, ktoré Tesco malo len ako prímes v zmesi (moruše, rebarbora, dračie ovocie). Exotické
+zostali len tie, ktoré sa nepodarilo kúpiť nikde okrem špecializovaných predajní: slanorožec,
+samostatné kačacie krídla, tolstolobik a halibut atlantický.
 
 ### Otvorené body na overenie
 
@@ -326,3 +330,18 @@ definície sú aspoň menej bežné. Revízia hraničných prípadov (bežné vs
   *Pyropia* a nori sa vyrába aj z *P. tenera*. Novšie práce radia komerčné kmene spiruliny do rodu
   *Limnospira*, strom sa drží *Arthrospira platensis*. Kombu môže byť aj z iných druhov *Saccharina*
   či *Laminaria*.
+- **Dostupnosť:**
+  - Košík predáva aj sortiment Metra, preto sú menej bežné aj gastro položky: ovocné pyré
+    (bergamot, calamansi, yuzu, acai, marhule Bergeron, višne Oblačinské), klíčky a mikrozelenina,
+    ustrice, hrebenatky, britvovky či sépiový atrament. Ak by sa gastro sortiment nemal počítať,
+    patria medzi exotické;
+  - na hranici bežné / menej bežné: jablko Pink Lady, bravčový lalok, šalvia, medvedí cesnak
+    (čerstvý len na jar, inak sušený), papája (krájaná), černice, machovka, rebarbora, jablko Šampion,
+    šalát Lollo Rosso a Lollo Biondo, shiitake. Najslabšie je overený Lidl, jeho web ukazuje len
+    aktuálne akcie;
+  - avokádo v reťazcoch býva takmer vždy Hass, ale štítok odrodu neuvádza, preto je avokádo Hass
+    menej bežné. Rovnako kapusta špicatá (skorá kapusta býva špicatá) a zemiaky Agria;
+  - druh kalmárov v mrazených krúžkoch reťazcov a slávok v ich výrobkoch sa nepodarilo overiť
+    (na Košíku sú krúžky *Illex argentinus*, konzervy *Dosidicus gigas*, slávky jedlé *Mytilus edulis*,
+    varené *M. chilensis*). Kalmár lietavý (*Todarodes sagittatus*) sa nenašiel, Košík predáva
+    tuby *Todarodes pacificus*. Treba overiť, na ktorý druh sa list „kalmár lietavý“ vzťahuje.
