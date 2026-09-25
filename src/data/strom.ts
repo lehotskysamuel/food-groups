@@ -31,7 +31,7 @@ export const strom = {
                   "proteovité": {
                     "Grevilleoideae": {
                       "Macadamieae": {
-                        "makadamia": {
+                        "makadámia": {
                           "*": {
                             "*": {
                               "*": {
@@ -75,7 +75,7 @@ export const strom = {
                               }
                             }
                           },
-                          "egreš obyčajný": {
+                          "ríbezľa egrešová": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -140,7 +140,7 @@ export const strom = {
                       "Maleae": {
                         "jabloň": {
                           "jabloň domáca": {
-                            "-": {
+                            "*": {
                               "Granny Smith": {
                                 "plod": {
                                   "jablko Granny Smith": "bežné"
@@ -239,7 +239,7 @@ export const strom = {
                               }
                             }
                           },
-                          "hrušeň písečná": {
+                          "hruška hruškolistá": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -523,7 +523,7 @@ export const strom = {
                           }
                         },
                         "vigna": {
-                          "Vigna radiata": {
+                          "vigna zlatá": {
                             "*": {
                               "*": {
                                 "klíčok": {
@@ -532,7 +532,7 @@ export const strom = {
                               }
                             }
                           },
-                          "Vigna angularis": {
+                          "vigna hranatá": {
                             "*": {
                               "*": {
                                 "klíčok": {
@@ -571,9 +571,9 @@ export const strom = {
                       }
                     },
                     "Detarioideae": {
-                      "TBD": {
-                        "tamarindovník": {
-                          "tamarindovník indický": {
+                      "Amherstieae": {
+                        "tamarind": {
+                          "tamarind indický": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -602,8 +602,8 @@ export const strom = {
                             }
                           }
                         },
-                        "ořechovec": {
-                          "ořechovec pekan": {
+                        "hikória": {
+                          "hikória pekanová": {
                             "*": {
                               "*": {
                                 "semeno": {
@@ -618,7 +618,7 @@ export const strom = {
                   },
                   "brezovité": {
                     "Coryloideae": {
-                      "TBD": {
+                      "Coryleae": {
                         "lieska": {
                           "lieska obyčajná": {
                             "*": {
@@ -634,8 +634,8 @@ export const strom = {
                     }
                   },
                   "bukovité": {
-                    "TBD": {
-                      "TBD": {
+                    "Quercoideae": {
+                      "-": {
                         "gaštan": {
                           "gaštan jedlý": {
                             "*": {
@@ -653,7 +653,7 @@ export const strom = {
                 },
                 "tekvicotvaré": {
                   "tekvicovité": {
-                    "TBD": {
+                    "-": {
                       "Benincaseae": {
                         "uhorka": {
                           "uhorka siata": {
@@ -680,7 +680,7 @@ export const strom = {
                               }
                             }
                           },
-                          "uhorka melónová": {
+                          "melón cukrový": {
                             "Inodorus": {
                               "*": {
                                 "plod": {
@@ -709,8 +709,8 @@ export const strom = {
                             }
                           }
                         },
-                        "lubenice": {
-                          "lubenice obecná": {
+                        "dyňa": {
+                          "dyňa červená": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -746,7 +746,7 @@ export const strom = {
                               }
                             }
                           },
-                          "tekvica muškátová": {
+                          "tekvica mošusová": {
                             "*": {
                               "Butternut": {
                                 "plod": {
@@ -808,7 +808,7 @@ export const strom = {
                           "mučenka jedlá": {
                             "*": {
                               "*": {
-                                "plod": {
+                                "miešok": {
                                   "marakuja": "bežné"
                                 }
                               }
@@ -819,7 +819,7 @@ export const strom = {
                     }
                   },
                   "fialkovité": {
-                    "-": {
+                    "Violoideae": {
                       "-": {
                         "fialka": {
                           "*": {
@@ -838,10 +838,10 @@ export const strom = {
                 },
                 "kysličkotvaré": {
                   "kysličkovité": {
-                    "-": {
+                    "Averrhoideae": {
                       "-": {
-                        "Averrhoa": {
-                          "Averrhoa carambola": {
+                        "karambola": {
+                          "karambola obecná": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -859,7 +859,7 @@ export const strom = {
               "malvidy": {
                 "kapustotvaré": {
                   "kapustovité": {
-                    "TBD": {
+                    "Brassicoideae": {
                       "Brassiceae": {
                         "kapusta": {
                           "kapusta obyčajná": {
@@ -939,7 +939,7 @@ export const strom = {
                               }
                             }
                           },
-                          "kapusta repová": {
+                          "kapusta poľná": {
                             "pekingská": {
                               "*": {
                                 "hlávka": {
@@ -983,26 +983,26 @@ export const strom = {
                           "reďkev ohnicová": {
                             "reďkovka": {
                               "červená": {
-                                "koreň": {
+                                "buľva": {
                                   "reďkovka červená": "bežné"
                                 }
                               },
                               "biela": {
-                                "koreň": {
+                                "buľva": {
                                   "reďkovka biela": "bežné"
                                 }
                               }
                             },
                             "reďkev čierna": {
                               "*": {
-                                "koreň": {
+                                "buľva": {
                                   "reďkev čierna": "exotické"
                                 }
                               }
                             },
                             "daikon": {
                               "*": {
-                                "koreň": {
+                                "buľva": {
                                   "daikon": "exotické"
                                 }
                               }
@@ -1012,15 +1012,15 @@ export const strom = {
                                 "klíčok": {
                                   "reďkovkové klíčky": "exotické"
                                 },
-                                "mikrozelenina": {
+                                "klíčna rastlina": {
                                   "reďkovková mikrozelenina": "exotické"
                                 }
                               }
                             }
                           }
                         },
-                        "TBD": {
-                          "TBD": {
+                        "dvojradovka": {
+                          "dvojradovka tenkolistá": {
                             "*": {
                               "*": {
                                 "list": {
@@ -1049,7 +1049,7 @@ export const strom = {
                           "žerucha siata": {
                             "*": {
                               "*": {
-                                "mikrozelenina": {
+                                "klíčna rastlina": {
                                   "žerucha": "exotické"
                                 }
                               }
@@ -1060,8 +1060,8 @@ export const strom = {
                     }
                   },
                   "kaparovité": {
-                    "TBD": {
-                      "TBD": {
+                    "-": {
+                      "-": {
                         "kapara": {
                           "kapara tŕnitá": {
                             "*": {
@@ -1105,7 +1105,7 @@ export const strom = {
                           "kapucínka väčšia": {
                             "*": {
                               "*": {
-                                "mikrozelenina": {
+                                "klíčna rastlina": {
                                   "kapucínka": "exotické"
                                 }
                               }
@@ -1120,8 +1120,8 @@ export const strom = {
                   "rutovité": {
                     "Aurantioideae": {
                       "Aurantieae": {
-                        "Citrus": {
-                          "Citrus × limon": {
+                        "citrónovník": {
+                          "citrónovník pravý": {
                             "citrón": {
                               "*": {
                                 "plod": {
@@ -1145,7 +1145,7 @@ export const strom = {
                               }
                             }
                           },
-                          "Citrus × aurantium": {
+                          "citrónovník horký": {
                             "pomaranč": {
                               "*": {
                                 "plod": {
@@ -1177,10 +1177,8 @@ export const strom = {
                                   "grapefruit": "bežné"
                                 }
                               }
-                            }
-                          },
-                          "Citrus reticulata": {
-                            "*": {
+                            },
+                            "mandarínka": {
                               "*": {
                                 "plod": {
                                   "mandarínka": "bežné"
@@ -1188,7 +1186,7 @@ export const strom = {
                               }
                             }
                           },
-                          "Citrus maxima": {
+                          "citrónovník obrovský": {
                             "*": {
                               "červené": {
                                 "plod": {
@@ -1202,7 +1200,7 @@ export const strom = {
                               }
                             }
                           },
-                          "*": {
+                          "Citrus × latifolia": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -1242,11 +1240,11 @@ export const strom = {
                       }
                     }
                   },
-                  "ledvinovníkovité": {
+                  "obličkovcovité": {
                     "Anacardioideae": {
-                      "TBD": {
-                        "ledvinovník": {
-                          "ledvinovník západní": {
+                      "-": {
+                        "obličkovec": {
+                          "obličkovec západný": {
                             "*": {
                               "*": {
                                 "semeno": {
@@ -1303,7 +1301,7 @@ export const strom = {
                           "liči čínske": {
                             "*": {
                               "*": {
-                                "plod": {
+                                "miešok": {
                                   "liči": "exotické"
                                 }
                               }
@@ -1316,8 +1314,8 @@ export const strom = {
                 },
                 "myrtotvaré": {
                   "vrbicovité": {
-                    "TBD": {
-                      "TBD": {
+                    "Punicoideae": {
+                      "-": {
                         "granátovník": {
                           "granátovník púnsky": {
                             "*": {
@@ -1347,7 +1345,7 @@ export const strom = {
                           "repa obyčajná": {
                             "cvikla": {
                               "*": {
-                                "koreň": {
+                                "buľva": {
                                   "červená repa": "bežné"
                                 },
                                 "list": {
@@ -1358,12 +1356,12 @@ export const strom = {
                                 }
                               },
                               "Chioggia": {
-                                "koreň": {
+                                "buľva": {
                                   "cvikla Chioggia": "exotické"
                                 }
                               },
                               "žltá": {
-                                "koreň": {
+                                "buľva": {
                                   "repa žltá": "exotické"
                                 }
                               }
@@ -1405,11 +1403,11 @@ export const strom = {
                     "Amaranthoideae": {
                       "Amarantheae": {
                         "láskavec": {
-                          "láskavec krvavý": {
+                          "láskavec zakrvavený": {
                             "*": {
                               "*": {
-                                "mikrozelenina": {
-                                  "láskavec krvavý": "exotické"
+                                "klíčna rastlina": {
+                                  "láskavcová mikrozelenina": "exotické"
                                 }
                               }
                             }
@@ -1477,7 +1475,7 @@ export const strom = {
                     "Vaccinioideae": {
                       "Vaccinieae": {
                         "brusnica": {
-                          "brusnica veľkoplodá": {
+                          "kľukva veľkoplodá": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -1486,7 +1484,7 @@ export const strom = {
                               }
                             }
                           },
-                          "brusnice chocholičnatá": {
+                          "čučoriedka chocholíkatá": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -1548,14 +1546,14 @@ export const strom = {
                     "Solanoideae": {
                       "Solaneae": {
                         "ľuľok": {
-                          "lilek rajče": {
+                          "rajčiak jedlý": {
                             "cherry": {
                               "*": {
                                 "plod": {
                                   "paradajky cherry": "bežné"
                                 }
                               },
-                              "San Marzano": {
+                              "cherry San Marzano": {
                                 "plod": {
                                   "paradajky cherry San Marzano": "bežné"
                                 }
@@ -1599,7 +1597,7 @@ export const strom = {
                               }
                             }
                           },
-                          "ľuľok zemiakový": {
+                          "zemiak obyčajný": {
                             "*": {
                               "*": {
                                 "hľuza": {
@@ -1628,7 +1626,7 @@ export const strom = {
                               }
                             }
                           },
-                          "ľuľok baklažánový": {
+                          "ľuľok jedlý": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -1729,9 +1727,9 @@ export const strom = {
                               }
                             }
                           },
-                          "paprika čínská": {
+                          "paprika leskloplodá": {
                             "*": {
-                              "Habanero": {
+                              "habanero": {
                                 "plod": {
                                   "habanero": "exotické"
                                 }
@@ -1754,12 +1752,12 @@ export const strom = {
                         }
                       },
                       "Physaleae": {
-                        "mochyňa": {
-                          "mochyňa peruánska": {
+                        "machovka": {
+                          "machovka peruánska": {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "mochyňa": "exotické"
+                                  "machovka": "exotické"
                                 }
                               }
                             }
@@ -1769,10 +1767,10 @@ export const strom = {
                     }
                   },
                   "pupencovité": {
-                    "TBD": {
+                    "-": {
                       "Ipomoeeae": {
                         "povojník": {
-                          "povojník batátový": {
+                          "povojník jedlý": {
                             "*": {
                               "*": {
                                 "koreňová hľuza": {
@@ -1840,7 +1838,7 @@ export const strom = {
                           }
                         },
                         "šalvia": {
-                          "šalvia hispánska": {
+                          "šalvia aztécka": {
                             "*": {
                               "*": {
                                 "semeno": {
@@ -1868,12 +1866,12 @@ export const strom = {
                             }
                           }
                         },
-                        "dúška": {
-                          "dúška tymiánová": {
+                        "materina dúška": {
+                          "materina dúška obyčajná": {
                             "*": {
                               "*": {
                                 "list": {
-                                  "tymián": "exotické"
+                                  "tymian": "exotické"
                                 }
                               }
                             }
@@ -1882,7 +1880,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "tymián citrónový": "exotické"
+                                  "tymian citrónový": "exotické"
                                 }
                               }
                             }
@@ -1923,8 +1921,8 @@ export const strom = {
                     }
                   },
                   "sezamovité": {
-                    "TBD": {
-                      "TBD": {
+                    "-": {
+                      "Sesameae": {
                         "sezam": {
                           "sezam indický": {
                             "*": {
@@ -1942,8 +1940,8 @@ export const strom = {
                   "olivovité": {
                     "Oleoideae": {
                       "Oleeae": {
-                        "olivovník": {
-                          "olivovník európsky": {
+                        "oliva": {
+                          "oliva európska": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -1973,7 +1971,7 @@ export const strom = {
                   }
                 }
               },
-              "kampanulidy": {
+              "campanulidy": {
                 "astrotvaré": {
                   "astrovité": {
                     "Cichorioideae": {
@@ -1982,24 +1980,24 @@ export const strom = {
                           "šalát siaty": {
                             "hlávkový": {
                               "*": {
-                                "list": {
+                                "hlávka": {
                                   "šalát hlávkový": "bežné"
                                 }
                               },
                               "ľadový": {
-                                "list": {
+                                "hlávka": {
                                   "šalát ľadový": "bežné"
                                 }
                               }
                             },
                             "rímsky": {
                               "*": {
-                                "list": {
+                                "hlávka": {
                                   "šalát rímsky": "bežné"
                                 }
                               },
                               "Little Gem": {
-                                "list": {
+                                "hlávka": {
                                   "šalát Little Gem": "bežné"
                                 }
                               }
@@ -2027,18 +2025,18 @@ export const strom = {
                           "čakanka obyčajná": {
                             "foliosum": {
                               "Witloof": {
-                                "pupeň": {
+                                "púčik": {
                                   "čakanka biela": "exotické"
                                 }
                               },
                               "Radicchio": {
-                                "list": {
+                                "hlávka": {
                                   "radicchio": "exotické"
                                 }
                               }
                             }
                           },
-                          "čekanka endivie": {
+                          "čakanka štrbáková": {
                             "crispum": {
                               "*": {
                                 "list": {
@@ -2070,7 +2068,7 @@ export const strom = {
                                 "semeno": {
                                   "slnečnicové semená": "bežné"
                                 },
-                                "mikrozelenina": {
+                                "klíčna rastlina": {
                                   "slnečnicová mikrozelenina": "exotické"
                                 }
                               }
@@ -2121,7 +2119,7 @@ export const strom = {
                 "štetkotvaré": {
                   "zemolezovité": {
                     "Valerianoideae": {
-                      "TBD": {
+                      "Valerianeae": {
                         "valeriána": {
                           "valeriánka poľná": {
                             "*": {
@@ -2238,7 +2236,7 @@ export const strom = {
                         },
                         "fenikel": {
                           "fenikel obyčajný": {
-                            "buľvový": {
+                            "azoricum": {
                               "*": {
                                 "listové pošvy": {
                                   "fenikel": "bežné"
@@ -2274,7 +2272,7 @@ export const strom = {
                           }
                         }
                       },
-                      "TBD": {
+                      "-": {
                         "ligurček": {
                           "ligurček lekársky": {
                             "*": {
@@ -2424,7 +2422,7 @@ export const strom = {
                 }
               }
             },
-            "komelinidy": {
+            "commelinidy": {
               "-": {
                 "arekotvaré": {
                   "arekovité": {
@@ -2446,8 +2444,8 @@ export const strom = {
                         }
                       },
                       "Euterpeae": {
-                        "Euterpe": {
-                          "Euterpe oleracea": {
+                        "euterpa": {
+                          "euterpe brazilská": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -2476,12 +2474,12 @@ export const strom = {
                     }
                   }
                 },
-                "zázvorotvaré": {
+                "ďumbierotvaré": {
                   "banánovníkovité": {
                     "-": {
                       "-": {
                         "banánovník": {
-                          "Musa acuminata": {
+                          "banánovník zašpičatělý": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -2494,11 +2492,11 @@ export const strom = {
                       }
                     }
                   },
-                  "zázvorovité": {
+                  "ďumbierovité": {
                     "Zingiberoideae": {
                       "Zingibereae": {
-                        "zázvor": {
-                          "zázvor lekársky": {
+                        "ďumbier": {
+                          "ďumbier lekársky": {
                             "*": {
                               "*": {
                                 "podzemok": {
@@ -2524,11 +2522,11 @@ export const strom = {
                   }
                 },
                 "lipnicotvaré": {
-                  "bromeliovité": {
+                  "broméliovité": {
                     "Bromelioideae": {
                       "-": {
                         "ananás": {
-                          "ananás chochlatý": {
+                          "ananás pestovaný": {
                             "*": {
                               "*": {
                                 "plodenstvo": {
@@ -2559,7 +2557,7 @@ export const strom = {
                           "voňatka citronová": {
                             "*": {
                               "*": {
-                                "stonka": {
+                                "nepravá stonka": {
                                   "citrónová tráva": "exotické"
                                 }
                               }
@@ -2630,10 +2628,10 @@ export const strom = {
               "-": {
                 "vavrínotvaré": {
                   "vavrínovité": {
-                    "TBD": {
+                    "-": {
                       "Perseeae": {
-                        "perzea": {
-                          "perzea americká": {
+                        "hruškovec": {
+                          "hruškovec americký": {
                             "*": {
                               "*": {
                                 "plod": {
@@ -2743,7 +2741,7 @@ export const strom = {
               "-": {
                 "pečiarkotvaré": {
                   "pečiarkovité": {
-                    "TBD": {
+                    "Agaricoideae": {
                       "-": {
                         "pečiarka": {
                           "pečiarka dvojvýtrusná": {
@@ -2777,7 +2775,7 @@ export const strom = {
                               }
                             }
                           },
-                          "hlíva máčková": {
+                          "hliva kotúčová": {
                             "*": {
                               "*": {
                                 "plodnica": {
@@ -2810,8 +2808,8 @@ export const strom = {
                   "Lyophyllaceae": {
                     "-": {
                       "-": {
-                        "Hypsizygus": {
-                          "Hypsizygus tessulatus": {
+                        "mramorovec": {
+                          "mramorovec rozpukaný": {
                             "*": {
                               "hnedé": {
                                 "plodnica": {
@@ -2833,7 +2831,7 @@ export const strom = {
                     "-": {
                       "-": {
                         "plamienka": {
-                          "plamienka zamatová": {
+                          "plamienka zimná": {
                             "*": {
                               "*": {
                                 "plodnica": {
@@ -2909,7 +2907,13 @@ export const strom = {
                       }
                     }
                   }
-                },
+                }
+              }
+            }
+          },
+          "Auriculariomycetidae": {
+            "-": {
+              "-": {
                 "uchovcotvaré": {
                   "uchovcovité": {
                     "-": {
@@ -2954,10 +2958,10 @@ export const strom = {
                                 "*": {
                                   "bravčové mäso": "bežné"
                                 },
-                                "karé": {
+                                "chrbát": {
                                   "bravčové karé": "bežné"
                                 },
-                                "krkovička": {
+                                "krk": {
                                   "bravčová krkovička": "bežné"
                                 },
                                 "plece": {
@@ -2966,16 +2970,16 @@ export const strom = {
                                 "stehno": {
                                   "bravčové stehno": "bežné"
                                 },
-                                "panenka": {
+                                "sviečkovica": {
                                   "bravčová panenka": "bežné"
                                 },
                                 "bok": {
                                   "bravčový bok": "bežné"
                                 },
-                                "rebrá": {
+                                "rebro": {
                                   "bravčové rebierka": "bežné"
                                 },
-                                "koleno": {
+                                "nožina": {
                                   "bravčové koleno": "bežné"
                                 },
                                 "noha": {
@@ -2984,7 +2988,7 @@ export const strom = {
                                 "hlava": {
                                   "bravčová hlava": "bežné"
                                 },
-                                "líčka": {
+                                "líce": {
                                   "bravčové líčka": "menej bežné"
                                 },
                                 "lalok": {
@@ -3025,7 +3029,7 @@ export const strom = {
                             }
                           },
                           "diviak lesný": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "diviačie mäso": "menej bežné"
@@ -3065,7 +3069,7 @@ export const strom = {
                                 "sviečkovica": {
                                   "hovädzia sviečkovica": "bežné"
                                 },
-                                "roštenka": {
+                                "chrbát": {
                                   "hovädzia roštenka": "bežné"
                                 },
                                 "rebro": {
@@ -3083,7 +3087,7 @@ export const strom = {
                                 "chvost": {
                                   "hovädzí chvost": "menej bežné"
                                 },
-                                "líčka": {
+                                "líce": {
                                   "hovädzie líčka": "menej bežné"
                                 },
                                 "jazyk": {
@@ -3098,7 +3102,7 @@ export const strom = {
                                 "žalúdok": {
                                   "hovädzie držky": "bežné"
                                 },
-                                "semenníky": {
+                                "semenník": {
                                   "býčie žľazy": "exotické"
                                 },
                                 "kosť": {
@@ -3127,7 +3131,7 @@ export const strom = {
                                 "plece": {
                                   "jahňacie plece": "menej bežné"
                                 },
-                                "karé": {
+                                "chrbát": {
                                   "jahňacie karé": "menej bežné"
                                 },
                                 "črevo": {
@@ -3159,7 +3163,7 @@ export const strom = {
                       "Cervini": {
                         "jeleň": {
                           "jeleň lesný": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "jelenie mäso": "bežné"
@@ -3239,7 +3243,7 @@ export const strom = {
                       "-": {
                         "králik": {
                           "králik divý": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "králičie mäso": "bežné"
@@ -3263,16 +3267,16 @@ export const strom = {
           }
         },
         "vtáky": {
-          "Neognathae": {
+          "letce": {
             "Galloanserae": {
               "-": {
                 "kurotvaré": {
                   "bažantovité": {
                     "Phasianinae": {
                       "Gallini": {
-                        "kur": {
-                          "kur bankivský": {
-                            "-": {
+                        "kura": {
+                          "kura divá": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "kuracie mäso": "bežné"
@@ -3305,7 +3309,7 @@ export const strom = {
                                   "kuracia koža": "bežné"
                                 },
                                 "vajce": {
-                                  "slepačie vajce": "bežné"
+                                  "slepačie vajcia": "bežné"
                                 }
                               }
                             }
@@ -3315,7 +3319,7 @@ export const strom = {
                       "Phasianini": {
                         "bažant": {
                           "bažant obyčajný": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "prsia": {
                                   "bažantie prsia": "menej bežné"
@@ -3328,10 +3332,10 @@ export const strom = {
                           }
                         }
                       },
-                      "TBD": {
-                        "moriak": {
-                          "moriak divý": {
-                            "-": {
+                      "Tetraonini": {
+                        "morka": {
+                          "morka divá": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "morčacie mäso": "bežné"
@@ -3340,7 +3344,7 @@ export const strom = {
                                   "morčacie prsia": "bežné"
                                 },
                                 "stehno": {
-                                  "morčacie stehno": "bežné"
+                                  "morčacie stehná": "bežné"
                                 },
                                 "krídlo": {
                                   "morčacie krídla": "bežné"
@@ -3368,7 +3372,7 @@ export const strom = {
                       "Anatini": {
                         "kačica": {
                           "kačica divá": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "kačacie mäso": "bežné"
@@ -3401,7 +3405,7 @@ export const strom = {
                       "Anserini": {
                         "hus": {
                           "hus divá": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "pečeň": {
                                   "husacia pečeň": "bežné"
@@ -3421,13 +3425,13 @@ export const strom = {
             }
           }
         },
-        "kostnatí": {
+        "kostnaté": {
           "Otomorpha": {
             "Clupei": {
               "-": {
                 "sleďotvaré": {
                   "sleďovité": {
-                    "Clupeinae": {
+                    "-": {
                       "-": {
                         "sleď": {
                           "sleď atlantický": {
@@ -3485,7 +3489,7 @@ export const strom = {
                 "kaprotvaré": {
                   "kaprovité": {
                     "Cyprininae": {
-                      "Cyprinini": {
+                      "-": {
                         "kapor": {
                           "kapor obyčajný": {
                             "-": {
@@ -3534,11 +3538,11 @@ export const strom = {
                       }
                     }
                   },
-                  "keříčkovcovití": {
+                  "kláriovité": {
                     "-": {
                       "-": {
-                        "Clarias": {
-                          "sumček africký": {
+                        "klárias": {
+                          "klárias panafrický": {
                             "-": {
                               "*": {
                                 "svalovina": {
@@ -3584,7 +3588,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "losos filé": "bežné"
+                                  "losos atlantický": "bežné"
                                 }
                               }
                             }
@@ -3750,7 +3754,7 @@ export const strom = {
                 "ostriežotvaré": {
                   "ostriežovité": {
                     "Luciopercinae": {
-                      "-": {
+                      "Luciopercini": {
                         "zubáč": {
                           "zubáč veľkoústy": {
                             "-": {
@@ -3766,9 +3770,9 @@ export const strom = {
                     }
                   },
                   "obloplutváčovité": {
-                    "-": {
+                    "Cyclopterinae": {
                       "-": {
-                        "Cyclopterus": {
+                        "hranáč": {
                           "hranáč sivý": {
                             "-": {
                               "*": {
@@ -3863,11 +3867,11 @@ export const strom = {
                   }
                 },
                 "Carangiformes": {
-                  "mečúňovité": {
+                  "mečiarovité": {
                     "-": {
                       "-": {
-                        "mečúň": {
-                          "mečúň obyčajný": {
+                        "mečiar": {
+                          "mečiar veľký": {
                             "-": {
                               "*": {
                                 "svalovina": {
@@ -3939,7 +3943,7 @@ export const strom = {
                     "Pseudocrenilabrinae": {
                       "Oreochromini": {
                         "Oreochromis": {
-                          "tilápia nílska": {
+                          "tilapia nílska": {
                             "-": {
                               "*": {
                                 "svalovina": {
@@ -3989,8 +3993,8 @@ export const strom = {
     "článkonožce": {
       "kôrovce": {
         "rakovce": {
-          "Eumalacostraca": {
-            "Eucarida": {
+          "pravé rakovce": {
+            "panciernaté rakovce": {
               "-": {
                 "desaťnožce": {
                   "Penaeidae": {
@@ -4055,9 +4059,9 @@ export const strom = {
       },
       "šesťnôžky": {
         "hmyz": {
-          "Pterygota": {
-            "Neoptera": {
-              "Holometabola": {
+          "krídlatce": {
+            "novokrídlatce": {
+              "holometabolný hmyz": {
                 "blanokrídlovce": {
                   "včelovité": {
                     "Apinae": {
@@ -4095,7 +4099,7 @@ export const strom = {
                       "-": {
                         "slávka": {
                           "slávka jedlá": {
-                            "-": {
+                            "*": {
                               "*": {
                                 "*": {
                                   "slávka jedlá": "bežné"
@@ -4137,11 +4141,11 @@ export const strom = {
                     "Crassostreinae": {
                       "-": {
                         "Magallana": {
-                          "Magallana gigas": {
+                          "ustrica tichomorská": {
                             "-": {
                               "*": {
                                 "*": {
-                                  "Magallana gigas": "exotické"
+                                  "ustrica tichomorská": "exotické"
                                 }
                               }
                             }
@@ -4240,11 +4244,11 @@ export const strom = {
                     "Illicinae": {
                       "-": {
                         "Illex": {
-                          "Illex argentinus": {
+                          "kalmár argentínsky": {
                             "-": {
                               "*": {
                                 "*": {
-                                  "Illex argentinus": "menej bežné"
+                                  "kalmár argentínsky": "menej bežné"
                                 }
                               }
                             }
@@ -4255,11 +4259,11 @@ export const strom = {
                     "Todarodinae": {
                       "-": {
                         "gordan": {
-                          "Todarodes pacificus": {
+                          "kalmár lietavý": {
                             "-": {
                               "*": {
                                 "*": {
-                                  "Todarodes pacificus": "menej bežné"
+                                  "kalmár lietavý": "menej bežné"
                                 }
                               }
                             }
