@@ -85,5 +85,7 @@ export default defineConfig({
   root: "web",
   base: "./",
   build: { outDir: "../dist", emptyOutDir: true },
+  // PORT nastaví spúšťač náhľadu, keď je 5173 obsadený; inak predvolený port Vite.
+  server: { port: Number(process.env["PORT"]) || 5173 },
   plugins: [editMod(), jedenSubor()],
 });
