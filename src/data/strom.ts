@@ -122,7 +122,7 @@ export const strom = {
                               },
                               "Cotton Candy": {
                                 "plod": {
-                                  "hrozno Cotton Candy": "exotické"
+                                  "hrozno Cotton Candy": "menej bežné"
                                 }
                               }
                             }
@@ -163,7 +163,7 @@ export const strom = {
                               },
                               "Cosmic Crisp": {
                                 "plod": {
-                                  "jablko Cosmic Crisp": "bežné"
+                                  "jablko Cosmic Crisp": "menej bežné"
                                 }
                               },
                               "červené": {
@@ -183,7 +183,7 @@ export const strom = {
                               },
                               "Evelina": {
                                 "plod": {
-                                  "jablko Evelina": "exotické"
+                                  "jablko Evelina": "menej bežné"
                                 }
                               },
                               "Šampion": {
@@ -229,12 +229,12 @@ export const strom = {
                               },
                               "Lucas": {
                                 "plod": {
-                                  "hruška Lucas": "exotické"
+                                  "hruška Lucas": "menej bežné"
                                 }
                               },
                               "Guyot": {
                                 "plod": {
-                                  "hruška Guyot": "exotické"
+                                  "hruška Guyot": "menej bežné"
                                 }
                               }
                             }
@@ -243,7 +243,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "hruška Nashi": "bežné"
+                                  "hruška Nashi": "menej bežné"
                                 }
                               }
                             }
@@ -263,7 +263,7 @@ export const strom = {
                             "ringlota": {
                               "*": {
                                 "plod": {
-                                  "ringloty": "exotické"
+                                  "ringloty": "menej bežné"
                                 }
                               }
                             }
@@ -310,7 +310,7 @@ export const strom = {
                               },
                               "Bergeron": {
                                 "plod": {
-                                  "marhule Bergeron": "exotické"
+                                  "marhule Bergeron": "menej bežné"
                                 }
                               }
                             }
@@ -333,7 +333,7 @@ export const strom = {
                               },
                               "Oblačinská": {
                                 "plod": {
-                                  "višne Oblačinské": "exotické"
+                                  "višne Oblačinské": "menej bežné"
                                 }
                               }
                             }
@@ -392,7 +392,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "kvet": {
-                                  "ružové lupene": "exotické"
+                                  "ružové lupene": "menej bežné"
                                 }
                               }
                             }
@@ -422,7 +422,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plodenstvo": {
-                                  "moruše biele": "bežné"
+                                  "moruše biele": "menej bežné"
                                 }
                               }
                             }
@@ -474,14 +474,14 @@ export const strom = {
                                   "hrášok": "bežné"
                                 },
                                 "výhonok": {
-                                  "hrachové výhonky": "exotické"
+                                  "hrachové výhonky": "menej bežné"
                                 }
                               }
                             },
                             "cukrový": {
                               "*": {
                                 "struk": {
-                                  "hrášok cukrový": "exotické"
+                                  "hrášok cukrový": "menej bežné"
                                 }
                               }
                             }
@@ -536,7 +536,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "klíčok": {
-                                  "azuki klíčky": "exotické"
+                                  "azuki klíčky": "menej bežné"
                                 }
                               }
                             }
@@ -549,7 +549,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "klíčok": {
-                                  "lucernové klíčky": "exotické"
+                                  "lucernové klíčky": "menej bežné"
                                 }
                               }
                             }
@@ -577,7 +577,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "tamarind": "exotické"
+                                  "tamarind": "menej bežné"
                                 }
                               }
                             }
@@ -689,7 +689,7 @@ export const strom = {
                               },
                               "Piel de Sapo": {
                                 "plod": {
-                                  "melón Piel de Sapo": "exotické"
+                                  "melón Piel de Sapo": "menej bežné"
                                 }
                               }
                             },
@@ -714,7 +714,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "melón vodový": "exotické"
+                                  "melón vodový": "bežné"
                                 }
                               }
                             }
@@ -741,7 +741,7 @@ export const strom = {
                             "*": {
                               "špagetová": {
                                 "plod": {
-                                  "tekvica špagetová": "exotické"
+                                  "tekvica špagetová": "menej bežné"
                                 }
                               }
                             }
@@ -755,7 +755,7 @@ export const strom = {
                               },
                               "*": {
                                 "plod": {
-                                  "tekvica muškátová": "exotické"
+                                  "tekvica muškátová": "menej bežné"
                                 }
                               }
                             }
@@ -826,7 +826,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "kvet": {
-                                  "fialkové kvety": "exotické"
+                                  "fialkové kvety": "menej bežné"
                                 }
                               }
                             }
@@ -845,7 +845,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "karambola": "exotické"
+                                  "karambola": "menej bežné"
                                 }
                               }
                             }
@@ -881,7 +881,7 @@ export const strom = {
                               },
                               "špicatá červená": {
                                 "hlávka": {
-                                  "kapusta špicatá červená": "exotické"
+                                  "kapusta špicatá červená": "menej bežné"
                                 }
                               }
                             },
@@ -905,12 +905,12 @@ export const strom = {
                                   "brokolica": "bežné"
                                 },
                                 "klíčok": {
-                                  "brokolicové klíčky": "exotické"
+                                  "brokolicové klíčky": "menej bežné"
                                 }
                               },
                               "Broccolini": {
                                 "súkvetie": {
-                                  "brokolica stonková": "exotické"
+                                  "brokolica stonková": "menej bežné"
                                 }
                               }
                             },
@@ -922,19 +922,19 @@ export const strom = {
                               },
                               "oranžový": {
                                 "súkvetie": {
-                                  "karfiol oranžový": "exotické"
+                                  "karfiol oranžový": "menej bežné"
                                 }
                               },
                               "Romanesco": {
                                 "súkvetie": {
-                                  "romanesco": "exotické"
+                                  "romanesco": "menej bežné"
                                 }
                               }
                             },
                             "ružičkový kel": {
                               "*": {
                                 "púčik": {
-                                  "ružičkový kel": "exotické"
+                                  "ružičkový kel": "bežné"
                                 }
                               }
                             }
@@ -950,14 +950,14 @@ export const strom = {
                             "pak choi": {
                               "*": {
                                 "list": {
-                                  "pak choi": "exotické"
+                                  "pak choi": "menej bežné"
                                 }
                               }
                             },
                             "mizuna": {
                               "*": {
                                 "list": {
-                                  "mizuna": "exotické"
+                                  "mizuna": "menej bežné"
                                 }
                               }
                             }
@@ -966,7 +966,7 @@ export const strom = {
                             "kvaka": {
                               "*": {
                                 "buľva": {
-                                  "kvaka": "exotické"
+                                  "kvaka": "menej bežné"
                                 }
                               }
                             },
@@ -996,24 +996,24 @@ export const strom = {
                             "reďkev čierna": {
                               "*": {
                                 "buľva": {
-                                  "reďkev čierna": "exotické"
+                                  "reďkev čierna": "menej bežné"
                                 }
                               }
                             },
                             "daikon": {
                               "*": {
                                 "buľva": {
-                                  "daikon": "exotické"
+                                  "daikon": "menej bežné"
                                 }
                               }
                             },
                             "*": {
                               "*": {
                                 "klíčok": {
-                                  "reďkovkové klíčky": "exotické"
+                                  "reďkovkové klíčky": "menej bežné"
                                 },
                                 "klíčna rastlina": {
-                                  "reďkovková mikrozelenina": "exotické"
+                                  "reďkovková mikrozelenina": "menej bežné"
                                 }
                               }
                             }
@@ -1037,7 +1037,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "koreň": {
-                                  "chren": "exotické"
+                                  "chren": "bežné"
                                 }
                               }
                             }
@@ -1050,7 +1050,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "klíčna rastlina": {
-                                  "žerucha": "exotické"
+                                  "žerucha": "menej bežné"
                                 }
                               }
                             }
@@ -1089,7 +1089,7 @@ export const strom = {
                               },
                               "Formosa": {
                                 "plod": {
-                                  "papája Formosa": "exotické"
+                                  "papája Formosa": "menej bežné"
                                 }
                               }
                             }
@@ -1106,7 +1106,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "klíčna rastlina": {
-                                  "kapucínka": "exotické"
+                                  "kapucínka": "menej bežné"
                                 }
                               }
                             }
@@ -1133,14 +1133,14 @@ export const strom = {
                               },
                               "Primofiori": {
                                 "plod": {
-                                  "citrón Primofiori": "exotické"
+                                  "citrón Primofiori": "menej bežné"
                                 }
                               }
                             },
                             "bergamot": {
                               "*": {
                                 "plod": {
-                                  "bergamot": "exotické"
+                                  "bergamot": "menej bežné"
                                 }
                               }
                             }
@@ -1213,7 +1213,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "kumquat": "exotické"
+                                  "kumquat": "menej bežné"
                                 }
                               }
                             }
@@ -1222,7 +1222,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "calamansi": "exotické"
+                                  "calamansi": "menej bežné"
                                 }
                               }
                             }
@@ -1231,7 +1231,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "yuzu": "exotické"
+                                  "yuzu": "menej bežné"
                                 }
                               }
                             }
@@ -1264,17 +1264,17 @@ export const strom = {
                               },
                               "Alphonso": {
                                 "plod": {
-                                  "mango Alphonso": "exotické"
+                                  "mango Alphonso": "menej bežné"
                                 }
                               },
                               "Palmer": {
                                 "plod": {
-                                  "mango Palmer": "exotické"
+                                  "mango Palmer": "menej bežné"
                                 }
                               },
                               "Kent": {
                                 "plod": {
-                                  "mango Kent": "exotické"
+                                  "mango Kent": "menej bežné"
                                 }
                               }
                             }
@@ -1302,7 +1302,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "miešok": {
-                                  "liči": "exotické"
+                                  "liči": "menej bežné"
                                 }
                               }
                             }
@@ -1349,20 +1349,20 @@ export const strom = {
                                   "červená repa": "bežné"
                                 },
                                 "list": {
-                                  "cviklové listy": "exotické"
+                                  "cviklové listy": "menej bežné"
                                 },
                                 "klíčok": {
-                                  "cviklové klíčky": "exotické"
+                                  "cviklové klíčky": "menej bežné"
                                 }
                               },
                               "Chioggia": {
                                 "buľva": {
-                                  "cvikla Chioggia": "exotické"
+                                  "cvikla Chioggia": "menej bežné"
                                 }
                               },
                               "žltá": {
                                 "buľva": {
-                                  "repa žltá": "exotické"
+                                  "repa žltá": "menej bežné"
                                 }
                               }
                             }
@@ -1407,7 +1407,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "klíčna rastlina": {
-                                  "láskavcová mikrozelenina": "exotické"
+                                  "láskavcová mikrozelenina": "menej bežné"
                                 }
                               }
                             }
@@ -1456,7 +1456,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "opuncia": "exotické"
+                                  "opuncia": "menej bežné"
                                 }
                               }
                             }
@@ -1555,7 +1555,7 @@ export const strom = {
                               },
                               "cherry San Marzano": {
                                 "plod": {
-                                  "paradajky cherry San Marzano": "bežné"
+                                  "paradajky cherry San Marzano": "menej bežné"
                                 }
                               }
                             },
@@ -1582,17 +1582,17 @@ export const strom = {
                               },
                               "Kumato": {
                                 "plod": {
-                                  "paradajky Kumato": "exotické"
+                                  "paradajky Kumato": "menej bežné"
                                 }
                               },
                               "Monterrosa": {
                                 "plod": {
-                                  "paradajky Monterrosa": "exotické"
+                                  "paradajky Monterrosa": "menej bežné"
                                 }
                               },
                               "San Marzano": {
                                 "plod": {
-                                  "paradajky San Marzano": "exotické"
+                                  "paradajky San Marzano": "menej bežné"
                                 }
                               }
                             }
@@ -1611,7 +1611,7 @@ export const strom = {
                               },
                               "fialové": {
                                 "hľuza": {
-                                  "zemiaky fialové": "exotické"
+                                  "zemiaky fialové": "menej bežné"
                                 }
                               },
                               "Agria": {
@@ -1621,7 +1621,7 @@ export const strom = {
                               },
                               "Jazzy": {
                                 "hľuza": {
-                                  "zemiaky Jazzy": "exotické"
+                                  "zemiaky Jazzy": "menej bežné"
                                 }
                               }
                             }
@@ -1663,7 +1663,7 @@ export const strom = {
                               },
                               "Palermo": {
                                 "plod": {
-                                  "paprika Palermo": "bežné"
+                                  "paprika Palermo": "menej bežné"
                                 }
                               },
                               "jabĺčková": {
@@ -1698,17 +1698,17 @@ export const strom = {
                               },
                               "kalifornská zelená": {
                                 "plod": {
-                                  "paprika zelená": "exotické"
+                                  "paprika zelená": "bežné"
                                 }
                               },
                               "Ramiro": {
                                 "plod": {
-                                  "paprika Ramiro": "exotické"
+                                  "paprika Ramiro": "menej bežné"
                                 }
                               },
                               "Padrón": {
                                 "plod": {
-                                  "paprika Padrón": "exotické"
+                                  "paprika Padrón": "menej bežné"
                                 }
                               },
                               "kajenská": {
@@ -1731,7 +1731,7 @@ export const strom = {
                             "*": {
                               "habanero": {
                                 "plod": {
-                                  "habanero": "exotické"
+                                  "habanero": "menej bežné"
                                 }
                               }
                             }
@@ -1800,7 +1800,7 @@ export const strom = {
                             "thajská": {
                               "*": {
                                 "list": {
-                                  "bazalka thajská": "exotické"
+                                  "bazalka thajská": "menej bežné"
                                 }
                               }
                             }
@@ -1822,7 +1822,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "mäta klasnatá": "exotické"
+                                  "mäta klasnatá": "menej bežné"
                                 }
                               }
                             }
@@ -1831,7 +1831,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "mäta": "exotické"
+                                  "mäta": "bežné"
                                 }
                               }
                             }
@@ -1851,7 +1851,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "šalvia": "exotické"
+                                  "šalvia": "bežné"
                                 }
                               }
                             }
@@ -1860,7 +1860,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "rozmarín": "exotické"
+                                  "rozmarín": "bežné"
                                 }
                               }
                             }
@@ -1871,7 +1871,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "tymian": "exotické"
+                                  "tymian": "bežné"
                                 }
                               }
                             }
@@ -1880,7 +1880,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "tymian citrónový": "exotické"
+                                  "tymian citrónový": "menej bežné"
                                 }
                               }
                             }
@@ -1891,7 +1891,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "medovka": "exotické"
+                                  "medovka": "bežné"
                                 }
                               }
                             }
@@ -1902,7 +1902,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "oregano": "exotické"
+                                  "oregano": "bežné"
                                 }
                               }
                             }
@@ -1911,7 +1911,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "majorán": "exotické"
+                                  "majorán": "bežné"
                                 }
                               }
                             }
@@ -2015,7 +2015,7 @@ export const strom = {
                               },
                               "dubový": {
                                 "list": {
-                                  "šalát dubový": "exotické"
+                                  "šalát dubový": "menej bežné"
                                 }
                               }
                             }
@@ -2031,7 +2031,7 @@ export const strom = {
                               },
                               "Radicchio": {
                                 "hlávka": {
-                                  "radicchio": "exotické"
+                                  "radicchio": "menej bežné"
                                 }
                               }
                             }
@@ -2040,7 +2040,7 @@ export const strom = {
                             "crispum": {
                               "*": {
                                 "list": {
-                                  "endívia frisée": "exotické"
+                                  "endívia frisée": "menej bežné"
                                 }
                               }
                             }
@@ -2051,7 +2051,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "koreň": {
-                                  "čierny koreň": "exotické"
+                                  "čierny koreň": "menej bežné"
                                 }
                               }
                             }
@@ -2069,7 +2069,7 @@ export const strom = {
                                   "slnečnicové semená": "bežné"
                                 },
                                 "klíčna rastlina": {
-                                  "slnečnicová mikrozelenina": "exotické"
+                                  "slnečnicová mikrozelenina": "menej bežné"
                                 }
                               }
                             }
@@ -2078,7 +2078,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "hľuza": {
-                                  "topinambur": "exotické"
+                                  "topinambur": "menej bežné"
                                 }
                               }
                             }
@@ -2091,7 +2091,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "estragón": "exotické"
+                                  "estragón": "menej bežné"
                                 }
                               }
                             }
@@ -2149,12 +2149,12 @@ export const strom = {
                               },
                               "fialová": {
                                 "koreň": {
-                                  "mrkva fialová": "exotické"
+                                  "mrkva fialová": "menej bežné"
                                 }
                               },
                               "žltá": {
                                 "koreň": {
-                                  "mrkva žltá": "exotické"
+                                  "mrkva žltá": "menej bežné"
                                 }
                               }
                             }
@@ -2165,7 +2165,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "trebuľka": "exotické"
+                                  "trebuľka": "menej bežné"
                                 }
                               }
                             }
@@ -2199,7 +2199,7 @@ export const strom = {
                             "hladkolistý": {
                               "*": {
                                 "list": {
-                                  "petržlenová vňať hladkolistá": "exotické"
+                                  "petržlenová vňať hladkolistá": "menej bežné"
                                 }
                               }
                             }
@@ -2278,7 +2278,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "ligurček": "exotické"
+                                  "ligurček": "menej bežné"
                                 }
                               }
                             }
@@ -2346,7 +2346,7 @@ export const strom = {
                                   "cesnak": "bežné"
                                 },
                                 "klíčok": {
-                                  "cesnakové klíčky": "exotické"
+                                  "cesnakové klíčky": "menej bežné"
                                 }
                               }
                             }
@@ -2358,7 +2358,7 @@ export const strom = {
                                   "pór": "bežné"
                                 },
                                 "klíčok": {
-                                  "pórové klíčky": "exotické"
+                                  "pórové klíčky": "menej bežné"
                                 }
                               }
                             }
@@ -2436,7 +2436,7 @@ export const strom = {
                                   "kokos": "bežné"
                                 },
                                 "nezrelé semeno": {
-                                  "mladý kokos": "exotické"
+                                  "mladý kokos": "menej bežné"
                                 }
                               }
                             }
@@ -2449,7 +2449,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plod": {
-                                  "acai": "exotické"
+                                  "acai": "menej bežné"
                                 }
                               }
                             }
@@ -2547,7 +2547,7 @@ export const strom = {
                             "cukrová": {
                               "*": {
                                 "nezrelé semeno": {
-                                  "kukurica cukrová": "exotické"
+                                  "kukurica cukrová": "bežné"
                                 }
                               }
                             }
@@ -2558,7 +2558,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "nepravá stonka": {
-                                  "citrónová tráva": "exotické"
+                                  "citrónová tráva": "menej bežné"
                                 }
                               }
                             }
@@ -2640,7 +2640,7 @@ export const strom = {
                               },
                               "Hass": {
                                 "plod": {
-                                  "avokádo Hass": "exotické"
+                                  "avokádo Hass": "bežné"
                                 }
                               }
                             }
@@ -2653,7 +2653,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "list": {
-                                  "bobkový list": "exotické"
+                                  "bobkový list": "bežné"
                                 }
                               }
                             }
@@ -2779,7 +2779,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plodnica": {
-                                  "hliva kráľovská": "exotické"
+                                  "hliva kráľovská": "menej bežné"
                                 }
                               }
                             }
@@ -2813,12 +2813,12 @@ export const strom = {
                             "*": {
                               "hnedé": {
                                 "plodnica": {
-                                  "shimeji hnedé": "exotické"
+                                  "shimeji hnedé": "menej bežné"
                                 }
                               },
                               "biele": {
                                 "plodnica": {
-                                  "shimeji biele": "exotické"
+                                  "shimeji biele": "menej bežné"
                                 }
                               }
                             }
@@ -2835,7 +2835,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plodnica": {
-                                  "enoki": "exotické"
+                                  "enoki": "menej bežné"
                                 }
                               }
                             }
@@ -2898,7 +2898,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "plodnica": {
-                                  "maitake": "exotické"
+                                  "maitake": "menej bežné"
                                 }
                               }
                             }
@@ -2986,7 +2986,7 @@ export const strom = {
                                   "bravčové nožičky": "bežné"
                                 },
                                 "hlava": {
-                                  "bravčová hlava": "bežné"
+                                  "bravčová hlava": "menej bežné"
                                 },
                                 "líce": {
                                   "bravčové líčka": "menej bežné"
@@ -3103,7 +3103,7 @@ export const strom = {
                                   "hovädzie držky": "bežné"
                                 },
                                 "semenník": {
-                                  "býčie žľazy": "exotické"
+                                  "býčie žľazy": "menej bežné"
                                 },
                                 "kosť": {
                                   "hovädzie kosti": "bežné"
@@ -3114,7 +3114,7 @@ export const strom = {
                               },
                               "wagyu": {
                                 "*": {
-                                  "hovädzie mäso wagyu": "exotické"
+                                  "hovädzie mäso wagyu": "menej bežné"
                                 }
                               }
                             }
@@ -3166,7 +3166,7 @@ export const strom = {
                             "*": {
                               "*": {
                                 "*": {
-                                  "jelenie mäso": "bežné"
+                                  "jelenie mäso": "menej bežné"
                                 },
                                 "stehno": {
                                   "jelenie stehno": "menej bežné"
@@ -3384,10 +3384,10 @@ export const strom = {
                                   "kačacie stehná": "bežné"
                                 },
                                 "krídlo": {
-                                  "kačacie krídla": "bežné"
+                                  "kačacie krídla": "menej bežné"
                                 },
                                 "chrbát": {
-                                  "kačacie chrbty": "bežné"
+                                  "kačacie chrbty": "menej bežné"
                                 },
                                 "pečeň": {
                                   "kačacia pečeň": "bežné"
@@ -3837,7 +3837,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "kambala veľká": "exotické"
+                                  "kambala veľká": "menej bežné"
                                 }
                               }
                             }
@@ -3856,7 +3856,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "čert morský": "exotické"
+                                  "čert morský": "menej bežné"
                                 }
                               }
                             }
@@ -3875,7 +3875,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "mečúň": "exotické"
+                                  "mečúň": "menej bežné"
                                 }
                               }
                             }
@@ -3974,7 +3974,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "ikry": {
-                                  "jeseterový kaviár": "exotické"
+                                  "jeseterový kaviár": "menej bežné"
                                 }
                               }
                             }
@@ -4025,7 +4025,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "Metapenaeus monoceros": "exotické"
+                                  "Metapenaeus monoceros": "menej bežné"
                                 }
                               }
                             }
@@ -4042,7 +4042,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "kamčatský krab": "exotické"
+                                  "kamčatský krab": "menej bežné"
                                 }
                               }
                             }
@@ -4130,7 +4130,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "*": {
-                                  "ustrica jedlá": "exotické"
+                                  "ustrica jedlá": "menej bežné"
                                 }
                               }
                             }
@@ -4145,7 +4145,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "*": {
-                                  "ustrica tichomorská": "exotické"
+                                  "ustrica tichomorská": "menej bežné"
                                 }
                               }
                             }
@@ -4164,7 +4164,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "svalovina": {
-                                  "hrebenatka": "exotické"
+                                  "hrebenatka": "menej bežné"
                                 }
                               }
                             }
@@ -4187,7 +4187,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "*": {
-                                  "vongole": "exotické"
+                                  "vongole": "menej bežné"
                                 }
                               }
                             }
@@ -4335,7 +4335,7 @@ export const strom = {
                             "-": {
                               "*": {
                                 "*": {
-                                  "baby chobotnica": "exotické"
+                                  "baby chobotnica": "menej bežné"
                                 }
                               }
                             }

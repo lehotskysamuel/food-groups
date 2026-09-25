@@ -42,15 +42,27 @@ Strom je jeden vnorený objekt s pevnou hĺbkou 17. Kľúč = názov uzla, hodno
 uzly nasledujúcej úrovne. Hodnota listu (úroveň 17) hovorí, či je potravina na slovenskom
 trhu **`"bežné"`**, **`"menej bežné"`** alebo **`"exotické"`**. Rank uzla vyplýva z hĺbky.
 
-- **bežné** (sivé) – kúpi sa v bežnom supermarkete,
-- **menej bežné** (oranžové) – dá sa kúpiť, ale nie v každom obchode alebo nie vždy (napr. egreš).
-  Ide o dostupnosť, nie o pôvod, patria sem aj domáce potraviny, ktoré sa ťažko zháňajú,
-- **exotické** (červené) – exotické, na slovenskom trhu ťažko dostupné.
+Dostupnosť hovorí, ako ľahko sa potravina zoženie v bežnom supermarkete:
 
-**Verzia 1 je heuristika:** čo má Tesco v kategórii Ovocie, zelenina (vrátane pôvodnej ukážky),
-je `"bežné"` (156 potravín); čo pribudlo až z Košíka, je `"exotické"` (118). Predpoklad: ak to
-Tesco nemá, je to pravdepodobne exotické. Kategóriu treba ručne prejsť a opraviť podľa skúsenosti
-(úroveň `"menej bežné"` pribudla neskôr, heuristika ju nepriraďuje).
+- **bežné** (sivé) – v podstate v každom supermarkete (Lidl, Kaufland, Billa, Tesco),
+- **menej bežné** (oranžové) – len vo väčších predajniach a hypermarketoch, v e-shopoch (Košík),
+  v Metre a podobne, alebo len občas (akciový týždeň). Ide o dostupnosť, nie o pôvod, patria sem aj
+  domáce potraviny, ktoré sa ťažko zháňajú (egreš, ringloty),
+- **exotické** (červené) – nedá sa kúpiť vôbec alebo len v špecializovanom obchode.
+
+Pravidlá hodnotenia:
+
+- Potravina sa hodnotí v akejkoľvek podobe, v ktorej je hlavnou zložkou: čerstvá, mrazená, sušená,
+  sterilizovaná, kvasená, údená, ako čaj, olej či syr. Spracovanie do stromu nepatrí (pozri
+  [Mimo stromu](#mimo-stromu)), preto sú bežné sušené bylinky (majorán, tymian, bobkový list), strúhaný
+  chren, sterilizovaná kukurica, údený lalok či bryndza (ovčie mlieko). Príchuť ani menšinová
+  zložka zmesi sa nepočíta.
+- Sezónna potravina sa hodnotí v sezóne (čerešne, pomelo, gaštany, kuriatka).
+- Odroda, plemeno či farba (úroveň 15) sa počíta, len keď je uvedená na obale alebo cenovke.
+  Pri rybách a morských plodoch rozhoduje latinský názov druhu, ktorý musí byť na obale.
+- Časť tela, ktorá sa predáva len spolu s inou, má dostupnosť toho kusu (kuracia koža so stehnami,
+  bravčová koža s bokom).
+
 Povolené hodnoty sú v `DOSTUPNOST` v `src/strom.types.ts`.
 
 | # | Úroveň | Príklad (brokolica) |
@@ -211,12 +223,11 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
 potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
 úrovni (napr. tribus -eae nie je v slote podčeľade). Obe kontroly bežia aj v CI pred nasadením.
-Ručne treba ešte prejsť **dostupnosť**: kategória bežné / menej bežné / exotické
-musí zodpovedať realite. Zatiaľ je to len heuristika. Ovocie a zelenina: čo má Tesco, je
-`"bežné"`, čo pribudlo až z Košíka, je `"exotické"`. Ďalších 83 potravín (ostatné rastliny a prvé
-živočíchy) má `"bežné"`, lebo sú v Tescu. 77 živočíšnych potravín z Košíka (mäkkýše, kôrovce,
-jesetery, divina, ikry a ďalšie časti tela) má odhad: 11 bežné, 50 menej bežné (mäsiarstvo, Metro,
-e-shop), 16 exotické. Riasy, sinica a slanorožec (6 potravín) sú doplnené ako bežne predávané.
+**Dostupnosť** sa ručne reviduje podľa [pravidiel](#model) (25. 9. 2026). Pôvodná heuristika
+(čo má Tesco v ovocí a zelenine, je bežné, čo pribudlo až z Košíka, je exotické) mala systematické
+chyby: sušené bylinky, chren, sterilizovaná kukurica, dyňa či zelená paprika boli exotické, lebo
+chýbali v čerstvom sortimente Tesca. Všetky potraviny z Košíka sa dajú kúpiť online, takže podľa
+definície sú aspoň menej bežné. Revízia hraničných prípadov (bežné vs. menej bežné) ešte prebieha.
 
 ### Otvorené body na overenie
 
