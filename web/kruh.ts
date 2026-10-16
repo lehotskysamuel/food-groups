@@ -8,7 +8,8 @@
  * So zvýraznením (plánovač jedál) sú zelené výseky, ktoré obsahujú zvýraznenú potravinu, ostatné sivé.
  */
 import { ZNACKY } from "../src/strom.types";
-import { RISE, TRIEDA, el, nazovUrovne, pocetEl, sklon, sucet, znacka } from "./spolocne";
+import { priZmeneJazyka, t } from "./jazyk";
+import { TRIEDA, el, indexRise, nazovUrovne, pocetEl, sklon, sucet, znacka } from "./spolocne";
 import type { Uzol, VUzol } from "./spolocne";
 
 const SVG = "http://www.w3.org/2000/svg";
@@ -43,7 +44,7 @@ interface Vysek {
   /** Rozsah výseku ako podiel všetkých zobrazených potravín. */
   readonly x0: number;
   readonly x1: number;
-  /** Index ríše v RISE (farba) a jej názov (rozptyl odtieňa). */
+  /** Index ríše v RISE (farba) a jej slovenský názov (rozptyl odtieňa). */
   readonly risa: number;
   readonly kral: string;
   /** Najväčšia hĺbka v podstrome. */
@@ -158,19 +159,15 @@ export class Kruh {
   constructor(private readonly kontajner: HTMLElement) {
     this.plocha = svg("svg");
     this.plocha.setAttribute("tabindex", "0");
-    this.plocha.setAttribute(
-      "aria-label",
-      "Kruhový diagram potravín. Šípky vľavo a vpravo vyberajú výsek v prstenci, hore a dole prechádzajú na rodiča a dieťa, Enter výsek priblíži, Escape oddiali o úroveň, Home ukáže celý graf.",
-    );
     this.plocha.append(this.gVyseky, this.gZhody, this.obrys, this.gStitky, this.gStred);
     this.bublina.hidden = true;
     this.bublina.setAttribute("role", "tooltip");
     this.bublina.setAttribute("aria-live", "polite");
     this.domov.type = "button";
-    this.domov.setAttribute("aria-label", "Celý graf");
-    this.domov.append(el("span", undefined, "⤒"), el("span", "text", "Celý graf"));
     this.domov.hidden = true;
-    this.domov.title = "Späť na celý graf (Home)";
+    this.pevneTexty();
+    // Zvyšok (štítky, stred, cesta) prekreslí nastav() s novým stromom.
+    priZmeneJazyka(() => this.pevneTexty());
     const obal = el("div", "kruh-obal");
     obal.append(this.plocha, this.domov);
     kontajner.append(this.navigacia, obal);
@@ -220,8 +217,16 @@ export class Kruh {
     });
   }
 
+  /** Pevné texty diagramu v jazyku webu. */
+  private pevneTexty(): void {
+    this.plocha.setAttribute("aria-label", t.kruh.aria);
+    this.domov.setAttribute("aria-label", t.kruh.celyGraf);
+    this.domov.replaceChildren(el("span", undefined, "⤒"), el("span", "text", t.kruh.celyGraf));
+    this.domov.title = t.kruh.celyGrafTitul;
+  }
+
   /**
-   * Nový pohľad (po filtri, hľadaní, prepnutí detailu alebo zmene dát). Priblíženie sa zachová, ak uzol ešte existuje.
+   * Nový pohľad (po filtri, hľadaní, prepnutí detailu, zmene dát alebo jazyka). Priblíženie sa zachová, ak uzol ešte existuje.
    * So zvýraznením sú zelené výseky so zvýraznenými potravinami a ostatné sivé.
    */
   nastav(pohlad: readonly VUzol[], koren: readonly Uzol[], zvyraznenie?: Zvyraznenie): void {
@@ -272,7 +277,7 @@ export class Kruh {
         hlbka,
         x0: x / spolu,
         x1: (x + n) / spolu,
-        risa: Math.max(0, RISE.indexOf(kral)),
+        risa: indexRise(kral),
         kral,
         spodok: hlbka,
         zvyraznene: v.deti.length === 0 && this.zvyraznenePotraviny(v).length ? 1 : 0,
@@ -289,7 +294,7 @@ export class Kruh {
       }
       return s;
     };
-    for (const v of pohlad) pridaj(v, undefined, 0, v.u.nazov);
+    for (const v of pohlad) pridaj(v, undefined, 0, v.u.kluc);
     this.vyseky = vyseky;
     this.spolu = celkom;
     this.spodok = vyseky.reduce((a, s) => Math.max(a, s.hlbka), 0);
@@ -303,7 +308,7 @@ export class Kruh {
     const vsetky = pocty.reduce((a, n) => a + n, 0) || 1;
     koren.forEach((r, j) => {
       const n = pocty[j] || 1;
-      this.rozptyl.set(r.nazov, Math.min(70, (140 * n) / vsetky));
+      this.rozptyl.set(r.kluc, Math.min(70, (140 * n) / vsetky));
       let x = 0;
       const prejdi = (u: Uzol): void => {
         const x0 = x;
@@ -422,7 +427,7 @@ export class Kruh {
       const t = s.hlbka >= this.okno.h0 ? this.tvar(s) : undefined;
       if (!t) continue;
       // „–“ (úroveň neexistuje) by bol len šum, v bubline je vysvetlený.
-      if (s.v.u.nazov === ZNACKY.NEEXISTUJE) continue;
+      if (s.v.u.kluc === ZNACKY.NEEXISTUJE) continue;
       const text = stitok(s.v.u);
       const uhol = t.a1 - t.a0;
       const pismo = (s.hlbka === 0 ? [PISMO.risa, PISMO.bezne] : [PISMO.bezne]).find(
@@ -471,7 +476,7 @@ export class Kruh {
         ["s-hore", "↑"],
         ["s-nazov", this.skrat(stitok(s.v.u), PISMO.risa.font, max)],
         ["s-uroven", this.skrat(nazovUrovne(s.v.u), "400 10.5px 'IBM Plex Mono', monospace", max)],
-        ["s-pocet", z ? `${s.zvyraznene} z ${n} ${z.popis}` : `${n} ${sklon(n)}`],
+        ["s-pocet", z ? t.zPoctu(s.zvyraznene, n, z.popis) : `${n} ${sklon(n)}`],
       );
     } else if (z) {
       const n = this.vyseky.reduce((a, v) => a + (v.hlbka === 0 ? v.zvyraznene : 0), 0);
@@ -507,9 +512,9 @@ export class Kruh {
       return b;
     };
     if (cesta.length === 0) {
-      polozky.push(el("span", "aktualne", "Všetky ríše"));
+      polozky.push(el("span", "aktualne", t.kruh.vsetkyRise));
     } else {
-      polozky.push(tlacidlo(-1, "Všetky ríše"));
+      polozky.push(tlacidlo(-1, t.kruh.vsetkyRise));
       cesta.forEach((c, j) => {
         polozky.push(el("span", "odd", "›"));
         if (j === cesta.length - 1) {
@@ -519,7 +524,7 @@ export class Kruh {
         } else polozky.push(tlacidlo(c.i, stitok(c.v.u)));
       });
     }
-    this.navigacia.setAttribute("aria-label", "Priblížená časť diagramu");
+    this.navigacia.setAttribute("aria-label", t.kruh.cestaAria);
     this.navigacia.replaceChildren(...polozky);
     this.domov.hidden = !this.fokus;
   }
@@ -687,11 +692,11 @@ export class Kruh {
     const z = this.zvyraznenie;
     if (d) {
       if (z && s.zvyraznene) pata.append(el("span", "chip zelena", z.popis));
-      pata.append(el("span", `chip ${TRIEDA[d]}`, d));
+      pata.append(el("span", `chip ${TRIEDA[d]}`, t.dostupnost[d]));
     } else {
       const n = sucet(s.v.pocty);
       pata.append(pocetEl(s.v), el("span", undefined, z ? `${sklon(n)}, ${s.zvyraznene} ${z.popis}` : sklon(n)));
-      if (s.deti.length) pata.append(el("span", "rada", "klik priblíži"));
+      if (s.deti.length) pata.append(el("span", "rada", t.kruh.klikPriblizi));
     }
     const clenovia = s.v.clenovia ? [el("p", "clenovia", s.v.clenovia.map((c) => c.nazov).join(", "))] : [];
     const detail = d && z && s.zvyraznene

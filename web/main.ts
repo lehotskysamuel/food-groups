@@ -8,17 +8,22 @@
  */
 import { subory } from "../src/data/plany";
 import { strom } from "../src/data/strom";
-import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
+import { prelozUzol } from "../src/preklad";
+import { DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
 import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
+import type { KodChybyUpravy } from "../src/texty";
+import { cislo, jazyk, priZmeneJazyka, spustiJazyk, t } from "./jazyk";
 import { Kruh } from "./kruh";
 import { Planovac } from "./planovac";
-import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, hlbkyJednoduche, nazovUrovne, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, prepinajPodrobnost, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import { DRUH, PREDVOLENA_DOST, SEP, TRIEDA, el, hlbkyJednoduche, indexRise, nazovUrovne, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, prepinajPodrobnost, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
 import type { Nastavenia, Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
 
-let koren: readonly Uzol[] = postav(strom as unknown as Strom);
+/** Dáta stromu; pri HMR (edit mód) sa vymenia. */
+let data = strom as unknown as Strom;
+let koren: readonly Uzol[] = postav(data, jazyk);
 
 const EDIT = import.meta.env.DEV;
 
@@ -67,7 +72,7 @@ function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
   const s = el("span", "nazov");
   if (u.znacka) {
     const { znak, pozn } = znacka(u);
-    s.append(el("span", u.nazov === ZNACKY.TBD ? "chip tbd" : "znak", znak), el("span", "pozn", pozn));
+    s.append(el("span", u.kluc === ZNACKY.TBD ? "chip tbd" : "znak", znak), el("span", "pozn", pozn));
     return s;
   }
   const i = zhoda ? u.hladat.indexOf(nast.q) : -1;
@@ -83,13 +88,13 @@ function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
 }
 
 function dostupnostEl(id: string, d: List, upravit = EDIT): HTMLElement {
-  const chip = el(upravit ? "button" : "span", `chip ${TRIEDA[d]}`, d);
-  chip.title = DOSTUPNOST[d];
+  const chip = el(upravit ? "button" : "span", `chip ${TRIEDA[d]}`, t.dostupnost[d]);
+  chip.title = t.dostupnostPopis[d];
   if (chip instanceof HTMLButtonElement) {
     chip.type = "button";
     chip.dataset["id"] = id;
     chip.dataset["z"] = d;
-    chip.title += ` – klik prepne na ${dalsia(d)} a zapíše to do src/data/strom.ts`;
+    chip.title += t.edit.prepne(t.dostupnost[dalsia(d)]);
   }
   return chip;
 }
@@ -114,7 +119,7 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
   d.dataset["id"] = u.id;
   d.open = !zb.has(u.id);
   if (u.znacka) d.classList.add("znacka-uzol");
-  if (u.uroven === 0) d.classList.add(`risa-${Math.max(0, RISE.indexOf(u.nazov))}`);
+  if (u.uroven === 0) d.classList.add(`risa-${indexRise(u.kluc)}`);
   const s = el("summary");
   const vrch = v.retazec[0];
   const popisUrovne = vrch ? `${nazovUrovne(vrch)} – ${nazovUrovne(u)}` : nazovUrovne(u);
@@ -126,7 +131,7 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
   ciara.type = "button";
   ciara.dataset["nazov"] = u.nazov;
   ciara.dataset["uroven"] = popisUrovne;
-  ciara.setAttribute("aria-label", `Prejsť na ${u.nazov}`);
+  ciara.setAttribute("aria-label", t.strom.prejstNa(u.nazov));
   deti.append(ciara);
   for (const c of v.deti) deti.append(uzolEl(c, zb));
   d.append(s, deti);
@@ -145,11 +150,9 @@ function vykresli(): void {
 
   const spolu = pohlad.reduce((a, v) => a + sucet(v.pocty), 0);
   if (pohlad.length === 0) {
-    infoEl.textContent = nast.q
-      ? `Pre „${hladatEl.value.trim()}“ sa nenašla žiadna potravina ani taxón.`
-      : "Žiadna potravina nezodpovedá filtru.";
+    infoEl.textContent = nast.q ? t.strom.nenaslo(hladatEl.value.trim()) : t.strom.nicVoFiltri;
   } else if (nast.q || nast.dost.size < DOSTUPNOSTI.length) {
-    infoEl.textContent = `Zobrazených ${spolu} ${sklon(spolu)}.`;
+    infoEl.textContent = t.strom.zobrazene(spolu);
   } else {
     infoEl.textContent = "";
   }
@@ -166,14 +169,14 @@ function statistiky(): void {
   }
   /** [názov, hodnota, CSS trieda] */
   const polozky: [string, string, string?][] = [
-    ["potraviny", String(sucet(pocty))],
-    ...DOSTUPNOSTI.map((d): [string, string, string] => [d, String(pocty[d]), TRIEDA[d]]),
-    ["uzly stromu", uzly.toLocaleString("sk-SK")],
+    [t.strom.statPotraviny, cislo(sucet(pocty))],
+    ...DOSTUPNOSTI.map((d): [string, string, string] => [t.dostupnost[d], cislo(pocty[d]), TRIEDA[d]]),
+    [t.strom.statUzly, cislo(uzly)],
   ];
   koren.forEach((r, i) => {
     let n = 0;
     for (const u of vsetky([r])) if (u.dostupnost) n++;
-    polozky.push([r.nazov, String(n), `risa risa-${Math.max(0, RISE.indexOf(r.nazov))}${i === 0 ? " prva-risa" : ""}`]);
+    polozky.push([r.nazov, cislo(n), `risa risa-${indexRise(r.kluc)}${i === 0 ? " prva-risa" : ""}`]);
   });
   dl.replaceChildren(
     ...polozky.map(([k, h, trieda]) => {
@@ -281,7 +284,7 @@ function naplnUrovne(): void {
   poEl.replaceChildren(poVyzva);
   if (nast.podrobnost === "jednoduchy") {
     hlbkyJednoduche().forEach((nazvy, i) => {
-      const o = el("option", undefined, `${i + 2}. úroveň: ${nazvy}`);
+      const o = el("option", undefined, t.podrobnost.hlbka(i + 2, nazvy));
       o.value = `h${i + 2}`;
       poEl.append(o);
     });
@@ -289,7 +292,7 @@ function naplnUrovne(): void {
   }
   UROVNE.forEach((nazov, i) => {
     if (i === 0 || (nast.podrobnost === "komplexny" && i > DRUH && nazov !== "potravina")) return;
-    const o = el("option", undefined, nazov);
+    const o = el("option", undefined, t.urovne[i] ?? nazov);
     o.value = String(i);
     poEl.append(o);
   });
@@ -375,7 +378,7 @@ function trasa(): void {
     if ((a.dataset["stranka"] === "planovac") === plan) a.setAttribute("aria-current", "page");
     else a.removeAttribute("aria-current");
   });
-  document.title = plan ? "Plánovač jedál" : "Strom potravín";
+  document.title = plan ? t.planovac.titul : t.strom.titul;
   // Edit mód (zápis dostupnosti) sa týka len stránky stromu.
   document.documentElement.classList.toggle("edit-mod", EDIT && !plan);
   const pasik = document.querySelector<HTMLElement>(".edit-mod-pasik");
@@ -388,9 +391,42 @@ window.addEventListener("hashchange", trasa);
 
 // ---------- edit mód (len dev server) ----------
 
+/** Odpoveď dev servera na zápis (vite.config.ts): nová hodnota alebo chyba s kódom a údajmi (src/uprava.ts). */
+interface OdpovedUpravy {
+  readonly dostupnost?: List;
+  readonly chyba?: string;
+  readonly kod?: KodChybyUpravy;
+  readonly kluc?: string;
+  readonly hodnota?: List;
+  readonly z?: List;
+  readonly cesta?: readonly string[];
+}
+
+/** Správa o chybe zápisu v jazyku webu (podľa kódu, inak správa servera). */
+function spravaChyby(o: OdpovedUpravy, status: number): string {
+  const c = t.edit.chyby;
+  switch (o.kod) {
+    case "ina-hodnota":
+      return c[o.kod]({
+        kluc: prelozUzol(o.kluc ?? "", UROVNE.length - 1, jazyk),
+        hodnota: o.hodnota ? t.dostupnost[o.hodnota] : "",
+        z: o.z ? t.dostupnost[o.z] : "",
+      });
+    case "nenaslo":
+      return c[o.kod]({ cesta: (o.cesta ?? []).map((k, i) => prelozUzol(k, i, jazyk)).join(" › ") });
+    case undefined:
+      return o.chyba ?? `HTTP ${status}`;
+    default:
+      return c[o.kod]();
+  }
+}
+
 if (EDIT) {
   const pasik = el("div", "edit-mod-pasik");
-  pasik.append(el("b", undefined, "EDIT MÓD"), el("span", undefined, "klik na štítok: bežné → menej bežné → exotické, zapíše sa do src/data/strom.ts"));
+  const pasikTexty = (): void =>
+    pasik.replaceChildren(el("b", undefined, t.edit.pasik), el("span", undefined, t.edit.pasikPopis));
+  pasikTexty();
+  priZmeneJazyka(pasikTexty);
   document.body.prepend(pasik);
   document.documentElement.classList.add("edit-mod");
 
@@ -406,15 +442,15 @@ if (EDIT) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cesta: id.split(SEP), z }),
       });
-      const telo = (await odpoved.json()) as { dostupnost?: List; chyba?: string };
-      if (!odpoved.ok || !telo.dostupnost) throw new Error(telo.chyba ?? `HTTP ${odpoved.status}`);
+      const telo = (await odpoved.json()) as OdpovedUpravy;
+      if (!odpoved.ok || !telo.dostupnost) throw new Error(spravaChyby(telo, odpoved.status));
       // Kým nepríde HMR s novým stromom, ukáž novú hodnotu aspoň na štítku.
       const novy = dostupnostEl(id, telo.dostupnost);
       chip.replaceWith(novy);
       novy.focus();
     } catch (err) {
       chip.disabled = false;
-      infoEl.textContent = `Zmenu sa nepodarilo zapísať: ${err instanceof Error ? err.message : String(err)}`;
+      infoEl.textContent = t.edit.nepodarilo(err instanceof Error ? err.message : String(err));
       infoEl.hidden = false;
     }
   });
@@ -423,7 +459,8 @@ if (EDIT) {
   import.meta.hot?.accept("../src/data/strom", (m) => {
     if (!m) return;
     const fokus = document.activeElement instanceof HTMLElement ? document.activeElement.dataset["id"] : undefined;
-    koren = postav((m as unknown as { strom: Strom }).strom);
+    data = (m as unknown as { strom: Strom }).strom;
+    koren = postav(data, jazyk);
     statistiky();
     vykresli();
     planovac.nastavKoren(koren);
@@ -436,8 +473,21 @@ if (EDIT) {
   });
 }
 
+// ---------- jazyk ----------
+
+// Názvy uzlov aj všetky texty sa prekreslia; rozbalenie, filter, hľadaný text a priblíženie kruhu zostanú.
+priZmeneJazyka(() => {
+  koren = postav(data, jazyk);
+  if (nast.q) nast.q = norm(hladatEl.value);
+  naplnUrovne();
+  statistiky();
+  planovac.nastavKoren(koren);
+  trasa();
+});
+
 // ---------- štart ----------
 
+spustiJazyk();
 naplnUrovne();
 statistiky();
 trasa();

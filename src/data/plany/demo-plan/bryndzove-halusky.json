@@ -1,11 +1,14 @@
 {
-  "nazov": "Bryndzové halušky",
-  "popis": "Zemiakové halušky s bryndzou, opečenou slaninou a pažítkou.",
+  "nazov": { "sk": "Bryndzové halušky", "en": "Bryndzové halušky (potato dumplings with sheep’s cheese)" },
+  "popis": {
+    "sk": "Zemiakové halušky s bryndzou, opečenou slaninou a pažítkou.",
+    "en": "Potato dumplings with bryndza sheep’s cheese, crispy bacon and chives."
+  },
   "suroviny": [
     { "potravina": "zemiaky", "mnozstvo": "600 g" },
-    { "potravina": "pšenica", "forma": "hladká múka", "mnozstvo": "250 g" },
-    { "potravina": "ovčie mlieko", "forma": "bryndza", "mnozstvo": "250 g" },
-    { "potravina": "bravčový bok", "forma": "údená slanina", "mnozstvo": "150 g" },
-    { "potravina": "pažítka", "mnozstvo": "hrsť" }
+    { "potravina": "pšenica", "forma": { "sk": "hladká múka", "en": "plain flour" }, "mnozstvo": "250 g" },
+    { "potravina": "ovčie mlieko", "forma": { "sk": "bryndza", "en": "bryndza (sheep’s cheese)" }, "mnozstvo": "250 g" },
+    { "potravina": "bravčový bok", "forma": { "sk": "údená slanina", "en": "smoked bacon" }, "mnozstvo": "150 g" },
+    { "potravina": "pažítka", "mnozstvo": { "sk": "hrsť", "en": "a handful" } }
   ]
 }

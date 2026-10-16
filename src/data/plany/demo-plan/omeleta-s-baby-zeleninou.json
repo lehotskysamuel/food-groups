@@ -1,17 +1,20 @@
 {
-  "nazov": "Omeleta so smaženou baby zeleninou",
-  "popis": "Maslová omeleta, k nej na oleji opražená mladá zelenina.",
+  "nazov": { "sk": "Omeleta so smaženou baby zeleninou", "en": "Omelette with fried baby vegetables" },
+  "popis": {
+    "sk": "Maslová omeleta, k nej na oleji opražená mladá zelenina.",
+    "en": "Buttery omelette served with young vegetables fried in oil."
+  },
   "suroviny": [
-    { "potravina": "slepačie vajcia", "mnozstvo": "3 ks" },
-    { "potravina": "kravské mlieko", "forma": "mlieko", "mnozstvo": "2 PL" },
-    { "potravina": "kravské mlieko", "forma": "maslo", "mnozstvo": "10 g" },
-    { "potravina": "repka", "forma": "repkový olej", "mnozstvo": "1 PL" },
-    { "potravina": "mrkva", "forma": "baby mrkva", "mnozstvo": "100 g" },
-    { "potravina": "cuketa", "forma": "baby cuketa", "mnozstvo": "1 ks" },
+    { "potravina": "slepačie vajcia", "mnozstvo": { "sk": "3 ks", "en": "3" } },
+    { "potravina": "kravské mlieko", "forma": { "sk": "mlieko", "en": "milk" }, "mnozstvo": { "sk": "2 PL", "en": "2 tbsp" } },
+    { "potravina": "kravské mlieko", "forma": { "sk": "maslo", "en": "butter" }, "mnozstvo": "10 g" },
+    { "potravina": "repka", "forma": { "sk": "repkový olej", "en": "rapeseed oil" }, "mnozstvo": { "sk": "1 PL", "en": "1 tbsp" } },
+    { "potravina": "mrkva", "forma": { "sk": "baby mrkva", "en": "baby carrots" }, "mnozstvo": "100 g" },
+    { "potravina": "cuketa", "forma": { "sk": "baby cuketa", "en": "baby courgette" }, "mnozstvo": { "sk": "1 ks", "en": "1" } },
     { "potravina": "hrášok cukrový", "mnozstvo": "80 g" },
-    { "potravina": "paprika mini", "mnozstvo": "3 ks" },
-    { "potravina": "paradajky cherry", "mnozstvo": "6 ks" },
-    { "potravina": "jarná cibuľka", "mnozstvo": "2 ks" },
-    { "potravina": "petržlenová vňať", "mnozstvo": "na posypanie" }
+    { "potravina": "paprika mini", "mnozstvo": { "sk": "3 ks", "en": "3" } },
+    { "potravina": "paradajky cherry", "mnozstvo": { "sk": "6 ks", "en": "6" } },
+    { "potravina": "jarná cibuľka", "mnozstvo": { "sk": "2 ks", "en": "2" } },
+    { "potravina": "petržlenová vňať", "mnozstvo": { "sk": "na posypanie", "en": "to sprinkle" } }
   ]
 }

@@ -3,17 +3,25 @@
  * a plánovač jedál (planovac.ts).
  */
 import { podkategorie, triedy, zjednodusene } from "../src/data/zjednodusene";
-import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
+import { prelozUzol, prelozZjednodusene } from "../src/preklad";
+import type { Jazyk } from "../src/preklad";
+import { DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
 import type { List } from "../src/strom.types";
+import { jazyk, priZmeneJazyka, t } from "./jazyk";
 
 export interface Uzol {
+  /** Cesta slovenských názvov od ríše (nezávisí od jazyka, prežije jeho zmenu). */
   readonly id: string;
+  /** Slovenský názov z dát (src/data/strom.ts). */
+  readonly kluc: string;
+  /** Zobrazený názov v jazyku webu. */
   readonly nazov: string;
   /** 0 = ríša … 16 = potravina */
   readonly uroven: number;
   readonly deti: readonly Uzol[];
   readonly dostupnost: List | undefined;
   readonly znacka: boolean;
+  /** Zobrazený názov po `norm`, hľadá sa v ňom. */
   readonly hladat: string;
   /** Názov úrovne uzla, ktorý nie je z UROVNE (jednoduchý pohľad: podkategória). */
   readonly urovenNazov?: string;
@@ -56,36 +64,53 @@ const JEDNODUCHE_UROVNE: { readonly [risa: string]: readonly JednoduchaUroven[];
   ostatné: ["čeľaď"],
 };
 
-/** Pohľady na strom (pozri zobraz), v poradí prepínača. */
-export const PODROBNOSTI = {
-  jednoduchy: {
-    nazov: "Jednoduchý",
-    popis: `Zjednodušené potraviny (všetky hrušky ako jedna hruška), úrovne: ${Object.entries(JEDNODUCHE_UROVNE)
-      .map(([risa, u]) => [risa === "ostatné" ? "ostatné ríše" : risa, ...u, "potravina"].join(" › "))
-      .join("; ")}`,
-  },
-  komplexny: { nazov: "Komplexný", popis: "Celý strom bez uzlov „–“ a „∗“ a úrovní pod druhom, reťaze uzlov s jediným dieťaťom sú zlúčené" },
-  detailny: { nazov: "Detailný", popis: "Všetky uzly: aj „–“ a „∗“, úrovne pod druhom a reťaze uzlov s jediným dieťaťom" },
-} as const satisfies Record<string, { readonly nazov: string; readonly popis: string }>;
+/** Pohľady na strom (pozri zobraz), v poradí prepínača; názvy a popisy sú v src/texty.ts (podrobnost). */
+export const PODROBNOSTI = ["jednoduchy", "komplexny", "detailny"] as const;
 
-export type Podrobnost = keyof typeof PODROBNOSTI;
+export type Podrobnost = (typeof PODROBNOSTI)[number];
+
+/** Názov úrovne jednoduchého pohľadu v jazyku webu. */
+const nazovJednoduchejUrovne = (u: JednoduchaUroven | "potravina"): string =>
+  u === "podkategória" ? t.podrobnost.podkategoria : (t.urovne[UROVNE.indexOf(u)] ?? u);
+
+/** Názov a popis pohľadu v jazyku webu (tlačidlo a jeho title). */
+function popisPodrobnosti(p: Podrobnost): { nazov: string; popis: string } {
+  const tp = t.podrobnost;
+  if (p === "komplexny") return { nazov: tp.komplexny, popis: tp.komplexnyPopis };
+  if (p === "detailny") return { nazov: tp.detailny, popis: tp.detailnyPopis };
+  const urovne = Object.entries(JEDNODUCHE_UROVNE)
+    .map(([risa, u]) =>
+      [risa === "ostatné" ? tp.ostatneRise : prelozUzol(risa, 0, jazyk), ...[...u, "potravina" as const].map(nazovJednoduchejUrovne)].join(" › "),
+    )
+    .join("; ");
+  return { nazov: tp.jednoduchy, popis: tp.jednoduchyPopis(urovne) };
+}
 
 /** Jednoduchý pohľad: názvy úrovní pod ríšou podľa hĺbky (index 0 = 2. úroveň), napr. ["trieda, čeľaď", …, "potravina"]. */
 export function hlbkyJednoduche(): string[] {
   const urovne = Object.values(JEDNODUCHE_UROVNE);
   const hlbka = Math.max(...urovne.map((u) => u.length)) + 1;
-  return Array.from({ length: hlbka }, (_, i) => [...new Set(urovne.map((u) => u[i] ?? "potravina"))].join(", "));
+  return Array.from({ length: hlbka }, (_, i) =>
+    [...new Set(urovne.map((u) => nazovJednoduchejUrovne(u[i] ?? "potravina")))].join(", "),
+  );
 }
 
 /** Prepínač pohľadu: naplní `skupina` tlačidlami (ako Strom / Kruh), zapne `hodnota` a pri zmene zavolá `zmena`. */
 export function prepinajPodrobnost(skupina: HTMLElement, hodnota: Podrobnost, zmena: (p: Podrobnost) => void): void {
-  const tlacidla = (Object.keys(PODROBNOSTI) as Podrobnost[]).map((p) => {
-    const b = el("button", undefined, PODROBNOSTI[p].nazov);
+  const tlacidla = PODROBNOSTI.map((p) => {
+    const b = el("button");
     b.type = "button";
-    b.title = PODROBNOSTI[p].popis;
     b.dataset["podrobnost"] = p;
     return b;
   });
+  const texty = (): void =>
+    tlacidla.forEach((b) => {
+      const { nazov, popis } = popisPodrobnosti(b.dataset["podrobnost"] as Podrobnost);
+      b.textContent = nazov;
+      b.title = popis;
+    });
+  texty();
+  priZmeneJazyka(texty);
   const nastav = (p: Podrobnost): void => tlacidla.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset["podrobnost"] === p)));
   skupina.replaceChildren(...tlacidla);
   nastav(hodnota);
@@ -107,19 +132,21 @@ const ZNACKY_SET = new Set<string>(Object.values(ZNACKY));
 
 export const norm = (s: string): string => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
 
-/** Uzly stromu z dát (src/data/strom.ts). */
-export function postav(obj: { readonly [k: string]: unknown }, uroven = 0, rodic = ""): Uzol[] {
-  return Object.entries(obj).map(([nazov, hodnota]) => {
-    const id = rodic ? rodic + SEP + nazov : nazov;
+/** Uzly stromu z dát (src/data/strom.ts) s názvami v jazyku `jazyk`. */
+export function postav(obj: { readonly [k: string]: unknown }, jazyk: Jazyk, uroven = 0, rodic = ""): Uzol[] {
+  return Object.entries(obj).map(([kluc, hodnota]) => {
+    const id = rodic ? rodic + SEP + kluc : kluc;
     const list = typeof hodnota === "string";
+    const nazov = prelozUzol(kluc, uroven, jazyk);
     return {
       id,
+      kluc,
       nazov,
       uroven,
-      znacka: ZNACKY_SET.has(nazov),
+      znacka: ZNACKY_SET.has(kluc),
       hladat: norm(nazov),
       dostupnost: list ? (hodnota as List) : undefined,
-      deti: list ? [] : postav(hodnota as { readonly [k: string]: unknown }, uroven + 1, id),
+      deti: list ? [] : postav(hodnota as { readonly [k: string]: unknown }, jazyk, uroven + 1, id),
     };
   });
 }
@@ -154,7 +181,7 @@ export const DRUH = UROVNE.indexOf("druh");
  * Pohľad je len prezentácia, dáta sa nemenia.
  */
 export function zobraz(u: Uzol, nast: Nastavenia, pokryte = false, ploche = false): VUzol[] {
-  if (nast.podrobnost === "jednoduchy") return jednoduchy(u, nast, JEDNODUCHE_UROVNE[u.nazov] ?? JEDNODUCHE_UROVNE.ostatné);
+  if (nast.podrobnost === "jednoduchy") return jednoduchy(u, nast, JEDNODUCHE_UROVNE[u.kluc] ?? JEDNODUCHE_UROVNE.ostatné);
   const zhoda = nast.q !== "" && u.hladat.includes(nast.q);
   const pok = pokryte || zhoda || nast.q === "";
   if (u.dostupnost) {
@@ -165,7 +192,7 @@ export function zobraz(u: Uzol, nast: Nastavenia, pokryte = false, ploche = fals
   if (deti.length === 0) return [];
   if (nast.podrobnost !== "detailny") {
     const skryty =
-      ploche || u.nazov === ZNACKY.NEEXISTUJE || (u.uroven === DRUH && u.nazov === ZNACKY.NEROZLISENE);
+      ploche || u.kluc === ZNACKY.NEEXISTUJE || (u.uroven === DRUH && u.kluc === ZNACKY.NEROZLISENE);
     if (skryty) return deti;
     const jedine = deti.length === 1 ? deti[0] : undefined;
     if (jedine && !jedine.u.dostupnost && u.uroven > 0) {
@@ -217,31 +244,39 @@ const CELAD = UROVNE.indexOf("čeľaď");
 
 const skupinyPodstromu = new WeakMap<Uzol, ReadonlyMap<string, Skupina>>();
 
-/** Názov potraviny → jej zjednodušená potravina, pre potraviny v podstrome `koren` (raz pre každý strom, aj po HMR). */
+/**
+ * Slovenský názov potraviny → jej zjednodušená potravina, pre potraviny v podstrome `koren` (raz pre každý strom,
+ * aj po HMR a zmene jazyka, lebo vtedy vznikne nový strom).
+ */
 function skupiny(koren: Uzol): ReadonlyMap<string, Skupina> {
   const hotove = skupinyPodstromu.get(koren);
   if (hotove) return hotove;
   const clenovia = new Map<string, Uzol[]>();
   for (const x of vsetky([koren])) {
-    const nazov = x.dostupnost ? SKUPINA_POTRAVINY.get(x.nazov) : undefined;
-    if (nazov !== undefined) clenovia.set(nazov, [...(clenovia.get(nazov) ?? []), x]);
+    const kluc = x.dostupnost ? SKUPINA_POTRAVINY.get(x.kluc) : undefined;
+    if (kluc !== undefined) clenovia.set(kluc, [...(clenovia.get(kluc) ?? []), x]);
   }
   const m = new Map<string, Skupina>();
-  for (const [nazov, listy] of clenovia) {
+  for (const [kluc, listy] of clenovia) {
     const prvy = listy[0];
     const dostupnost = DOSTUPNOSTI.find((d) => listy.some((l) => l.dostupnost === d));
     if (!prvy || !dostupnost) continue;
-    const u: Uzol = { id: `${prvy.id}${SEP}≡${nazov}`, nazov, uroven: prvy.uroven, deti: [], dostupnost, znacka: false, hladat: norm(nazov) };
+    const nazov = prelozZjednodusene(kluc, "zjednodusene", jazyk);
+    const u: Uzol = { id: `${prvy.id}${SEP}≡${kluc}`, kluc, nazov, uroven: prvy.uroven, deti: [], dostupnost, znacka: false, hladat: norm(nazov) };
     const skupina: Skupina = { u, clenovia: listy };
-    for (const l of listy) m.set(l.nazov, skupina);
+    for (const l of listy) m.set(l.kluc, skupina);
   }
   skupinyPodstromu.set(koren, m);
   return m;
 }
 
-/** Uzol, ktorý v strome nie je (ryby, podkategória); id je pod `rodic`, aby sa nezrazilo so skutočným uzlom. */
-const umely = (rodic: Uzol, nazov: string, uroven: number, urovenNazov?: string): Uzol => ({
-  id: `${rodic.id}${SEP}≡${nazov}`,
+/**
+ * Uzol, ktorý v strome nie je (ryby, podkategória): slovenský `kluc`, zobrazený `nazov`. Id je pod `rodic`,
+ * aby sa nezrazilo so skutočným uzlom.
+ */
+const umely = (rodic: Uzol, kluc: string, nazov: string, uroven: number, urovenNazov?: string): Uzol => ({
+  id: `${rodic.id}${SEP}≡${kluc}`,
+  kluc,
   nazov,
   uroven,
   deti: [],
@@ -284,7 +319,7 @@ function jednoduchy(risa: Uzol, nast: Nastavenia, urovne: readonly JednoduchaUro
       for (const d of u.deti) prejdi(d, [...cesta, d], pok);
       return;
     }
-    const s = sk.get(u.nazov);
+    const s = sk.get(u.kluc);
     const kluc = s ? s.u.id : u.id;
     const p = potraviny.get(kluc) ?? { u: s ? s.u : u, clenovia: s?.clenovia, cesta, pokryta: false, zhoda: false };
     p.pokryta ||= pok;
@@ -293,22 +328,23 @@ function jednoduchy(risa: Uzol, nast: Nastavenia, urovne: readonly JednoduchaUro
   };
   prejdi(risa, [risa], q === "");
 
-  const zaradenie = (p: Potravina): Zaradenie | undefined => PODKATEGORIE.get(p.cesta[CELAD]?.nazov ?? "")?.get(p.u.nazov);
+  const zaradenie = (p: Potravina): Zaradenie | undefined => PODKATEGORIE.get(p.cesta[CELAD]?.kluc ?? "")?.get(p.u.kluc);
 
   /** Uzol zjednodušenej potraviny na úrovni `uroven` (undefined = úroveň sa v tejto vetve vynechá). */
   const uzolNaUrovni = (p: Potravina, uroven: JednoduchaUroven, predosla: number): Uzol | undefined => {
     if (uroven === "podkategória") {
       const celad = p.cesta[CELAD];
       const z = zaradenie(p);
-      return celad && z ? umely(celad, z.kategoria, CELAD + 1, "podkategória") : undefined;
+      if (!celad || !z) return undefined;
+      return umely(celad, z.kategoria, prelozZjednodusene(z.kategoria, "podkategorie", jazyk), CELAD + 1, t.podrobnost.podkategoria);
     }
     const i = UROVNE.indexOf(uroven);
     // Značku zastúpi najbližší pomenovaný predok pod predchádzajúcou zobrazenou úrovňou.
     for (let j = i; j > predosla; j--) {
       const u = p.cesta[j];
       if (!u || u.znacka) continue;
-      const skupina = j === i ? SKUPINA_TRIEDY.get(u.nazov) : undefined;
-      return skupina && uroven === "trieda" ? umely(risa, skupina, i) : u;
+      const skupina = j === i ? SKUPINA_TRIEDY.get(u.kluc) : undefined;
+      return skupina && uroven === "trieda" ? umely(risa, skupina, prelozZjednodusene(skupina, "triedy", jazyk), i) : u;
     }
     return undefined;
   };
@@ -355,7 +391,11 @@ function spocitaj(deti: readonly VUzol[]): Pocty {
   return pocty;
 }
 
+/** Ríše podľa slovenského názvu (Uzol.kluc) v poradí farieb (--risa-…). */
 export const RISE = ["rastliny", "huby", "živočíchy", "chromisty", "baktérie"];
+
+/** Index ríše pre farbu; neznáma ríša má farbu prvej. */
+export const indexRise = (kluc: string): number => Math.max(0, RISE.indexOf(kluc));
 
 /** CSS trieda pre každú dostupnosť. */
 export const TRIEDA: Readonly<Record<List, string>> = { bežné: "bezne", "menej bežné": "menej", exotické: "exoticke" };
@@ -363,19 +403,17 @@ export const TRIEDA: Readonly<Record<List, string>> = { bežné: "bezne", "menej
 export const nulovePocty = (): Record<List, number> => ({ bežné: 0, "menej bežné": 0, exotické: 0 });
 export const sucet = (p: Pocty): number => DOSTUPNOSTI.reduce((a, d) => a + p[d], 0);
 
-/** Tvar slova podľa počtu: [1, 2–4, 0 a 5+], napr. ["jedlo", "jedlá", "jedál"]. */
-export const sklonuj = (n: number, [jeden, dva, pat]: readonly [string, string, string]): string =>
-  n === 1 ? jeden : n >= 2 && n <= 4 ? dva : pat;
+/** „potravina / potraviny / potravín“ (food / foods) podľa počtu. */
+export const sklon = (n: number): string => t.potraviny(n);
 
-export const sklon = (n: number): string => sklonuj(n, ["potravina", "potraviny", "potravín"]);
-
-export const nazovUrovne = (u: Uzol): string => u.urovenNazov ?? UROVNE[u.uroven] ?? "";
+/** Názov úrovne uzla v jazyku webu. */
+export const nazovUrovne = (u: Uzol): string => u.urovenNazov ?? t.urovne[u.uroven] ?? "";
 
 /** Krátky text značky („–“, „∗“, „TBD“) a jej význam. */
 export function znacka(u: Uzol): { znak: string; pozn: string } {
-  if (u.nazov === ZNACKY.TBD) return { znak: "TBD", pozn: "nedoplnené" };
-  if (u.nazov === ZNACKY.NEEXISTUJE) return { znak: "–", pozn: "neexistuje" };
-  return { znak: "∗", pozn: "nerozlíšené" };
+  if (u.kluc === ZNACKY.TBD) return { znak: "TBD", pozn: t.znacky.tbd };
+  if (u.kluc === ZNACKY.NEEXISTUJE) return { znak: "–", pozn: t.znacky.neexistuje };
+  return { znak: "∗", pozn: t.znacky.nerozlisene };
 }
 
 /**
@@ -389,10 +427,15 @@ export function prepinajDostupnosti(
 ): void {
   const boxy = [...skupina.querySelectorAll<HTMLInputElement>("input[data-dost]")];
   const hodnota = (b: HTMLInputElement): List => b.dataset["dost"] as List;
+  const popisy = (): void =>
+    boxy.forEach((b) => {
+      const label = b.closest("label");
+      if (label) label.title = t.dostupnostPopis[hodnota(b)];
+    });
+  popisy();
+  priZmeneJazyka(popisy);
   for (const b of boxy) {
     b.checked = dost.has(hodnota(b));
-    const label = b.closest("label");
-    if (label) label.title = DOSTUPNOST[hodnota(b)];
     b.addEventListener("change", () => zmena(new Set(boxy.filter((x) => x.checked).map(hodnota))));
   }
 }
@@ -413,7 +456,7 @@ export function pocetEl(v: VUzol): HTMLElement {
   const { pocty } = v;
   const spolu = sucet(pocty);
   const p = el("span", "pocet");
-  p.title = `${spolu} ${sklon(spolu)}: ${pocty["bežné"]} bežné, ${pocty["menej bežné"]} menej bežné, ${pocty["exotické"]} exotické`;
+  p.title = t.pocetTitul(spolu, pocty["bežné"], pocty["menej bežné"], pocty["exotické"]);
   const bar = el("i");
   bar.style.setProperty("--b", `${(pocty["bežné"] / spolu) * 100}%`);
   bar.style.setProperty("--m", `${((pocty["bežné"] + pocty["menej bežné"]) / spolu) * 100}%`);

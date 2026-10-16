@@ -8,7 +8,7 @@
       // Čokoľvek chýba mimo main/ (napr. náhľad zmazaný po zatvorení PR), ide na hlavnú verziu.
       // Chýbajúca stránka vnútri main/ zostane tu, takže presmerovanie sa nezacyklí.
       var main = '__BASE_PATH__main/';
-      if (location.pathname.indexOf(main) !== 0) location.replace(main);
+      if (location.pathname.indexOf(main) !== 0) location.replace(main + location.search + location.hash);
     </script>
     <style>
       body { font: 15px/1.5 system-ui, sans-serif; margin: 40px 16px; background: #f5f7f3; color: #1b2420; }
@@ -18,5 +18,17 @@
   <body>
     <h1>Stránka neexistuje</h1>
     <p>Skús <a href="__BASE_PATH__main/">hlavnú verziu</a>.</p>
+    <script>
+      // ?lang=en: text po anglicky.
+      if (/[?&]lang=en(&|$)/i.test(location.search)) {
+        document.documentElement.lang = 'en';
+        document.title = 'Food tree';
+        var a = document.querySelector('a');
+        a.href = main + location.search;
+        a.textContent = 'the main version';
+        document.querySelector('h1').textContent = 'Page not found';
+        a.parentNode.replaceChildren('Try ', a, '.');
+      }
+    </script>
   </body>
 </html>

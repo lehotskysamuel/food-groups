@@ -104,13 +104,47 @@ body {
   padding-block: 14px 72px;
 }
 
-/* ---------- navigácia medzi stránkami ---------- */
-.weby {
+/* ---------- horná lišta: navigácia medzi stránkami a jazyk ---------- */
+.lista {
   display: flex;
-  gap: 22px;
+  align-items: center;
+  gap: 8px 16px;
   margin-bottom: 26px;
   border-bottom: 1px solid var(--line);
 }
+.weby {
+  display: flex;
+  align-self: stretch;
+  gap: 22px;
+  min-width: 0;
+}
+.jazyky { display: flex; gap: 2px; margin-left: auto; }
+.jazyky button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.04em;
+}
+.jazyky button:hover { color: var(--ink); background: var(--hover); }
+.jazyky button[aria-pressed="true"] { color: var(--ink); }
+.vlajka {
+  flex: none;
+  width: 21px;
+  height: 14px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 14%, transparent);
+  opacity: 0.45;
+  filter: saturate(0.4);
+  transition: opacity 0.15s, filter 0.15s;
+}
+.jazyky button:hover .vlajka, .jazyky button[aria-pressed="true"] .vlajka { opacity: 1; filter: none; }
 .weby a {
   margin-bottom: -1px;
   padding: 8px 0 9px;

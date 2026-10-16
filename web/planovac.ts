@@ -6,11 +6,14 @@
  */
 import { nacitajPlany } from "../src/jedla";
 import type { NacitaneJedlo, Plan, Surovina } from "../src/jedla";
-import { DOSTUPNOST, UROVNE, ZNACKY } from "../src/strom.types";
+import { text } from "../src/preklad";
+import type { Text } from "../src/preklad";
+import { UROVNE, ZNACKY } from "../src/strom.types";
 import type { List } from "../src/strom.types";
+import { abeceda, cislo, jazyk, t } from "./jazyk";
 import { Kruh } from "./kruh";
 import type { Zvyraznenie } from "./kruh";
-import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, nazovUrovne, prepinajDostupnosti, prepinajPodrobnost, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, indexRise, nazovUrovne, prepinajDostupnosti, prepinajPodrobnost, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
 import type { Podrobnost, Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
@@ -37,10 +40,15 @@ const CELAD = UROVNE.indexOf("čeľaď");
 export const adresa = (...casti: readonly string[]): string =>
   "#" + ["planovac", ...casti].map(encodeURIComponent).join("/");
 
-const jedal = (n: number): string => sklonuj(n, ["jedlo", "jedlá", "jedál"]);
+/** Text jedla (názov, popis, forma, množstvo) v jazyku webu. */
+const tx = (x: Text): string => text(x, jazyk);
+
+/** Názov jedla v jazyku webu. */
+const nazovJedla = (j: NacitaneJedlo): string => tx(j.jedlo.nazov);
 
 /** „bryndza · 250 g“; bez formy len množstvo. */
-const formaAMnozstvo = (s: Surovina): string => [s.forma, s.mnozstvo].filter(Boolean).join(" · ");
+const formaAMnozstvo = (s: Surovina): string =>
+  [s.forma, s.mnozstvo].flatMap((x) => (x === undefined ? [] : [tx(x)])).filter(Boolean).join(" · ");
 
 export class Planovac {
   private koren: readonly Uzol[] = [];
@@ -48,7 +56,7 @@ export class Planovac {
   private pohlad: VUzol[] = [];
   private podrobnost: Podrobnost = "jednoduchy";
   private dost: ReadonlySet<List> = new Set(PREDVOLENA_DOST);
-  /** Názov potraviny → list stromu. */
+  /** Slovenský názov potraviny (ako v súboroch jedál) → list stromu. */
   private listy = new Map<string, Uzol>();
   private subory: Readonly<Record<string, unknown>> = {};
   private plany: Plan[] = [];
@@ -121,7 +129,7 @@ export class Planovac {
     });
   }
 
-  /** Nový strom (HMR zo src/data/strom.ts). */
+  /** Nový strom (HMR zo src/data/strom.ts alebo zmena jazyka). */
   nastavKoren(koren: readonly Uzol[]): void {
     this.koren = koren;
     this.prepocitaj();
@@ -148,8 +156,8 @@ export class Planovac {
   private prepocitaj(): void {
     this.pohlad = this.pohladStromu();
     this.listy = new Map();
-    for (const u of vsetky(this.koren)) if (u.dostupnost) this.listy.set(u.nazov, u);
-    ({ plany: this.plany, chyby: this.chyby } = nacitajPlany(this.subory, new Set(this.listy.keys())));
+    for (const u of vsetky(this.koren)) if (u.dostupnost) this.listy.set(u.kluc, u);
+    ({ plany: this.plany, chyby: this.chyby } = nacitajPlany(this.subory, new Set(this.listy.keys()), jazyk));
   }
 
   private vyber(jedla: readonly NacitaneJedlo[], suhrn: boolean): Vyber {
@@ -176,8 +184,8 @@ export class Planovac {
     const jedlo = plan && jedloId !== undefined ? plan.jedla.find((j) => j.id === jedloId) : undefined;
 
     let info = "";
-    if (planId !== undefined && !plan) info = `Plán „${planId}“ neexistuje.`;
-    else if (jedloId !== undefined && !jedlo) info = `Jedlo „${jedloId}“ v pláne „${planId}“ neexistuje.`;
+    if (planId !== undefined && !plan) info = t.planovac.planNeexistuje(planId);
+    else if (jedloId !== undefined && !jedlo) info = t.planovac.jedloNeexistuje(jedloId, planId ?? "");
     const infoEl = this.$<HTMLParagraphElement>("#plan-info");
     infoEl.textContent = info;
     infoEl.hidden = !info;
@@ -187,7 +195,7 @@ export class Planovac {
     if (this.chyby.length) {
       const ul = el("ul");
       ul.append(...this.chyby.map((c) => el("li", undefined, c)));
-      chybyEl.replaceChildren(el("b", undefined, "Niektoré súbory jedál majú chyby:"), ul);
+      chybyEl.replaceChildren(el("b", undefined, t.planovac.chybySuborov), ul);
     }
 
     this.omrvinky(plan, jedlo);
@@ -206,33 +214,29 @@ export class Planovac {
     };
     const casti: Node[] = [];
     if (plan) {
-      casti.push(odkaz("Všetky plány", adresa()), el("span", "odd", "›"));
+      casti.push(odkaz(t.planovac.vsetkyPlany, adresa()), el("span", "odd", "›"));
       if (jedlo) casti.push(odkaz(plan.id, adresa(plan.id)), el("span", "odd", "›"));
-      const posledne = el("span", "aktualne", jedlo ? jedlo.jedlo.nazov : plan.id);
+      const posledne = el("span", "aktualne", jedlo ? nazovJedla(jedlo) : plan.id);
       posledne.setAttribute("aria-current", "page");
       casti.push(posledne);
     }
     nav.hidden = casti.length === 0;
     nav.replaceChildren(...casti);
-    this.$("#plan-nadpis").textContent = plan ? plan.id : "Plánovač jedál";
-    this.$("#plan-podtitul").textContent = plan
-      ? `${plan.jedla.length} ${jedal(plan.jedla.length)}. Celý plán ukáže suroviny všetkých jedál naraz, klik na jedlo len jeho.`
-      : "Každý plán je priečinok v src/data/plany, každé jedlo v ňom samostatný JSON súbor. Suroviny jedál sú v strome potravín zelené.";
+    this.$("#plan-nadpis").textContent = plan ? plan.id : t.planovac.nadpis;
+    this.$("#plan-podtitul").textContent = plan ? t.planovac.podtitulPlan(plan.jedla.length) : t.planovac.podtitul;
   }
 
   /** Zoznam plánov. */
   private zoznam(): void {
     const zoznam = this.$("#plan-zoznam");
     if (this.plany.length === 0) {
-      zoznam.replaceChildren(
-        el("p", "info", "Zatiaľ tu nie je žiadny plán. Vytvor priečinok src/data/plany/<plán>/ a v ňom JSON súbor pre každé jedlo."),
-      );
+      zoznam.replaceChildren(el("p", "info", t.planovac.ziadnyPlan));
       return;
     }
     zoznam.replaceChildren(
       ...this.plany.map((p) => {
         const n = this.vyber(p.jedla, true).potraviny.size;
-        return this.karta(adresa(p.id), p.id, `${p.jedla.length} ${jedal(p.jedla.length)} · ${n} ${sklon(n)}`, p.jedla.map((j) => j.jedlo.nazov).join(", "), false);
+        return this.karta(adresa(p.id), p.id, `${p.jedla.length} ${t.planovac.jedla(p.jedla.length)} · ${n} ${sklon(n)}`, p.jedla.map(nazovJedla).join(", "), false);
       }),
     );
   }
@@ -252,17 +256,18 @@ export class Planovac {
     const v = jedlo ? this.vyber([jedlo], false) : suhrn;
 
     this.$("#plan-jedla").replaceChildren(
-      this.karta(adresa(plan.id), "Celý plán", `${plan.jedla.length} ${jedal(plan.jedla.length)} · ${suhrn.potraviny.size} ${sklon(suhrn.potraviny.size)}`, "Suroviny všetkých jedál v jednom grafe", !jedlo, "suhrn"),
+      this.karta(adresa(plan.id), t.planovac.celyPlan, `${plan.jedla.length} ${t.planovac.jedla(plan.jedla.length)} · ${suhrn.potraviny.size} ${sklon(suhrn.potraviny.size)}`, t.planovac.celyPlanPopis, !jedlo, "suhrn"),
       ...plan.jedla.map((j) => {
         const n = this.vyber([j], false).potraviny.size;
-        return this.karta(adresa(plan.id, j.id), j.jedlo.nazov, `${j.jedlo.suroviny.length} ${sklonuj(j.jedlo.suroviny.length, ["surovina", "suroviny", "surovín"])} · ${n} ${sklon(n)}`, j.jedlo.popis ?? "", j === jedlo);
+        const s = j.jedlo.suroviny.length;
+        return this.karta(adresa(plan.id, j.id), nazovJedla(j), `${s} ${t.planovac.suroviny(s)} · ${n} ${sklon(n)}`, j.jedlo.popis === undefined ? "" : tx(j.jedlo.popis), j === jedlo);
       }),
     );
 
-    this.$("#vyber-nadpis").textContent = jedlo ? jedlo.jedlo.nazov : "Celý plán";
-    const popis = jedlo ? (jedlo.jedlo.popis ?? "") : `Všetky suroviny ${plan.jedla.length} ${sklonuj(plan.jedla.length, ["jedla", "jedál", "jedál"])} plánu ${plan.id}.`;
+    this.$("#vyber-nadpis").textContent = jedlo ? nazovJedla(jedlo) : t.planovac.celyPlan;
+    const popis = jedlo ? (jedlo.jedlo.popis === undefined ? "" : tx(jedlo.jedlo.popis)) : t.planovac.vsetkySuroviny(plan.jedla.length, plan.id);
     this.$("#vyber-popis").textContent = popis;
-    this.$("#legenda-v").textContent = jedlo ? "v jedle" : "v pláne";
+    this.$("#legenda-v").textContent = jedlo ? t.planovac.vJedle : t.planovac.vPlane;
     this.statistiky(v);
     this.suroviny(v);
 
@@ -300,16 +305,19 @@ export class Planovac {
     }
     /** [názov, hodnota, CSS trieda] */
     const polozky: [string, number, string?][] = [
-      ["potraviny", v.potraviny.size, "zelena"],
-      ["druhy", druhy.size],
-      ["čeľade", celade.size],
+      [t.planovac.statPotraviny, v.potraviny.size, "zelena"],
+      [t.planovac.statDruhy, druhy.size],
+      [t.planovac.statCelade, celade.size],
     ];
     const rise = [...risePocty].sort(([a], [b]) => RISE.indexOf(a) - RISE.indexOf(b));
-    rise.forEach(([r, n], i) => polozky.push([r, n, `risa risa-${Math.max(0, RISE.indexOf(r))}${i === 0 ? " prva-risa" : ""}`]));
+    rise.forEach(([r, n], i) => {
+      const nazov = this.koren.find((u) => u.kluc === r)?.nazov ?? r;
+      polozky.push([nazov, n, `risa risa-${indexRise(r)}${i === 0 ? " prva-risa" : ""}`]);
+    });
     this.$("#vyber-statistiky").replaceChildren(
       ...polozky.map(([k, h, trieda]) => {
         const w = el("div", trieda);
-        w.append(el("dt", undefined, k), el("dd", undefined, String(h)));
+        w.append(el("dt", undefined, k), el("dd", undefined, cislo(h)));
         return w;
       }),
     );
@@ -322,18 +330,20 @@ export class Planovac {
       const li = el("li", trieda);
       li.append(el("span", "bod"), el("span", "s-nazov", nazov), el("span", "s-mnozstvo", vpravo));
       if (pod) li.append(el("span", "s-pod", pod));
-      const skryta = trieda === "skryta" ? "V grafe ju skrýva filter dostupnosti." : "";
+      const skryta = trieda === "skryta" ? t.planovac.skrytaFiltrom : "";
       if (titul || skryta) li.title = [titul, skryta].filter(Boolean).join("\n");
       return li;
     };
+    const mnozstvo = (s: Surovina): string => (s.mnozstvo === undefined ? "" : tx(s.mnozstvo));
     const nezname = v.nezname.map(({ s }) =>
-      riadok(s.forma ?? s.potravina, `„${s.potravina}“ nie je v strome`, s.mnozstvo ?? "", "chyba"),
+      riadok(s.forma === undefined ? s.potravina : tx(s.forma), t.planovac.nieJeVStrome(s.potravina), mnozstvo(s), "chyba"),
     );
     if (!v.suhrn) {
       ol.replaceChildren(
         ...v.jedla.flatMap((j) => j.jedlo.suroviny).flatMap((s) => {
-          if (!this.listy.has(s.potravina)) return [];
-          return [riadok(s.forma ?? s.potravina, s.forma ? s.potravina : "", s.mnozstvo ?? "", this.skryta(s.potravina))];
+          const u = this.listy.get(s.potravina);
+          if (!u) return [];
+          return [riadok(s.forma === undefined ? u.nazov : tx(s.forma), s.forma === undefined ? "" : u.nazov, mnozstvo(s), this.skryta(s.potravina))];
         }),
         ...nezname,
       );
@@ -341,17 +351,18 @@ export class Planovac {
     }
     const potraviny = [...v.potraviny].map(([id, pouzitia]) => {
       const jedla = [...new Set(pouzitia.map((p) => p.jedlo))];
-      return { nazov: id.split(SEP).at(-1) ?? id, jedla, pouzitia };
+      const kluc = pouzitia[0]?.s.potravina ?? id;
+      return { kluc, nazov: this.listy.get(kluc)?.nazov ?? kluc, jedla, pouzitia };
     });
-    potraviny.sort((a, b) => b.jedla.length - a.jedla.length || a.nazov.localeCompare(b.nazov, "sk"));
+    potraviny.sort((a, b) => b.jedla.length - a.jedla.length || abeceda(a.nazov, b.nazov));
     ol.replaceChildren(
       ...potraviny.map((p) =>
         riadok(
           p.nazov,
-          p.jedla.map((j) => j.jedlo.nazov).join(", "),
+          p.jedla.map(nazovJedla).join(", "),
           p.jedla.length > 1 ? `${p.jedla.length}×` : "",
-          this.skryta(p.nazov),
-          p.pouzitia.map(({ s, jedlo }) => `${jedlo.jedlo.nazov}: ${formaAMnozstvo(s) || s.potravina}`).join("\n"),
+          this.skryta(p.kluc),
+          p.pouzitia.map(({ s, jedlo }) => `${nazovJedla(jedlo)}: ${formaAMnozstvo(s) || p.nazov}`).join("\n"),
         ),
       ),
       ...nezname,
@@ -367,7 +378,7 @@ export class Planovac {
   private zvyraznenie(v: Vyber): Zvyraznenie {
     return {
       listy: new Set(v.potraviny.keys()),
-      popis: v.suhrn ? "v pláne" : "v jedle",
+      popis: v.suhrn ? t.planovac.vPlane : t.planovac.vJedle,
       detail: (id) => this.detailPotraviny(v, id),
     };
   }
@@ -375,7 +386,7 @@ export class Planovac {
   /** Text k zvýraznenej potravine: pri jedle forma a množstvo, pri pláne jedlá, v ktorých je. */
   private detailPotraviny(v: Vyber, id: string): string | undefined {
     const pouzitia = v.potraviny.get(id) ?? [];
-    if (v.suhrn) return [...new Set(pouzitia.map((p) => p.jedlo.jedlo.nazov))].join(", ") || undefined;
+    if (v.suhrn) return [...new Set(pouzitia.map((p) => nazovJedla(p.jedlo)))].join(", ") || undefined;
     return pouzitia.map((p) => formaAMnozstvo(p.s)).filter(Boolean).join("; ") || undefined;
   }
 
@@ -410,21 +421,21 @@ export class Planovac {
           .filter(Boolean)
           .join("; ");
         if (detail) row.append(el("span", "s-detail", detail));
-        const chip = el("span", `chip ${TRIEDA[u.dostupnost]}`, u.dostupnost);
-        chip.title = DOSTUPNOST[u.dostupnost];
+        const chip = el("span", `chip ${TRIEDA[u.dostupnost]}`, t.dostupnost[u.dostupnost]);
+        chip.title = t.dostupnostPopis[u.dostupnost];
         row.append(chip);
         return row;
       }
       const d = el("details", trieda);
       d.dataset["id"] = u.id;
       d.open = this.prepnute.get(u.id) ?? n > 0;
-      if (u.uroven === 0) d.classList.add(`risa-${Math.max(0, RISE.indexOf(u.nazov))}`);
+      if (u.uroven === 0) d.classList.add(`risa-${indexRise(u.kluc)}`);
       if (u.znacka) d.classList.add("znacka-uzol");
       const s = el("summary");
       const nazov = el("span", "nazov");
       if (u.znacka) {
         const z = znacka(u);
-        nazov.append(el("span", u.nazov === ZNACKY.TBD ? "chip tbd" : "znak", z.znak), el("span", "pozn", z.pozn));
+        nazov.append(el("span", u.kluc === ZNACKY.TBD ? "chip tbd" : "znak", z.znak), el("span", "pozn", z.pozn));
       } else {
         nazov.textContent = u.nazov;
       }
@@ -433,8 +444,8 @@ export class Planovac {
       if (vrch) s.title = [...x.retazec, u].map((y) => `${y.nazov} (${nazovUrovne(y)})`).join(" › ");
       const spolu = sucet(x.pocty);
       const p = el("span", "pocet-v");
-      p.title = `${n} z ${spolu} ${sklon(spolu)} ${v.suhrn ? "v pláne" : "v jedle"}`;
-      if (n) p.append(el("b", undefined, String(n)), ` z ${spolu}`);
+      p.title = `${t.zPoctu(n, spolu, sklon(spolu))} ${v.suhrn ? t.planovac.vPlane : t.planovac.vJedle}`;
+      if (n) p.append(el("b", undefined, String(n)), t.zBezCisla(spolu));
       else p.textContent = String(spolu);
       s.append(el("span", "caret"), nazov, uroven, p);
       const deti = el("div", "deti");
