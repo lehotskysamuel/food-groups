@@ -12,11 +12,20 @@ const vite = await createServer({
 });
 try {
   const { strom } = await vite.ssrLoadModule("/src/data/strom.ts");
-  const { skontroluj } = await vite.ssrLoadModule("/src/kontrola.ts");
+  const { skontroluj, skontrolujZjednodusene } = await vite.ssrLoadModule("/src/kontrola.ts");
+  const { zjednodusene, podkategorie, triedy } = await vite.ssrLoadModule("/src/data/zjednodusene.ts");
   const { subory } = await vite.ssrLoadModule("/src/data/plany.ts");
   const { nacitajPlany, nazvyPotravin } = await vite.ssrLoadModule("/src/jedla.ts");
   const chyby = skontroluj(strom);
   if (chyby.length === 0) console.log("Strom je v poriadku.");
+  const chybyZjednodusenych = skontrolujZjednodusene(strom, zjednodusene, podkategorie, triedy);
+  if (chybyZjednodusenych.length === 0) {
+    console.log(
+      `Jednoduchý pohľad je v poriadku (${Object.keys(zjednodusene).length} zjednodušených potravín, ` +
+        `podkategórie v ${Object.keys(podkategorie).length} čeľadiach).`,
+    );
+  }
+  chyby.push(...chybyZjednodusenych);
 
   const { plany, chyby: chybyPlanov } = nacitajPlany(subory, nazvyPotravin(strom));
   if (chybyPlanov.length === 0) {

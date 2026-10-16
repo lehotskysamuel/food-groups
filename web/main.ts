@@ -13,7 +13,7 @@ import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
 import { Kruh } from "./kruh";
 import { Planovac } from "./planovac";
-import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, hlbkyJednoduche, nazovUrovne, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, prepinajPodrobnost, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
 import type { Nastavenia, Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
@@ -24,7 +24,7 @@ const EDIT = import.meta.env.DEV;
 
 // ---------- stav ----------
 
-const nast: Nastavenia = { dost: new Set(PREDVOLENA_DOST), q: "", detail: false };
+const nast: Nastavenia = { dost: new Set(PREDVOLENA_DOST), q: "", podrobnost: "jednoduchy" };
 /** Zbalené uzly. Predvolene je celý strom rozbalený. */
 let zbalene = new Set<string>();
 /** Počas hľadania sa používa samostatná množina, výsledky sú rozbalené. */
@@ -35,6 +35,21 @@ const aktivneZbalene = (): Set<string> => (nast.q ? zbaleneHladanie : zbalene);
 function vnutorne(hranica: number): Set<string> {
   const s = new Set<string>();
   for (const u of vsetky(koren)) if (!u.dostupnost && u.uroven >= hranica) s.add(u.id);
+  return s;
+}
+
+/**
+ * Uzly s deťmi v aktuálnom pohľade (bez hľadania) od hĺbky `od` nižšie (1 = ríša). Jednoduchý pohľad má aj
+ * uzly, ktoré v strome nie sú (ryby, podkategórie), a jeho úrovne sa počítajú podľa hĺbky, nie podľa UROVNE.
+ */
+function vnutornePohladu(od: number): Set<string> {
+  const s = new Set<string>();
+  const prejdi = (v: VUzol, h: number): void => {
+    if (v.deti.length === 0) return;
+    if (h >= od) s.add(v.u.id);
+    for (const d of v.deti) prejdi(d, h + 1);
+  };
+  for (const v of koren.flatMap((u) => zobraz(u, { ...nast, q: "" }))) prejdi(v, 1);
   return s;
 }
 
@@ -67,8 +82,8 @@ function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
   return s;
 }
 
-function dostupnostEl(id: string, d: List): HTMLElement {
-  const chip = el(EDIT ? "button" : "span", `chip ${TRIEDA[d]}`, d);
+function dostupnostEl(id: string, d: List, upravit = EDIT): HTMLElement {
+  const chip = el(upravit ? "button" : "span", `chip ${TRIEDA[d]}`, d);
   chip.title = DOSTUPNOST[d];
   if (chip instanceof HTMLButtonElement) {
     chip.type = "button";
@@ -84,7 +99,15 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
   if (u.dostupnost) {
     const row = el("div", "list");
     row.append(el("span", "bod"), nazovEl(u, v.zhoda));
-    row.append(dostupnostEl(u.id, u.dostupnost));
+    if (v.clenovia) {
+      // Zjednodušená potravina: dostupnosť sa upravuje pri jej potravinách v komplexnom alebo detailnom pohľade.
+      const n = v.clenovia.length;
+      const pozn = el("span", "pozn", `${n} ${sklon(n)}`);
+      pozn.title = v.clenovia.map((c) => c.nazov).join(", ");
+      row.append(pozn, dostupnostEl(u.id, u.dostupnost, false));
+    } else {
+      row.append(dostupnostEl(u.id, u.dostupnost));
+    }
     return row;
   }
   const d = el("details");
@@ -94,15 +117,15 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
   if (u.uroven === 0) d.classList.add(`risa-${Math.max(0, RISE.indexOf(u.nazov))}`);
   const s = el("summary");
   const vrch = v.retazec[0];
-  const nazovUrovne = vrch ? `${UROVNE[vrch.uroven] ?? ""} – ${UROVNE[u.uroven] ?? ""}` : (UROVNE[u.uroven] ?? "");
-  const uroven = el("span", "uroven", nazovUrovne);
-  if (vrch) s.title = [...v.retazec, u].map((x) => `${x.nazov} (${UROVNE[x.uroven] ?? ""})`).join(" › ");
+  const popisUrovne = vrch ? `${nazovUrovne(vrch)} – ${nazovUrovne(u)}` : nazovUrovne(u);
+  const uroven = el("span", "uroven", popisUrovne);
+  if (vrch) s.title = [...v.retazec, u].map((x) => `${x.nazov} (${nazovUrovne(x)})`).join(" › ");
   s.append(el("span", "caret"), nazovEl(u, v.zhoda), uroven, pocetEl(v));
   const deti = el("div", "deti");
   const ciara = el("button", "ciara");
   ciara.type = "button";
   ciara.dataset["nazov"] = u.nazov;
-  ciara.dataset["uroven"] = nazovUrovne;
+  ciara.dataset["uroven"] = popisUrovne;
   ciara.setAttribute("aria-label", `Prejsť na ${u.nazov}`);
   deti.append(ciara);
   for (const c of v.deti) deti.append(uzolEl(c, zb));
@@ -240,6 +263,7 @@ function nastavVsetky(open: boolean): void {
     s.clear();
   } else {
     for (const u of vsetky(koren)) if (!u.dostupnost) s.add(u.id);
+    for (const id of vnutornePohladu(1)) s.add(id);
   }
   stromEl.querySelectorAll("details").forEach((x) => (x.open = open));
 }
@@ -249,25 +273,36 @@ $<HTMLButtonElement>("#zbalit-vsetko").addEventListener("click", () => nastavVse
 
 const poEl = $<HTMLSelectElement>("#rozbalit-po");
 const poVyzva = poEl.options[0] as HTMLOptionElement;
-/** Jednoduchý pohľad nezobrazuje úrovne medzi druhom a potravinou, preto ich neponúka. */
+/**
+ * Ponúka len úrovne, ktoré pohľad zobrazuje (komplexný nezobrazuje úrovne medzi druhom a potravinou).
+ * Jednoduchý pohľad má úrovne podľa hĺbky (hodnota „h3“), lebo ríše majú rôzne úrovne.
+ */
 function naplnUrovne(): void {
   poEl.replaceChildren(poVyzva);
+  if (nast.podrobnost === "jednoduchy") {
+    hlbkyJednoduche().forEach((nazvy, i) => {
+      const o = el("option", undefined, `${i + 2}. úroveň: ${nazvy}`);
+      o.value = `h${i + 2}`;
+      poEl.append(o);
+    });
+    return;
+  }
   UROVNE.forEach((nazov, i) => {
-    if (i === 0 || (!nast.detail && i > DRUH && nazov !== "potravina")) return;
+    if (i === 0 || (nast.podrobnost === "komplexny" && i > DRUH && nazov !== "potravina")) return;
     const o = el("option", undefined, nazov);
     o.value = String(i);
     poEl.append(o);
   });
 }
 poEl.addEventListener("change", () => {
-  const hranica = Number(poEl.value);
+  const hodnota = poEl.value;
   poEl.value = "";
-  if (!hranica) return;
+  if (!hodnota) return;
   if (nast.q) {
     hladatEl.value = "";
     nast.q = "";
   }
-  zbalene = vnutorne(hranica);
+  zbalene = hodnota.startsWith("h") ? vnutornePohladu(Number(hodnota.slice(1))) : vnutorne(Number(hodnota));
   vykresli();
 });
 
@@ -294,9 +329,8 @@ prepinajDostupnosti($("#stranka-strom .dostupnosti"), nast.dost, (dost) => {
   vykresli();
 });
 
-const detailEl = $<HTMLInputElement>("#detailny");
-detailEl.addEventListener("change", () => {
-  nast.detail = detailEl.checked;
+prepinajPodrobnost($<HTMLDivElement>("#podrobnost"), nast.podrobnost, (p) => {
+  nast.podrobnost = p;
   naplnUrovne();
   vykresli();
 });
@@ -404,7 +438,6 @@ if (EDIT) {
 
 // ---------- štart ----------
 
-detailEl.checked = nast.detail;
 naplnUrovne();
 statistiky();
 trasa();

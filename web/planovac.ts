@@ -10,8 +10,8 @@ import { DOSTUPNOST, UROVNE, ZNACKY } from "../src/strom.types";
 import type { List } from "../src/strom.types";
 import { Kruh } from "./kruh";
 import type { Zvyraznenie } from "./kruh";
-import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, nazovUrovne, prepinajDostupnosti, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
-import type { Uzol, VUzol } from "./spolocne";
+import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, nazovUrovne, prepinajDostupnosti, prepinajPodrobnost, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import type { Podrobnost, Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
 
@@ -44,9 +44,9 @@ const formaAMnozstvo = (s: Surovina): string => [s.forma, s.mnozstvo].filter(Boo
 
 export class Planovac {
   private koren: readonly Uzol[] = [];
-  /** Pohľad na celý strom: jednoduchý alebo detailný, s filtrom dostupnosti, rovnako ako na stránke Strom potravín. */
+  /** Pohľad na celý strom: jednoduchý, komplexný alebo detailný, s filtrom dostupnosti, rovnako ako na stránke Strom potravín. */
   private pohlad: VUzol[] = [];
-  private detailny = false;
+  private podrobnost: Podrobnost = "jednoduchy";
   private dost: ReadonlySet<List> = new Set(PREDVOLENA_DOST);
   /** Názov potraviny → list stromu. */
   private listy = new Map<string, Uzol>();
@@ -92,10 +92,8 @@ export class Planovac {
       this.pohlad = this.pohladStromu();
       this.vykresli();
     });
-    const detailEl = this.$<HTMLInputElement>("#plan-detailny");
-    detailEl.checked = this.detailny;
-    detailEl.addEventListener("change", () => {
-      this.detailny = detailEl.checked;
+    prepinajPodrobnost(this.$<HTMLDivElement>("#plan-podrobnost"), this.podrobnost, (p) => {
+      this.podrobnost = p;
       this.pohlad = this.pohladStromu();
       this.vykresli();
     });
@@ -144,7 +142,7 @@ export class Planovac {
   }
 
   private pohladStromu(): VUzol[] {
-    return this.koren.flatMap((u) => zobraz(u, { dost: this.dost, q: "", detail: this.detailny }));
+    return this.koren.flatMap((u) => zobraz(u, { dost: this.dost, q: "", podrobnost: this.podrobnost }));
   }
 
   private prepocitaj(): void {
@@ -385,11 +383,13 @@ export class Planovac {
 
   private strom(v: Vyber): void {
     const listy = new Set(v.potraviny.keys());
+    /** Potraviny jedla (plánu), ktoré list zobrazuje; zjednodušená potravina ich môže mať viac. */
+    const vJedle = (x: VUzol): readonly Uzol[] => (x.clenovia ?? [x.u]).filter((c) => listy.has(c.id));
     const pocty = new Map<VUzol, number>();
     const pocet = (x: VUzol): number => {
       let n = pocty.get(x);
       if (n === undefined) {
-        n = x.deti.length ? x.deti.reduce((a, d) => a + pocet(d), 0) : listy.has(x.u.id) ? 1 : 0;
+        n = x.deti.length ? x.deti.reduce((a, d) => a + pocet(d), 0) : vJedle(x).length ? 1 : 0;
         pocty.set(x, n);
       }
       return n;
@@ -401,7 +401,14 @@ export class Planovac {
       if (u.dostupnost) {
         const row = el("div", `list ${trieda}`);
         row.append(el("span", "bod"), el("span", "nazov", u.nazov));
-        const detail = n ? this.detailPotraviny(v, u.id) : undefined;
+        if (x.clenovia) row.title = x.clenovia.map((c) => c.nazov).join(", ");
+        const detail = vJedle(x)
+          .map((c) => {
+            const t = this.detailPotraviny(v, c.id);
+            return x.clenovia && t ? `${c.nazov}: ${t}` : t;
+          })
+          .filter(Boolean)
+          .join("; ");
         if (detail) row.append(el("span", "s-detail", detail));
         const chip = el("span", `chip ${TRIEDA[u.dostupnost]}`, u.dostupnost);
         chip.title = DOSTUPNOST[u.dostupnost];

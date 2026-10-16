@@ -503,6 +503,7 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 }
 .kruh-bublina .pata .pocet { margin: 0; color: var(--ink); }
 .kruh-bublina .rada { margin-left: auto; padding-left: 10px; font-size: 11px; }
+.kruh-bublina .clenovia { margin: 6px 0 0; font: 400 12.5px/1.4 var(--sans); color: var(--muted); }
 .kruh-bublina .detail { margin: 6px 0 0; font: 400 13px/1.4 var(--sans); color: var(--v-jedle-ink); }
 
 /* ---------- legenda ---------- */

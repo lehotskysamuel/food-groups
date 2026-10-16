@@ -8,7 +8,7 @@ vlastného jedálnička: čím širšie pokrytie stromu, tým diverzifikovanejš
 ```
 npm install          # jednorazovo
 npm run typecheck    # overí typy a tvar stromu (tsc --noEmit)
-npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni a že jedlá odkazujú na potraviny zo stromu
+npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni, že jedlá odkazujú na potraviny zo stromu a dáta jednoduchého pohľadu
 npm run dev          # web v edit móde na http://localhost:5173 (číta aj zapisuje src/data/strom.ts)
 npm run build        # web vo view móde: jeden súbor dist/index.html, otvorí sa aj bez servera
 npm run preview      # dist/ cez lokálny server (nepovinné)
@@ -52,15 +52,19 @@ vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages p
 - `src/strom.types.ts` – typy pre 17 úrovní stromu (`U01_Risa` … `U17_Potravina`), značky,
   názvy úrovní a typ `Potravina<T>` (zjednotenie názvov všetkých listov stromu)
 - `src/data/strom.ts` – samotný strom (`as const satisfies Strom`), zdroj pravdy
+- `src/data/zjednodusene.ts` – dáta jednoduchého pohľadu (pozri [Jednoduchý pohľad](#jednoduchý-pohľad))
 - `src/kontrola.ts` – kontroly, ktoré typy nezachytia (`npm run kontrola` cez `scripts/kontrola.mjs`)
 - `src/uprava.ts` – prepnutie jedného listu v texte `strom.ts` (používa ho edit mód, `vite.config.ts`)
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
   rozbalenie po zvolenú úroveň, hľadanie, prepínače bežné / menej bežné / exotické (každý sa zapína
-  a vypína zvlášť, exotické sú predvolene vypnuté). Predvolený je jednoduchý pohľad (preskočí uzly `-`, druh `*` a úrovne pod druhom,
-  zlúči reťaze uzlov s jediným dieťaťom), prepínač **Detailný pohľad** zobrazí celý strom bez skrývania.
+  a vypína zvlášť, exotické sú predvolene vypnuté). Prepínač **Jednoduchý / Komplexný / Detailný** vyberie pohľad:
+  predvolený [jednoduchý](#jednoduchý-pohľad) má najviac štyri úrovne a zjednodušené potraviny, komplexný
+  ukáže celý strom bez uzlov `-`, druhu `*` a úrovní pod druhom a zlúči reťaze uzlov s jediným dieťaťom,
+  detailný ukáže celý strom bez skrývania.
   Prepínač **Strom / Kruh** ukáže ten istý pohľad ako viacúrovňový kruhový diagram (`web/kruh.ts`, adresa `#kruh`): prstenec = úroveň, veľkosť výseku =
   počet potravín, hover ukáže výsek so všetkými predkami, klik priblíži, klik do stredu oddiali o úroveň,
-  tlačidlo **Celý graf** (alebo Home) vráti celý graf
+  tlačidlo **Celý graf** (alebo Home) vráti celý graf. Štítok výseku je radiálne alebo pozdĺž oblúka, podľa toho,
+  čo je bližšie k vodorovnému textu
 - `src/jedla.ts` – typy `Jedlo` a `Surovina` a načítanie a kontrola plánov jedál
 - `src/data/plany/<plán>/<jedlo>.json` – plány jedál (pozri [Plánovač jedál](#plánovač-jedál)), `src/data/plany.ts` ich načíta
 - `web/planovac.ts` – stránka Plánovač jedál (`#planovac`)
@@ -119,10 +123,38 @@ v červenom rámčeku.
 Na stránke: zoznam plánov → klik na plán ukáže jeho jedlá a **Celý plán** (súhrn surovín všetkých jedál) → klik
 na jedlo ukáže len jeho suroviny. Graf sa dá prepnúť medzi **Kruh** a **Strom**: potraviny v jedle (alebo v pláne)
 a vetvy, ktoré k nim vedú, sú zelené, ostatné potraviny stromu sivé. V strome sú predvolene rozbalené len vetvy
-so surovinami. Prepínače **Bežné / Menej bežné / Exotické** (exotické predvolene vypnuté) a **Detailný pohľad**
-fungujú v oboch grafoch rovnako ako na stránke Strom potravín. Surovina, ktorú filter dostupnosti skryje,
+so surovinami. Prepínače **Bežné / Menej bežné / Exotické** (exotické predvolene vypnuté) a **Jednoduchý / Komplexný /
+Detailný** fungujú v oboch grafoch rovnako ako na stránke Strom potravín. Surovina, ktorú filter dostupnosti skryje,
 je v zozname surovín vyblednutá. Nad grafom je počet rôznych potravín, druhov a čeľadí, teda miera diverzity
 jedla či plánu.
+
+## Jednoduchý pohľad
+
+Predvolený pohľad na stránke stromu aj v plánovači. Má najviac štyri úrovne:
+
+- **živočíchy** › trieda (cicavce, vtáky, ryby…) › čeľaď › potravina
+- **rastliny** › čeľaď › podkategória (jadroviny, hlúbová zelenina, bylinky…) › potravina
+- **huby, chromisty, baktérie** › čeľaď › potravina
+
+Posledná úroveň je **zjednodušená potravina**: všetky hrušky sú jedna hruška, všetky kusy bravčového mäsa
+jedno bravčové mäso. Zjednodušená potravina má dostupnosť svojej najdostupnejšej potraviny, počíta sa ako
+jedna a v bubline kruhu (v strome pri počte) vypíše potraviny, ktoré zastupuje. Dostupnosť sa v edit móde
+mení len v komplexnom alebo detailnom pohľade, pri jednotlivých potravinách.
+
+Všetko je v `src/data/zjednodusene.ts`:
+
+- `zjednodusene` – názov → potraviny stromu. Zlučujú sa odrody, farby a tvary toho istého ovocia či zeleniny,
+  príbuzné druhy s rovnakým bežným menom (losos, treska), kusy mäsa jedného zvieraťa a jeho vnútornosti.
+  Rôzne zeleniny z jedného druhu (kapusta, kel, kaleráb, brokolica, karfiol) a iné jedlé časti či štádiá
+  (klíčky, vňať, kôra, tuk, mlieko, vajcia, ikry) zostávajú samostatné. Potravina, ktorá tu nie je, sa ukáže
+  pod vlastným názvom.
+- `triedy` – triedy živočíchov zobrazené pod jedným názvom (kostnaté a chrupkokostnaté → ryby).
+- `podkategorie` – čeľaď → kuchynská podkategória → zjednodušené potraviny. Rovnaký názov podkategórie
+  v rôznych čeľadiach znamená to isté (orechy sú v ružovitých, orechovitých aj bôbovitých).
+
+`npm run kontrola` overí, že každá potravina je najviac v jednej zjednodušenej potravine a všetky jej
+potraviny sú v tej istej čeľadi, že každá potravina rastlín je práve v jednej podkategórii svojej čeľade
+a že `triedy` obsahujú len triedy zo stromu. Novú potravinu rastlín treba preto zaradiť aj do podkategórie.
 
 ## Model
 
@@ -315,7 +347,8 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 `npm run typecheck` stráži **tvar** stromu (hĺbka 17, list = `"bežné"` / `"menej bežné"` / `"exotické"`, značka nie je názvom
 potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
 potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
-úrovni (napr. tribus -eae nie je v slote podčeľade). Obe kontroly bežia aj v CI pred nasadením.
+úrovni (napr. tribus -eae nie je v slote podčeľade), a pravidlá [jednoduchého pohľadu](#jednoduchý-pohľad).
+Obe kontroly bežia aj v CI pred nasadením.
 **Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (október 2026): 261 bežné, 84 menej
 bežné, 95 exotické. Pri 97 potravinách platí ručná úprava v edit móde, ktorá má prednosť
 pred revíziou. Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland,

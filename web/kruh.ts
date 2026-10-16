@@ -275,7 +275,7 @@ export class Kruh {
         risa: Math.max(0, RISE.indexOf(kral)),
         kral,
         spodok: hlbka,
-        zvyraznene: v.deti.length === 0 && this.zvyraznenie?.listy.has(v.u.id) ? 1 : 0,
+        zvyraznene: v.deti.length === 0 && this.zvyraznenePotraviny(v).length ? 1 : 0,
         farba: "",
         tmavyText: false,
       };
@@ -330,7 +330,7 @@ export class Kruh {
       const t = clamp((s.hlbka - h0) / prstence, 0, 1);
       let [L, C, H] = zaklad[s.risa] ?? zaklad[0] ?? [0.55, 0.08, 170];
       if (!this.zvyraznenie) {
-        H += ((this.poloha.get(s.v.u.id) ?? 0.5) - 0.5) * (this.rozptyl.get(s.kral) ?? 0);
+        H += (this.polohaUzla(s.v) - 0.5) * (this.rozptyl.get(s.kral) ?? 0);
         L = clamp(L + (tmave ? -0.3 : 0.33) * t, 0.3, 0.88);
         C *= 1.15 * (1 - 0.3 * t);
       } else if (s.zvyraznene) {
@@ -410,7 +410,12 @@ export class Kruh {
     return this.meradlo.measureText(text).width;
   }
 
-  /** Štítok sa kreslí len tam, kde sa celý zmestí: pozdĺž oblúka, inak radiálne. */
+  /**
+   * Štítok sa kreslí len tam, kde sa celý zmestí, radiálne alebo pozdĺž oblúka, podľa toho, ktorý text je
+   * bližšie k vodorovnému. Radiálny je vodorovný pri 3 a 9 hodinách, pozdĺž oblúka pri 12 a 6. Text pozdĺž
+   * oblúka sa preto vo výseku posunie čo najbližšie k 12 alebo 6 hodinám; ak by aj tak bol naklonený o viac
+   * ako 45° (na boku kruhu by bol takmer zvislý), pozdĺž oblúka sa nekreslí.
+   */
   private stitky(): void {
     this.texty.clear();
     if (!this.R) return;
@@ -429,17 +434,35 @@ export class Kruh {
       const h = pismo.px;
       const uhol = t.a1 - t.a0;
       const rm = (t.r0 + t.r1) / 2;
-      // Celý prstenec má štítok hore.
-      const am = uhol >= TAU - 1e-6 ? 0 : (t.a0 + t.a1) / 2;
+      const am = (t.a0 + t.a1) / 2;
       const mimo = this.zvyraznenie && !s.zvyraznene ? " mimo" : "";
       const e = svg("text", `${pismo === PISMO.risa ? "risa " : ""}${s.tmavyText ? "tmavy" : "svetly"}${mimo}`);
       e.dataset["i"] = String(s.i);
-      if (h + 4 <= hrubka && w + 10 <= rm * uhol) {
+      /** Pozdĺž oblúka: stred textu čo najbližšie k vodorovnej polohe, ktorá sa ešte zmestí do výseku. */
+      const oblukStred = (): number | undefined => {
+        if (h + 4 > hrubka || w + 10 > rm * uhol) return undefined;
+        // Celý prstenec má štítok hore.
+        if (uhol >= TAU - 1e-6) return 0;
+        const polText = (w + 10) / rm / 2;
+        const [od, po] = [t.a0 + polText, t.a1 - polText];
+        const stred = [0, TAU, Math.PI]
+          .map((a) => clamp(a, od, po))
+          .reduce((a, b) => (Math.abs(Math.sin(b)) < Math.abs(Math.sin(a)) - 1e-9 ? b : a));
+        return Math.abs(Math.sin(stred)) <= Math.SQRT1_2 ? stred : undefined;
+      };
+      const radialne = w + 10 <= hrubka && h + 2 <= t.r0 * uhol;
+      const stredOblukom = oblukStred();
+      // Náklon od vodorovnej (0 = vodorovne, 1 = zvislo).
+      const ao = stredOblukom !== undefined && (!radialne || Math.abs(Math.sin(stredOblukom)) < Math.abs(Math.cos(am)))
+        ? stredOblukom
+        : undefined;
+      if (ao !== undefined) {
         // Pozdĺž oblúka; v dolnej polovici opačným smerom, aby text nebol hore nohami.
-        const dole = am > Math.PI / 2 && am < (3 * Math.PI) / 2;
+        const dole = ao > Math.PI / 2 && ao < (3 * Math.PI) / 2;
         const r = rm + (dole ? 0.35 : -0.35) * h;
-        const pol = Math.min(uhol, TAU - 0.02) / 2;
-        const [z, k] = dole ? [am + pol, am - pol] : [am - pol, am + pol];
+        // Najdlhší oblúk súmerný okolo stredu textu, ktorý je celý vo výseku (startOffset 50 % = stred).
+        const pol = uhol >= TAU - 1e-6 ? Math.PI - 0.01 : Math.min(ao - t.a0, t.a1 - ao);
+        const [z, k] = dole ? [ao + pol, ao - pol] : [ao - pol, ao + pol];
         const oblukText = svg("path");
         oblukText.id = `kruh-t${s.i}`;
         oblukText.setAttribute(
@@ -452,7 +475,7 @@ export class Kruh {
         tp.setAttribute("startOffset", "50%");
         tp.textContent = text;
         e.append(tp);
-      } else if (w + 10 <= hrubka && h + 2 <= t.r0 * uhol) {
+      } else if (radialne) {
         // Radiálne, čitateľné zľava doprava na oboch stranách.
         const st = (am * 180) / Math.PI;
         const otoc = am > Math.PI ? st + 90 : st - 90;
@@ -714,7 +737,36 @@ export class Kruh {
       pata.append(pocetEl(s.v), el("span", undefined, z ? `${sklon(n)}, ${s.zvyraznene} ${z.popis}` : sklon(n)));
       if (s.deti.length) pata.append(el("span", "rada", "klik priblíži"));
     }
-    const detail = d && z && s.zvyraznene ? z.detail?.(s.v.u.id) : undefined;
-    this.bublina.replaceChildren(ol, pata, ...(detail ? [el("p", "detail", detail)] : []));
+    const clenovia = s.v.clenovia ? [el("p", "clenovia", s.v.clenovia.map((c) => c.nazov).join(", "))] : [];
+    const detail = d && z && s.zvyraznene
+      ? this.zvyraznenePotraviny(s.v)
+          .map((c) => {
+            const t = z.detail?.(c.id);
+            return s.v.clenovia && t ? `${c.nazov}: ${t}` : t;
+          })
+          .filter(Boolean)
+          .join("; ")
+      : undefined;
+    this.bublina.replaceChildren(ol, ...clenovia, pata, ...(detail ? [el("p", "detail", detail)] : []));
+  }
+
+  /**
+   * Poloha uzla v ríši (0–1) pre odtieň. Uzol, ktorý v strome nie je (zjednodušená potravina, ryby,
+   * podkategória), má polohu stredu svojich potravín alebo detí.
+   */
+  private polohaUzla(v: VUzol): number {
+    const p = this.poloha.get(v.u.id);
+    if (p !== undefined) return p;
+    const prvy = v.clenovia?.[0] ?? v.deti[0];
+    const posledny = v.clenovia?.at(-1) ?? v.deti.at(-1);
+    if (!prvy || !posledny) return 0.5;
+    const poloha = (x: Uzol | VUzol): number => ("u" in x ? this.polohaUzla(x) : (this.poloha.get(x.id) ?? 0.5));
+    return (poloha(prvy) + poloha(posledny)) / 2;
+  }
+
+  /** Zvýraznené potraviny stromu, ktoré list zobrazuje (zjednodušená potravina ich môže mať viac). */
+  private zvyraznenePotraviny(v: VUzol): readonly Uzol[] {
+    const z = this.zvyraznenie;
+    return z ? (v.clenovia ?? [v.u]).filter((c) => z.listy.has(c.id)) : [];
   }
 }
