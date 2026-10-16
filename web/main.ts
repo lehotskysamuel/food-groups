@@ -13,8 +13,8 @@ import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
 import { Kruh } from "./kruh";
 import { Planovac } from "./planovac";
-import { DRUH, RISE, SEP, TRIEDA, el, norm, nulovePocty, pocetEl, postav, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
-import type { Dost, Nastavenia, Uzol, VUzol } from "./spolocne";
+import { DRUH, RISE, SEP, TRIEDA, el, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import type { Nastavenia, Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
 
@@ -24,7 +24,7 @@ const EDIT = import.meta.env.DEV;
 
 // ---------- stav ----------
 
-const nast: Nastavenia = { dost: "vsetko", q: "", detail: false };
+const nast: Nastavenia = { dost: new Set(DOSTUPNOSTI), q: "", detail: false };
 /** Zbalené uzly. Predvolene je celý strom rozbalený. */
 let zbalene = new Set<string>();
 /** Počas hľadania sa používa samostatná množina, výsledky sú rozbalené. */
@@ -125,7 +125,7 @@ function vykresli(): void {
     infoEl.textContent = nast.q
       ? `Pre „${hladatEl.value.trim()}“ sa nenašla žiadna potravina ani taxón.`
       : "Žiadna potravina nezodpovedá filtru.";
-  } else if (nast.q || nast.dost !== "vsetko") {
+  } else if (nast.q || nast.dost.size < DOSTUPNOSTI.length) {
     infoEl.textContent = `Zobrazených ${spolu} ${sklon(spolu)}.`;
   } else {
     infoEl.textContent = "";
@@ -289,17 +289,10 @@ hladatEl.addEventListener("keydown", (e) => {
   }
 });
 
-const dostTlacidla = document.querySelectorAll<HTMLButtonElement>("[data-dost]");
-function oznacDost(): void {
-  dostTlacidla.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset["dost"] === nast.dost)));
-}
-dostTlacidla.forEach((b) =>
-  b.addEventListener("click", () => {
-    nast.dost = (b.dataset["dost"] ?? "vsetko") as Dost;
-    oznacDost();
-    vykresli();
-  }),
-);
+prepinajDostupnosti($("#stranka-strom .dostupnosti"), nast.dost, (dost) => {
+  nast.dost = dost;
+  vykresli();
+});
 
 const detailEl = $<HTMLInputElement>("#detailny");
 detailEl.addEventListener("change", () => {
@@ -413,6 +406,5 @@ if (EDIT) {
 
 detailEl.checked = nast.detail;
 naplnUrovne();
-oznacDost();
 statistiky();
 trasa();

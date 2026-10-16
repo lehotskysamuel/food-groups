@@ -6,10 +6,11 @@
  */
 import { nacitajPlany } from "../src/jedla";
 import type { NacitaneJedlo, Plan, Surovina } from "../src/jedla";
-import { DOSTUPNOST, UROVNE } from "../src/strom.types";
+import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
+import type { List } from "../src/strom.types";
 import { Kruh } from "./kruh";
 import type { Zvyraznenie } from "./kruh";
-import { DRUH, RISE, SEP, TRIEDA, el, nazovUrovne, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import { DRUH, RISE, SEP, TRIEDA, el, nazovUrovne, prepinajDostupnosti, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
 import type { Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
@@ -43,10 +44,12 @@ const formaAMnozstvo = (s: Surovina): string => [s.forma, s.mnozstvo].filter(Boo
 
 export class Planovac {
   private koren: readonly Uzol[] = [];
-  /** Jednoduchý pohľad na celý strom (rovnaký ako predvolený pohľad stránky Strom potravín). */
+  /** Pohľad na celý strom: jednoduchý alebo detailný, s filtrom dostupnosti, rovnako ako na stránke Strom potravín. */
   private pohlad: VUzol[] = [];
-  /** Názov potraviny → id listu. */
-  private idPotraviny = new Map<string, string>();
+  private detailny = false;
+  private dost: ReadonlySet<List> = new Set(DOSTUPNOSTI);
+  /** Názov potraviny → list stromu. */
+  private listy = new Map<string, Uzol>();
   private subory: Readonly<Record<string, unknown>> = {};
   private plany: Plan[] = [];
   private chyby: string[] = [];
@@ -83,6 +86,18 @@ export class Planovac {
     this.$<HTMLButtonElement>("#plan-rozbalit").addEventListener("click", () => {
       for (const u of vsetky(this.koren)) if (!u.dostupnost) this.prepnute.set(u.id, true);
       this.stromEl.querySelectorAll("details").forEach((d) => (d.open = true));
+    });
+    prepinajDostupnosti(this.$(".dostupnosti"), this.dost, (dost) => {
+      this.dost = dost;
+      this.pohlad = this.pohladStromu();
+      this.vykresli();
+    });
+    const detailEl = this.$<HTMLInputElement>("#plan-detailny");
+    detailEl.checked = this.detailny;
+    detailEl.addEventListener("change", () => {
+      this.detailny = detailEl.checked;
+      this.pohlad = this.pohladStromu();
+      this.vykresli();
     });
     this.$<HTMLButtonElement>("#plan-len-suroviny").addEventListener("click", () => {
       this.prepnute.clear();
@@ -128,11 +143,15 @@ export class Planovac {
     this.vykresli();
   }
 
+  private pohladStromu(): VUzol[] {
+    return this.koren.flatMap((u) => zobraz(u, { dost: this.dost, q: "", detail: this.detailny }));
+  }
+
   private prepocitaj(): void {
-    this.pohlad = this.koren.flatMap((u) => zobraz(u, { dost: "vsetko", q: "", detail: false }));
-    this.idPotraviny = new Map();
-    for (const u of vsetky(this.koren)) if (u.dostupnost) this.idPotraviny.set(u.nazov, u.id);
-    ({ plany: this.plany, chyby: this.chyby } = nacitajPlany(this.subory, new Set(this.idPotraviny.keys())));
+    this.pohlad = this.pohladStromu();
+    this.listy = new Map();
+    for (const u of vsetky(this.koren)) if (u.dostupnost) this.listy.set(u.nazov, u);
+    ({ plany: this.plany, chyby: this.chyby } = nacitajPlany(this.subory, new Set(this.listy.keys())));
   }
 
   private vyber(jedla: readonly NacitaneJedlo[], suhrn: boolean): Vyber {
@@ -140,7 +159,7 @@ export class Planovac {
     const nezname: Pouzitie[] = [];
     for (const jedlo of jedla) {
       for (const s of jedlo.jedlo.suroviny) {
-        const id = this.idPotraviny.get(s.potravina);
+        const id = this.listy.get(s.potravina)?.id;
         if (id === undefined) {
           nezname.push({ s, jedlo });
           continue;
@@ -258,6 +277,7 @@ export class Planovac {
       b.setAttribute("aria-pressed", String(b.dataset["planPohlad"] === this.rezim)),
     );
     this.$("#plan-strom-nastroje").hidden = this.rezim !== "strom";
+    this.$("#plan-prazdne").hidden = this.pohlad.length > 0;
     this.stromEl.hidden = this.rezim !== "strom";
     this.$("#plan-diagram").hidden = this.rezim !== "kruh";
     if (this.rezim === "kruh") {
@@ -304,7 +324,8 @@ export class Planovac {
       const li = el("li", trieda);
       li.append(el("span", "bod"), el("span", "s-nazov", nazov), el("span", "s-mnozstvo", vpravo));
       if (pod) li.append(el("span", "s-pod", pod));
-      if (titul) li.title = titul;
+      const skryta = trieda === "skryta" ? "V grafe ju skrýva filter dostupnosti." : "";
+      if (titul || skryta) li.title = [titul, skryta].filter(Boolean).join("\n");
       return li;
     };
     const nezname = v.nezname.map(({ s }) =>
@@ -313,8 +334,8 @@ export class Planovac {
     if (!v.suhrn) {
       ol.replaceChildren(
         ...v.jedla.flatMap((j) => j.jedlo.suroviny).flatMap((s) => {
-          if (!this.idPotraviny.has(s.potravina)) return [];
-          return [riadok(s.forma ?? s.potravina, s.forma ? s.potravina : "", s.mnozstvo ?? "")];
+          if (!this.listy.has(s.potravina)) return [];
+          return [riadok(s.forma ?? s.potravina, s.forma ? s.potravina : "", s.mnozstvo ?? "", this.skryta(s.potravina))];
         }),
         ...nezname,
       );
@@ -331,12 +352,18 @@ export class Planovac {
           p.nazov,
           p.jedla.map((j) => j.jedlo.nazov).join(", "),
           p.jedla.length > 1 ? `${p.jedla.length}×` : "",
-          undefined,
+          this.skryta(p.nazov),
           p.pouzitia.map(({ s, jedlo }) => `${jedlo.jedlo.nazov}: ${formaAMnozstvo(s) || s.potravina}`).join("\n"),
         ),
       ),
       ...nezname,
     );
+  }
+
+  /** Trieda suroviny, ktorú graf neukazuje, lebo jej dostupnosť je vo filtri vypnutá. */
+  private skryta(potravina: string): "skryta" | undefined {
+    const d = this.listy.get(potravina)?.dostupnost;
+    return d && !this.dost.has(d) ? "skryta" : undefined;
   }
 
   private zvyraznenie(v: Vyber): Zvyraznenie {
@@ -390,7 +417,7 @@ export class Planovac {
       const nazov = el("span", "nazov");
       if (u.znacka) {
         const z = znacka(u);
-        nazov.append(el("span", "znak", z.znak), el("span", "pozn", z.pozn));
+        nazov.append(el("span", u.nazov === ZNACKY.TBD ? "chip tbd" : "znak", z.znak), el("span", "pozn", z.pozn));
       } else {
         nazov.textContent = u.nazov;
       }

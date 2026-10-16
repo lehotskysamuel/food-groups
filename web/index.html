@@ -33,6 +33,14 @@
       <button type="button" data-pohlad="strom" aria-pressed="true">Strom</button>
       <button type="button" data-pohlad="kruh" aria-pressed="false">Kruh</button>
     </div>
+    <div class="dostupnosti" role="group" aria-label="Dostupnosť">
+      <label class="prepinac bezne"><input type="checkbox" data-dost="bežné" autocomplete="off"> Bežné</label>
+      <label class="prepinac menej"><input type="checkbox" data-dost="menej bežné" autocomplete="off"> Menej bežné</label>
+      <label class="prepinac exoticke"><input type="checkbox" data-dost="exotické" autocomplete="off"> Exotické</label>
+    </div>
+    <label class="prepinac" title="Zobrazí všetky uzly: aj „–“ a „∗“, úrovne pod druhom a reťaze uzlov s jediným dieťaťom">
+      <input type="checkbox" id="detailny" autocomplete="off"> Detailný pohľad
+    </label>
     <div class="skupina" data-pre="strom">
       <button type="button" id="rozbalit-vsetko">Rozbaliť všetko</button>
       <button type="button" id="zbalit-vsetko">Zbaliť všetko</button>
@@ -41,17 +49,6 @@
       </select>
     </div>
     <input type="search" id="hladat" class="hladat" placeholder="Hľadať potravinu alebo taxón…" autocomplete="off" aria-label="Hľadať">
-    <div class="skupina">
-      <div class="segment" role="group" aria-label="Dostupnosť">
-        <button type="button" data-dost="vsetko" aria-pressed="true">Všetko</button>
-        <button type="button" data-dost="bežné" aria-pressed="false">Bežné</button>
-        <button type="button" data-dost="menej bežné" aria-pressed="false">Menej bežné</button>
-        <button type="button" data-dost="exotické" aria-pressed="false">Exotické</button>
-      </div>
-      <label class="prepinac" title="Zobrazí všetky uzly: aj „–“ a „∗“, úrovne pod druhom a reťaze uzlov s jediným dieťaťom">
-        <input type="checkbox" id="detailny" autocomplete="off"> Detailný pohľad
-      </label>
-    </div>
   </div>
 
   <p id="info" class="info" aria-live="polite"></p>
@@ -87,6 +84,14 @@
             <button type="button" data-plan-pohlad="kruh" aria-pressed="true">Kruh</button>
             <button type="button" data-plan-pohlad="strom" aria-pressed="false">Strom</button>
           </div>
+          <div class="dostupnosti" role="group" aria-label="Dostupnosť">
+            <label class="prepinac bezne"><input type="checkbox" data-dost="bežné" autocomplete="off"> Bežné</label>
+            <label class="prepinac menej"><input type="checkbox" data-dost="menej bežné" autocomplete="off"> Menej bežné</label>
+            <label class="prepinac exoticke"><input type="checkbox" data-dost="exotické" autocomplete="off"> Exotické</label>
+          </div>
+          <label class="prepinac" title="Zobrazí všetky uzly: aj „–“ a „∗“, úrovne pod druhom a reťaze uzlov s jediným dieťaťom">
+            <input type="checkbox" id="plan-detailny" autocomplete="off"> Detailný pohľad
+          </label>
           <div class="skupina" id="plan-strom-nastroje" hidden>
             <button type="button" id="plan-rozbalit">Rozbaliť všetko</button>
             <button type="button" id="plan-len-suroviny">Rozbaliť len suroviny</button>
@@ -95,6 +100,7 @@
         <div class="vyber-telo">
           <ol id="suroviny" class="suroviny" aria-label="Suroviny"></ol>
           <div class="vyber-graf">
+            <p id="plan-prazdne" class="info" hidden>Žiadna potravina nezodpovedá filtru dostupnosti.</p>
             <div id="plan-strom" class="strom plan-strom" hidden></div>
             <div id="plan-diagram" class="kruh"></div>
           </div>

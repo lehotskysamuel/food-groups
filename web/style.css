@@ -206,10 +206,24 @@ select { padding-right: 8px; cursor: pointer; }
 .segment button { border: 0; border-radius: 0; height: 32px; }
 .segment button + button { border-left: 1px solid var(--line); }
 .segment button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.segment button[data-dost="menej bežné"][aria-pressed="true"] { background: var(--menej); color: #fff; }
-.segment button[data-dost="exotické"][aria-pressed="true"] { background: var(--exot); color: #fff; }
 .prepinac { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; cursor: pointer; user-select: none; }
 .prepinac input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+/* Prepínače dostupnosti sú jedna skupina v rámčeku ako .segment, každý sa zapína zvlášť.
+   Farbu majú ako štítky a pruh počtu. */
+.dostupnosti {
+  display: inline-flex;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.dostupnosti .prepinac { padding: 0 11px; }
+.dostupnosti .prepinac + .prepinac { border-left: 1px solid var(--line); }
+.dostupnosti .prepinac:hover { background: var(--hover); }
+.prepinac.bezne input { accent-color: var(--bezne-ink); }
+.prepinac.menej input { accent-color: var(--menej); }
+.prepinac.exoticke input { accent-color: var(--exot); }
 
 .info { margin: 14px 0 0; font-size: 13.5px; color: var(--muted); }
 
@@ -592,6 +606,8 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 .suroviny .s-pod { grid-column: 2 / -1; font-size: 12.5px; line-height: 1.35; color: var(--muted); }
 .suroviny li.chyba .bod { background: var(--exot); }
 .suroviny li.chyba .s-pod { color: var(--exot-ink); }
+/* Surovina, ktorú graf neukazuje pre filter dostupnosti. */
+.suroviny li.skryta { opacity: 0.45; }
 
 /* Strom plánovača: vetvy so surovinami sú zelené, ostatné sivé. */
 .plan-strom .deti { border-left: 1px solid var(--line); }

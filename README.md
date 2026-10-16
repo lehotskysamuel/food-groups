@@ -55,10 +55,10 @@ vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages p
 - `src/kontrola.ts` – kontroly, ktoré typy nezachytia (`npm run kontrola` cez `scripts/kontrola.mjs`)
 - `src/uprava.ts` – prepnutie jedného listu v texte `strom.ts` (používa ho edit mód, `vite.config.ts`)
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
-  rozbalenie po zvolenú úroveň, hľadanie, filter bežné / menej bežné / exotické. Predvolený je jednoduchý
-  pohľad (preskočí uzly `-`, druh `*` a úrovne pod druhom, zlúči reťaze uzlov s jediným dieťaťom),
-  prepínač **Detailný pohľad** zobrazí celý strom bez skrývania. Prepínač **Strom / Kruh** ukáže ten istý
-  pohľad ako viacúrovňový kruhový diagram (`web/kruh.ts`, adresa `#kruh`): prstenec = úroveň, veľkosť výseku =
+  rozbalenie po zvolenú úroveň, hľadanie, prepínače bežné / menej bežné / exotické (každý sa zapína
+  a vypína zvlášť). Predvolený je jednoduchý pohľad (preskočí uzly `-`, druh `*` a úrovne pod druhom,
+  zlúči reťaze uzlov s jediným dieťaťom), prepínač **Detailný pohľad** zobrazí celý strom bez skrývania.
+  Prepínač **Strom / Kruh** ukáže ten istý pohľad ako viacúrovňový kruhový diagram (`web/kruh.ts`, adresa `#kruh`): prstenec = úroveň, veľkosť výseku =
   počet potravín, hover ukáže výsek so všetkými predkami, klik priblíži, klik do stredu oddiali o úroveň,
   tlačidlo **Celý graf** (alebo Home) vráti celý graf
 - `src/jedla.ts` – typy `Jedlo` a `Surovina` a načítanie a kontrola plánov jedál
@@ -119,7 +119,8 @@ v červenom rámčeku.
 Na stránke: zoznam plánov → klik na plán ukáže jeho jedlá a **Celý plán** (súhrn surovín všetkých jedál) → klik
 na jedlo ukáže len jeho suroviny. Graf sa dá prepnúť medzi **Kruh** a **Strom**: potraviny v jedle (alebo v pláne)
 a vetvy, ktoré k nim vedú, sú zelené, ostatné potraviny stromu sivé. V strome sú predvolene rozbalené len vetvy
-so surovinami. Nad grafom je počet rôznych potravín, druhov a čeľadí, teda miera diverzity jedla či plánu.
+so surovinami. Prepínače **Bežné / Menej bežné / Exotické** a **Detailný pohľad** fungujú v oboch grafoch rovnako
+ako na stránke Strom potravín. Surovina, ktorú filter dostupnosti skryje, je v zozname surovín vyblednutá. Nad grafom je počet rôznych potravín, druhov a čeľadí, teda miera diverzity jedla či plánu.
 
 ## Model
 

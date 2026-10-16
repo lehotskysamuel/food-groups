@@ -2,7 +2,7 @@
  * Typy a pomocné funkcie, ktoré zdieľa zobrazenie stromu (main.ts), kruhový diagram (kruh.ts)
  * a plánovač jedál (planovac.ts).
  */
-import { DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
+import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
 import type { List } from "../src/strom.types";
 
 export interface Uzol {
@@ -29,10 +29,9 @@ export interface VUzol {
 
 export type Pocty = Readonly<Record<List, number>>;
 
-export type Dost = "vsetko" | List;
-
 export interface Nastavenia {
-  dost: Dost;
+  /** Zobrazené dostupnosti; potraviny s inou dostupnosťou sa skryjú. */
+  dost: ReadonlySet<List>;
   /** Hľadaný text po `norm`, prázdny = bez hľadania. */
   q: string;
   /** Detailný pohľad: nič sa nepreskakuje ani nezlučuje (pozri zobraz). */
@@ -87,7 +86,7 @@ export function zobraz(u: Uzol, nast: Nastavenia, pokryte = false, ploche = fals
   const zhoda = nast.q !== "" && u.hladat.includes(nast.q);
   const pok = pokryte || zhoda || nast.q === "";
   if (u.dostupnost) {
-    if (!pok || (nast.dost !== "vsetko" && u.dostupnost !== nast.dost)) return [];
+    if (!pok || !nast.dost.has(u.dostupnost)) return [];
     return [{ u, deti: [], pocty: { ...nulovePocty(), [u.dostupnost]: 1 }, zhoda, retazec: [] }];
   }
   const deti = u.deti.flatMap((d) => zobraz(d, nast, pok, ploche || u.uroven >= DRUH));
@@ -127,6 +126,25 @@ export function znacka(u: Uzol): { znak: string; pozn: string } {
   if (u.nazov === ZNACKY.TBD) return { znak: "TBD", pozn: "nedoplnené" };
   if (u.nazov === ZNACKY.NEEXISTUJE) return { znak: "–", pozn: "neexistuje" };
   return { znak: "∗", pozn: "nerozlíšené" };
+}
+
+/**
+ * Prepínače dostupnosti: checkboxy s `data-dost` v `skupina`, každý sa dá zapnúť a vypnúť zvlášť.
+ * Nastaví ich podľa `dost` a pri každej zmene zavolá `zmena` s množinou zapnutých dostupností.
+ */
+export function prepinajDostupnosti(
+  skupina: ParentNode,
+  dost: ReadonlySet<List>,
+  zmena: (dost: ReadonlySet<List>) => void,
+): void {
+  const boxy = [...skupina.querySelectorAll<HTMLInputElement>("input[data-dost]")];
+  const hodnota = (b: HTMLInputElement): List => b.dataset["dost"] as List;
+  for (const b of boxy) {
+    b.checked = dost.has(hodnota(b));
+    const label = b.closest("label");
+    if (label) label.title = DOSTUPNOST[hodnota(b)];
+    b.addEventListener("change", () => zmena(new Set(boxy.filter((x) => x.checked).map(hodnota))));
+  }
 }
 
 export const el = <K extends keyof HTMLElementTagNameMap>(
