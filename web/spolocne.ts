@@ -38,6 +38,9 @@ export interface Nastavenia {
   detail: boolean;
 }
 
+/** Predvolene zapnuté dostupnosti: exotické potraviny sú skryté, kým ich používateľ nezapne. */
+export const PREDVOLENA_DOST: readonly List[] = DOSTUPNOSTI.filter((d) => d !== "exotické");
+
 /** Oddeľovač názvov v id uzla (cesta od ríše). */
 export const SEP = "␟";
 const ZNACKY_SET = new Set<string>(Object.values(ZNACKY));

@@ -13,7 +13,7 @@ import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
 import { Kruh } from "./kruh";
 import { Planovac } from "./planovac";
-import { DRUH, RISE, SEP, TRIEDA, el, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, norm, nulovePocty, pocetEl, postav, prepinajDostupnosti, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
 import type { Nastavenia, Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
@@ -24,7 +24,7 @@ const EDIT = import.meta.env.DEV;
 
 // ---------- stav ----------
 
-const nast: Nastavenia = { dost: new Set(DOSTUPNOSTI), q: "", detail: false };
+const nast: Nastavenia = { dost: new Set(PREDVOLENA_DOST), q: "", detail: false };
 /** Zbalené uzly. Predvolene je celý strom rozbalený. */
 let zbalene = new Set<string>();
 /** Počas hľadania sa používa samostatná množina, výsledky sú rozbalené. */

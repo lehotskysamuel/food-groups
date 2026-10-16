@@ -6,11 +6,11 @@
  */
 import { nacitajPlany } from "../src/jedla";
 import type { NacitaneJedlo, Plan, Surovina } from "../src/jedla";
-import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
+import { DOSTUPNOST, UROVNE, ZNACKY } from "../src/strom.types";
 import type { List } from "../src/strom.types";
 import { Kruh } from "./kruh";
 import type { Zvyraznenie } from "./kruh";
-import { DRUH, RISE, SEP, TRIEDA, el, nazovUrovne, prepinajDostupnosti, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import { DRUH, PREDVOLENA_DOST, RISE, SEP, TRIEDA, el, nazovUrovne, prepinajDostupnosti, sklon, sklonuj, sucet, vsetky, znacka, zobraz } from "./spolocne";
 import type { Uzol, VUzol } from "./spolocne";
 
 type Pohlad = "strom" | "kruh";
@@ -47,7 +47,7 @@ export class Planovac {
   /** Pohľad na celý strom: jednoduchý alebo detailný, s filtrom dostupnosti, rovnako ako na stránke Strom potravín. */
   private pohlad: VUzol[] = [];
   private detailny = false;
-  private dost: ReadonlySet<List> = new Set(DOSTUPNOSTI);
+  private dost: ReadonlySet<List> = new Set(PREDVOLENA_DOST);
   /** Názov potraviny → list stromu. */
   private listy = new Map<string, Uzol>();
   private subory: Readonly<Record<string, unknown>> = {};
