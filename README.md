@@ -255,8 +255,9 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
 potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
 úrovni (napr. tribus -eae nie je v slote podčeľade). Obe kontroly bežia aj v CI pred nasadením.
-**Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (október 2026): 254 bežné, 109 menej
-bežné, 77 exotické. Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland,
+**Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (október 2026): 261 bežné, 84 menej
+bežné, 95 exotické. Pri 97 potravinách platí ručná úprava v edit móde, ktorá má prednosť
+pred revíziou. Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland,
 Billa, Tesco, Coop Jednota). Prvá verzia revízie brala všetko, čo predáva Košík, ako aspoň menej
 bežné. Tým sa medzi menej bežné dostal aj gastro sortiment Metra, ktorý sa mimo Bratislavy nezoženie,
 a exotické zostali len štyri potraviny. Pôvodná heuristika (čo má Tesco v ovocí a zelenine, je bežné, čo pribudlo až
