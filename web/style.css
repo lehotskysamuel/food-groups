@@ -332,6 +332,132 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 .risa-3 { --risa: var(--risa-chromisty); }
 .risa-4 { --risa: var(--risa-bakterie); }
 
+/* ---------- kruhový diagram ---------- */
+.kruh { margin-top: 10px; }
+.kruh.prazdny { display: none; }
+.kruh-cesta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 6px;
+  min-height: 28px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.kruh-cesta button {
+  height: auto;
+  padding: 1px 4px;
+  margin-inline: -4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+}
+.kruh-cesta button:hover { background: var(--hover); }
+.kruh-cesta .aktualne { color: var(--ink); font-weight: 500; }
+.kruh-obal {
+  position: relative;
+  /* Celý kruh sa zmestí pod lištu nástrojov aj na nižšej obrazovke. */
+  width: min(100%, max(300px, calc(100svh - 150px - var(--edit-h, 0px))));
+  margin: 6px auto 0;
+}
+/* V prázdnom rohu štvorca okolo kruhu. */
+.kruh-domov { position: absolute; top: 0; left: 0; display: inline-flex; align-items: center; gap: 5px; }
+.kruh svg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: visible;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Fokus ukazuje obrys vybraného výseku. */
+.kruh svg:focus { outline: none; }
+.kruh .vyseky path {
+  stroke: var(--bg);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.kruh svg.prechod .vyseky path { transition: opacity 0.15s, fill 0.55s; }
+.kruh .vyseky path.list { cursor: default; }
+.kruh svg.hover .vyseky path:not(.cesta),
+.kruh svg.hover .stitky text:not(.cesta) { opacity: 0.38; }
+.kruh .zhody path { fill: none; stroke: var(--ink); stroke-width: 2; pointer-events: none; }
+.kruh .obrys { fill: none; stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+.kruh svg:focus-visible .obrys { stroke-width: 2.5; }
+.kruh .stitky { pointer-events: none; }
+.kruh .stitky text {
+  font: 500 11.5px var(--sans);
+  text-anchor: middle;
+  transition: opacity 0.15s;
+}
+.kruh .stitky text.risa { font: 600 15px var(--serif); }
+.kruh .stitky .svetly { fill: #fff; }
+.kruh .stitky .tmavy { fill: #1b2420; }
+.kruh .stred circle { fill: var(--surface); stroke: var(--line); }
+.kruh .stred.spat { cursor: pointer; }
+.kruh .stred.spat:hover circle { fill: var(--hover); }
+.kruh .stred text { text-anchor: middle; fill: var(--ink); pointer-events: none; }
+.kruh .stred .s-cislo { font: 600 30px var(--serif); }
+.kruh .stred .s-nazov { font: 600 15px var(--serif); }
+.kruh .stred .s-uroven { font: 400 10.5px var(--mono); fill: var(--muted); }
+.kruh .stred .s-pocet { font: 500 11px var(--mono); fill: var(--muted); }
+.kruh .stred .s-hore { font: 500 12px var(--mono); fill: var(--accent); }
+
+.kruh-bublina {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  pointer-events: none;
+  width: max-content;
+  max-width: min(360px, calc(100vw - 16px));
+  padding: 8px 10px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.14);
+}
+.kruh-bublina ol { margin: 0; padding: 0; list-style: none; }
+.kruh-bublina li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 1px 0 1px 9px;
+  /* Čiara vľavo má farbu výseku, takže riadky sa dajú spárovať s prstencami. */
+  border-left: 3px solid var(--f);
+  font: 400 13.5px/1.35 var(--serif);
+  color: var(--muted);
+}
+.kruh-bublina li.tento { font-size: 16px; font-weight: 600; color: var(--ink); }
+.kruh-bublina .n { overflow-wrap: anywhere; }
+.kruh-bublina .n i { font-size: 12.5px; }
+.kruh-bublina .znak { font: 600 13px var(--mono); }
+.kruh-bublina .l {
+  flex: none;
+  max-width: 45%;
+  font: 400 10.5px var(--mono);
+  color: var(--muted);
+  text-align: right;
+}
+.kruh-bublina .pata {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+  font: 400 12px var(--mono);
+  color: var(--muted);
+}
+.kruh-bublina .pata .pocet { margin: 0; color: var(--ink); }
+.kruh-bublina .rada { margin-left: auto; padding-left: 10px; font-size: 11px; }
+
 /* ---------- legenda ---------- */
 .legenda {
   display: flex;
@@ -352,10 +478,13 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
   .stranka { padding-inline: 16px; }
   .statistiky .prva-risa { margin-left: 0; }
   .uroven { display: none; }
+  /* Na úzkom kruhu by text zasahoval do vonkajšieho prstenca. */
+  .kruh-domov { width: 34px; padding: 0; justify-content: center; }
+  .kruh-domov .text { display: none; }
   .deti { margin-left: 9px; padding-left: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .caret, .deti > .ciara::before { transition: none; }
+  .caret, .deti > .ciara::before, .kruh .vyseky path, .kruh .stitky text { transition: none; }
   summary.ciel { animation: none; }
 }
 

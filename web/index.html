@@ -15,12 +15,19 @@
   <header class="hlavicka">
     <p class="eyebrow">food-groups · 17 taxonomických úrovní</p>
     <h1>Strom potravín</h1>
-    <p class="podtitul">Klik na uzol ho zbalí alebo rozbalí, so <kbd>Shift</kbd> celý podstrom.</p>
+    <p class="podtitul">
+      <span data-pre="strom">Klik na uzol ho zbalí alebo rozbalí, so <kbd>Shift</kbd> celý podstrom.</span>
+      <span data-pre="kruh" hidden>Veľkosť výseku zodpovedá počtu potravín. Klik na výsek ho priblíži, klik do stredu oddiali.</span>
+    </p>
     <dl class="statistiky" id="statistiky"></dl>
   </header>
 
   <div class="nastroje" role="toolbar" aria-label="Ovládanie stromu">
-    <div class="skupina">
+    <div class="segment" role="group" aria-label="Zobrazenie">
+      <button type="button" data-pohlad="strom" aria-pressed="true">Strom</button>
+      <button type="button" data-pohlad="kruh" aria-pressed="false">Kruh</button>
+    </div>
+    <div class="skupina" data-pre="strom">
       <button type="button" id="rozbalit-vsetko">Rozbaliť všetko</button>
       <button type="button" id="zbalit-vsetko">Zbaliť všetko</button>
       <select id="rozbalit-po" aria-label="Rozbaliť po úroveň">
@@ -42,7 +49,8 @@
   </div>
 
   <p id="info" class="info" aria-live="polite"></p>
-  <div id="strom" class="strom"></div>
+  <div id="strom" class="strom" data-pre="strom"></div>
+  <div id="diagram" class="kruh" data-pre="kruh" hidden></div>
 
   <footer class="legenda">
     <div><span class="chip tbd">TBD</span> úroveň existuje, ešte nie je doplnená</div>

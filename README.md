@@ -57,7 +57,10 @@ vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages p
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
   rozbalenie po zvolenú úroveň, hľadanie, filter bežné / menej bežné / exotické. Predvolený je jednoduchý
   pohľad (preskočí uzly `-`, druh `*` a úrovne pod druhom, zlúči reťaze uzlov s jediným dieťaťom),
-  prepínač **Detailný pohľad** zobrazí celý strom bez skrývania
+  prepínač **Detailný pohľad** zobrazí celý strom bez skrývania. Prepínač **Strom / Kruh** ukáže ten istý
+  pohľad ako viacúrovňový kruhový diagram (`web/kruh.ts`, adresa `#kruh`): prstenec = úroveň, veľkosť výseku =
+  počet potravín, hover ukáže výsek so všetkými predkami, klik priblíži, klik do stredu oddiali o úroveň,
+  tlačidlo **Celý graf** (alebo Home) vráti celý graf
 - `test/strom.types.test.ts` – typové testy: overujú, že typy odmietnu chybný strom
 
 ## Model

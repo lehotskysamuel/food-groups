@@ -9,32 +9,12 @@ import { strom } from "../src/data/strom";
 import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
 import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
+import { Kruh } from "./kruh";
+import { RISE, TRIEDA, el, nulovePocty, pocetEl, sklon, sucet, znacka } from "./spolocne";
+import type { Uzol, VUzol } from "./spolocne";
 
 type Dost = "vsetko" | List;
-
-interface Uzol {
-  readonly id: string;
-  readonly nazov: string;
-  /** 0 = ríša … 16 = potravina */
-  readonly uroven: number;
-  readonly deti: readonly Uzol[];
-  readonly dostupnost: List | undefined;
-  readonly znacka: boolean;
-  readonly hladat: string;
-}
-
-/** Uzol v aktuálnom pohľade (po filtri a zlúčení značiek). */
-interface VUzol {
-  readonly u: Uzol;
-  readonly deti: readonly VUzol[];
-  /** Počet potravín v podstrome podľa dostupnosti. */
-  readonly pocty: Pocty;
-  readonly zhoda: boolean;
-  /** Predkovia zlúčení do tohto riadku (reťaz uzlov s jediným dieťaťom), od najvyššieho. */
-  readonly retazec: readonly Uzol[];
-}
-
-type Pocty = Readonly<Record<List, number>>;
+type Pohlad = "strom" | "kruh";
 
 interface Nastavenia {
   dost: Dost;
@@ -45,13 +25,6 @@ interface Nastavenia {
 
 const SEP = "␟";
 const ZNACKY_SET = new Set<string>(Object.values(ZNACKY));
-const RISE = ["rastliny", "huby", "živočíchy", "chromisty", "baktérie"];
-
-/** CSS trieda pre každú dostupnosť. */
-const TRIEDA: Readonly<Record<List, string>> = { bežné: "bezne", "menej bežné": "menej", exotické: "exoticke" };
-
-const nulovePocty = (): Record<List, number> => ({ bežné: 0, "menej bežné": 0, exotické: 0 });
-const sucet = (p: Pocty): number => DOSTUPNOSTI.reduce((a, d) => a + p[d], 0);
 
 const norm = (s: string): string => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
 
@@ -139,30 +112,18 @@ function zobraz(u: Uzol, pokryte: boolean, ploche: boolean): VUzol[] {
 // ---------- DOM ----------
 
 const $ = <T extends HTMLElement>(sel: string): T => document.querySelector(sel) as T;
-const el = <K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  cls?: string,
-  text?: string,
-): HTMLElementTagNameMap[K] => {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text !== undefined) e.textContent = text;
-  return e;
-};
 
 const stromEl = $<HTMLDivElement>("#strom");
 const infoEl = $<HTMLParagraphElement>("#info");
+const kruh = new Kruh($<HTMLDivElement>("#diagram"));
+/** Strom alebo kruhový diagram; kruh si pamätá adresa (#kruh). */
+let rezim: Pohlad = location.hash === "#kruh" ? "kruh" : "strom";
 
 function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
   const s = el("span", "nazov");
   if (u.znacka) {
-    if (u.nazov === ZNACKY.TBD) {
-      s.append(el("span", "chip tbd", "TBD"), el("span", "pozn", "nedoplnené"));
-    } else if (u.nazov === ZNACKY.NEEXISTUJE) {
-      s.append(el("span", "znak", "–"), el("span", "pozn", "neexistuje"));
-    } else {
-      s.append(el("span", "znak", "∗"), el("span", "pozn", "nerozlíšené"));
-    }
+    const { znak, pozn } = znacka(u);
+    s.append(el("span", u.nazov === ZNACKY.TBD ? "chip tbd" : "znak", znak), el("span", "pozn", pozn));
     return s;
   }
   const i = zhoda ? u.hladat.indexOf(nast.q) : -1;
@@ -175,18 +136,6 @@ function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
     s.textContent = u.nazov;
   }
   return s;
-}
-
-function pocetEl(v: VUzol): HTMLElement {
-  const { pocty } = v;
-  const spolu = sucet(pocty);
-  const p = el("span", "pocet");
-  p.title = `${spolu} ${sklon(spolu)}: ${pocty["bežné"]} bežné, ${pocty["menej bežné"]} menej bežné, ${pocty["exotické"]} exotické`;
-  const bar = el("i");
-  bar.style.setProperty("--b", `${(pocty["bežné"] / spolu) * 100}%`);
-  bar.style.setProperty("--m", `${((pocty["bežné"] + pocty["menej bežné"]) / spolu) * 100}%`);
-  p.append(el("b", undefined, String(spolu)), bar);
-  return p;
 }
 
 function dostupnostEl(id: string, d: List): HTMLElement {
@@ -234,8 +183,13 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
 
 function vykresli(): void {
   const pohlad = koren.flatMap((u) => zobraz(u, false, false));
-  const zb = aktivneZbalene();
-  stromEl.replaceChildren(...pohlad.map((v) => uzolEl(v, zb)));
+  if (rezim === "kruh") {
+    stromEl.replaceChildren();
+    kruh.nastav(pohlad, koren);
+  } else {
+    const zb = aktivneZbalene();
+    stromEl.replaceChildren(...pohlad.map((v) => uzolEl(v, zb)));
+  }
 
   const spolu = pohlad.reduce((a, v) => a + sucet(v.pocty), 0);
   if (pohlad.length === 0) {
@@ -249,8 +203,6 @@ function vykresli(): void {
   }
   infoEl.hidden = infoEl.textContent === "";
 }
-
-const sklon = (n: number): string => (n === 1 ? "potravina" : n >= 2 && n <= 4 ? "potraviny" : "potravín");
 
 function statistiky(): void {
   const dl = $<HTMLDListElement>("#statistiky");
@@ -427,6 +379,21 @@ detailEl.addEventListener("change", () => {
   vykresli();
 });
 
+const pohladTlacidla = document.querySelectorAll<HTMLButtonElement>("[data-pohlad]");
+/** Prepne strom / kruh: ukáže prvky s data-pre="<režim>" a skryje ostatné. */
+function nastavRezim(r: Pohlad): void {
+  rezim = r;
+  pohladTlacidla.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset["pohlad"] === r)));
+  document.querySelectorAll<HTMLElement>("[data-pre]").forEach((e) => (e.hidden = e.dataset["pre"] !== r));
+  bublina.hidden = true;
+  if ((location.hash === "#kruh") !== (r === "kruh")) {
+    history.replaceState(null, "", r === "kruh" ? "#kruh" : location.pathname + location.search);
+  }
+  vykresli();
+}
+pohladTlacidla.forEach((b) => b.addEventListener("click", () => nastavRezim((b.dataset["pohlad"] ?? "strom") as Pohlad)));
+window.addEventListener("hashchange", () => nastavRezim(location.hash === "#kruh" ? "kruh" : "strom"));
+
 // ---------- edit mód (len dev server) ----------
 
 if (EDIT) {
@@ -477,4 +444,4 @@ detailEl.checked = nast.detail;
 naplnUrovne();
 oznacDost();
 statistiky();
-vykresli();
+nastavRezim(rezim);
