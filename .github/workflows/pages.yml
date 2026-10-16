@@ -1,45 +1,83 @@
-# Po každom pushi do main zostaví statický web (dist/) a nasadí ho na GitHub Pages.
+# Publikuje web do vetvy gh-pages, ktorú servíruje GitHub Pages:
+#   vetva main      -> /food-groups/main/
+#   pull request #N -> /food-groups/pr-N/  (po merge alebo zatvorení PR sa zmaže)
+#   /food-groups/   -> presmeruje na main/
+# Pages musí byť nastavené na „Deploy from a branch“ -> gh-pages, / (root).
 name: GitHub Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+  pull-requests: write
 
-# Beží naraz len jedno nasadenie; rozbehnuté sa nerušia, aby sa nasadenie nezastavilo v polovici.
+# Jeden rad pre každý priečinok webu. Novší commit v tom istom PR zruší starší build.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  publish:
+    # PR z forku dostane token len na čítanie a do gh-pages nezapíše.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    env:
+      PRIECINOK: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+      ZMAZAT: ${{ github.event.action == 'closed' }}
     steps:
       - uses: actions/checkout@v7
+
       - uses: actions/setup-node@v7
+        if: env.ZMAZAT != 'true'
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm run kontrola
-      # Build vyrobí jediný dist/index.html (JS a CSS vložené), preto netreba --base.
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v5
+      - if: env.ZMAZAT != 'true'
+        run: npm ci
+      - if: env.ZMAZAT != 'true'
+        run: npm run typecheck
+      - if: env.ZMAZAT != 'true'
+        run: npm run kontrola
+      # Build vyrobí jediný dist/index.html (JS a CSS vložené), preto funguje z ľubovoľného priečinka.
+      - if: env.ZMAZAT != 'true'
+        run: npm run build
+
+      - name: Publikuj ${{ env.PRIECINOK }}
+        if: env.ZMAZAT != 'true'
+        run: .github/scripts/publikuj-pages.sh "$PRIECINOK" dist
+
+      - name: Zmaž ${{ env.PRIECINOK }}
+        if: env.ZMAZAT == 'true'
+        run: .github/scripts/publikuj-pages.sh "$PRIECINOK"
+
+      - name: Napíš odkaz na náhľad do PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          MERGED: ${{ github.event.pull_request.merged }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          web="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}"
+          znacka='<!-- pages-nahlad -->'
+          if [[ $ZMAZAT == true && $MERGED == true ]]; then
+            telo="Náhľad je zmazaný, PR bol mergnutý. Zmena bude na $web/main/ po dobehnutí nasadenia main."
+          elif [[ $ZMAZAT == true ]]; then
+            telo="Náhľad je zmazaný, PR bol zatvorený."
+          else
+            telo="Náhľad: $web/$PRIECINOK/"$'\n\n'"Zostavené z ${HEAD_SHA:0:7}. GitHub Pages sa zvyčajne aktualizuje do minúty či dvoch."
+          fi
+          telo="$znacka"$'\n'"$telo"
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$znacka\"))) | .id" | head -n 1)
+          if [[ -n $id ]]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$telo" >/dev/null
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -f body="$telo" >/dev/null
+          fi

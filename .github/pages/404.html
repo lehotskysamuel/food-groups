@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Strom potravín</title>
+    <script>
+      // Čokoľvek chýba mimo main/ (napr. náhľad zmazaný po zatvorení PR), ide na hlavnú verziu.
+      // Chýbajúca stránka vnútri main/ zostane tu, takže presmerovanie sa nezacyklí.
+      var main = '__BASE_PATH__main/';
+      if (location.pathname.indexOf(main) !== 0) location.replace(main);
+    </script>
+    <style>
+      body { font: 15px/1.5 system-ui, sans-serif; margin: 40px 16px; background: #f5f7f3; color: #1b2420; }
+      @media (prefers-color-scheme: dark) { body { background: #111614; color: #e3e8e3; } a { color: inherit; } }
+    </style>
+  </head>
+  <body>
+    <h1>Stránka neexistuje</h1>
+    <p>Skús <a href="__BASE_PATH__main/">hlavnú verziu</a>.</p>
+  </body>
+</html>

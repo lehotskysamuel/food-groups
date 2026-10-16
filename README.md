@@ -23,6 +23,30 @@ npm run preview      # dist/ cez lokálny server (nepovinné)
   Strom sa hneď prekreslí bez straty rozbalenia a filtra, rovnako aj pri ručnej úprave súboru.
   Zápis prijíma len dev server a len požiadavky z tohto počítača; do buildu sa edit kód nedostane.
 
+## Nasadenie
+
+`.github/workflows/pages.yml` publikuje web do vetvy `gh-pages`, ktorú servíruje GitHub Pages:
+
+| Udalosť | Výsledok |
+|---|---|
+| push alebo merge do `main` | aktualizuje sa https://lehotskysamuel.github.io/food-groups/main/ |
+| PR #N otvorený, znovu otvorený alebo aktualizovaný | (znova) sa zostaví https://lehotskysamuel.github.io/food-groups/pr-N/ a odkaz príde do PR ako komentár |
+| PR #N mergnutý | `pr-N/` sa zmaže, samotný merge aktualizuje `main/` |
+| PR #N zatvorený bez merge | `pr-N/` sa zmaže |
+
+- https://lehotskysamuel.github.io/food-groups/ presmeruje na `main/`.
+- Chýbajúca stránka mimo `main/` (napr. odkaz na zmazaný náhľad) tiež presmeruje na `main/`.
+- Pred každým publikovaním bežia `typecheck`, `kontrola` a build, chyba publikovanie zastaví.
+- PR z forku náhľad nemá, jeho token do `gh-pages` zapisovať nemôže.
+
+Publikuje `.github/scripts/publikuj-pages.sh <priečinok> [build]`: nahradí alebo zmaže jeden priečinok
+a prepíše presmerovania v koreni. Vetva `gh-pages` má vždy jediný commit, takže nerastie s každým
+nasadením. Push ide cez `--force-with-lease` s opakovaním, takže súbežné nasadenia sa neprepíšu
+(stáva sa to pri každom merge, keď naraz beží nasadenie `main/` a mazanie `pr-N/`).
+
+Jednorazové nastavenie: Settings → Pages → Build and deployment → Source **Deploy from a branch**,
+vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages pre súkromné repo je platené).
+
 ## Štruktúra
 
 - `src/strom.types.ts` – typy pre 17 úrovní stromu (`U01_Risa` … `U17_Potravina`), značky,
