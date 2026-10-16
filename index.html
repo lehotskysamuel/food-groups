@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Strom potravín</title>
+    <meta http-equiv="refresh" content="0; url=./main/" />
+    <script>
+      location.replace('./main/' + location.search + location.hash);
+    </script>
+    <style>
+      body { font: 15px/1.5 system-ui, sans-serif; margin: 40px 16px; background: #f5f7f3; color: #1b2420; }
+      @media (prefers-color-scheme: dark) { body { background: #111614; color: #e3e8e3; } a { color: inherit; } }
+    </style>
+  </head>
+  <body>
+    <p>Otváram <a href="./main/">hlavnú verziu</a>…</p>
+    <script>
+      // ?lang=en: text po anglicky (presmerovanie parameter zachová).
+      if (/[?&]lang=en(&|$)/i.test(location.search)) {
+        document.documentElement.lang = 'en';
+        document.title = 'Food tree';
+        var a = document.querySelector('a');
+        a.href = './main/' + location.search;
+        a.textContent = 'the main version';
+        a.parentNode.replaceChildren('Opening ', a, '…');
+      }
+    </script>
+  </body>
+</html>
