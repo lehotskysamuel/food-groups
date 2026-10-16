@@ -1,0 +1,20 @@
+{
+  "nazov": "Poke bowl s tofu",
+  "popis": "Sushi ryža s marinovaným tofu, zeleninou, mangom a sezamom.",
+  "suroviny": [
+    { "potravina": "ryža", "forma": "sushi ryža", "mnozstvo": "80 g" },
+    { "potravina": "sójové bôby", "forma": "tofu", "mnozstvo": "150 g" },
+    { "potravina": "sójové bôby", "forma": "sójová omáčka", "mnozstvo": "2 PL" },
+    { "potravina": "edamame", "mnozstvo": "50 g" },
+    { "potravina": "avokádo", "mnozstvo": "½ ks" },
+    { "potravina": "uhorka šalátová", "mnozstvo": "½ ks" },
+    { "potravina": "mrkva", "mnozstvo": "1 ks" },
+    { "potravina": "kapusta červená", "mnozstvo": "50 g" },
+    { "potravina": "mango", "mnozstvo": "½ ks" },
+    { "potravina": "jarná cibuľka", "mnozstvo": "1 ks" },
+    { "potravina": "sezamové semená", "mnozstvo": "1 PL" },
+    { "potravina": "nori", "mnozstvo": "1 plát" },
+    { "potravina": "zázvor", "forma": "nakladaný zázvor", "mnozstvo": "1 PL" },
+    { "potravina": "limeta", "forma": "limetková šťava", "mnozstvo": "½ limety" }
+  ]
+}

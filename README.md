@@ -8,7 +8,7 @@ vlastného jedálnička: čím širšie pokrytie stromu, tým diverzifikovanejš
 ```
 npm install          # jednorazovo
 npm run typecheck    # overí typy a tvar stromu (tsc --noEmit)
-npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni
+npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni a že jedlá odkazujú na potraviny zo stromu
 npm run dev          # web v edit móde na http://localhost:5173 (číta aj zapisuje src/data/strom.ts)
 npm run build        # web vo view móde: jeden súbor dist/index.html, otvorí sa aj bez servera
 npm run preview      # dist/ cez lokálny server (nepovinné)
@@ -61,7 +61,65 @@ vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages p
   pohľad ako viacúrovňový kruhový diagram (`web/kruh.ts`, adresa `#kruh`): prstenec = úroveň, veľkosť výseku =
   počet potravín, hover ukáže výsek so všetkými predkami, klik priblíži, klik do stredu oddiali o úroveň,
   tlačidlo **Celý graf** (alebo Home) vráti celý graf
+- `src/jedla.ts` – typy `Jedlo` a `Surovina` a načítanie a kontrola plánov jedál
+- `src/data/plany/<plán>/<jedlo>.json` – plány jedál (pozri [Plánovač jedál](#plánovač-jedál)), `src/data/plany.ts` ich načíta
+- `web/planovac.ts` – stránka Plánovač jedál (`#planovac`)
 - `test/strom.types.test.ts` – typové testy: overujú, že typy odmietnu chybný strom
+
+## Plánovač jedál
+
+Druhá stránka webu (odkaz **Plánovač jedál** navrchu, adresa `#planovac`) ukazuje, ktoré potraviny stromu
+pokrývajú jedlá. Dáta sú v priečinku `src/data/plany`:
+
+```
+src/data/plany/
+  demo-plan/                      jeden plán, názov priečinka je názov plánu
+    bryndzove-halusky.json        jedno jedlo
+    omeleta-s-baby-zeleninou.json
+    poke-bowl-s-tofu.json
+  tyzden-1/                       vlastný plán (napr. týždeň), v gite nie je
+    …
+```
+
+Nový plán = nový priečinok, nové jedlo = nový JSON súbor. Plány aj jedlá sú zoradené podľa názvu (čísla
+prirodzene: `tyzden-2` pred `tyzden-10`). Dev server zmenu ukáže hneď, build ich vloží do `dist/index.html`.
+
+Vlastné plány sú súkromné: `.gitignore` vynechá všetko v `src/data/plany` okrem `demo-plan`, takže sa
+nedostanú do repozitára ani na verejný web (GitHub Pages sa zostavuje z repozitára). Vidno ich len
+lokálne v `npm run dev` a v lokálnom `npm run build`, takže lokálny `dist/` nikam nenahrávaj.
+
+Jedlo (typ `Jedlo` v `src/jedla.ts`):
+
+```json
+{
+  "nazov": "Bryndzové halušky",
+  "popis": "Zemiakové halušky s bryndzou, opečenou slaninou a pažítkou.",
+  "suroviny": [
+    { "potravina": "zemiaky", "mnozstvo": "600 g" },
+    { "potravina": "ovčie mlieko", "forma": "bryndza", "mnozstvo": "250 g" }
+  ]
+}
+```
+
+| Kľúč | | Význam |
+|---|---|---|
+| `nazov` | povinný | názov jedla |
+| `popis` | nepovinný | krátky popis |
+| `suroviny` | povinný, aspoň jedna | zoznam surovín |
+| `suroviny[].potravina` | povinný | názov potraviny (listu) v strome, presne ako v `src/data/strom.ts`; názvy listov sú unikátne |
+| `suroviny[].forma` | nepovinný | produkt, ak to nie je samotná potravina (`bryndza`, `tofu`, `hladká múka`); zobrazí sa namiesto názvu potraviny |
+| `suroviny[].mnozstvo` | nepovinný | voľný text (`250 g`, `2 ks`, `hrsť`) |
+
+Surovina odkazuje na potravinu podľa rovnakých pravidiel ako strom ([Mimo stromu](#mimo-stromu)): bryndza je
+ovčie mlieko, slanina bravčový bok, olej semeno, tofu aj sójová omáčka sójové bôby. Viac surovín môže odkazovať
+na tú istú potravinu (mlieko a maslo). Soľ, voda a iné neživé suroviny sa nezapisujú. Iné kľúče, chýbajúca
+potravina či neexistujúca potravina sú chyba: `npm run kontrola` (a teda aj nasadenie) zlyhá a web ich ukáže
+v červenom rámčeku.
+
+Na stránke: zoznam plánov → klik na plán ukáže jeho jedlá a **Celý plán** (súhrn surovín všetkých jedál) → klik
+na jedlo ukáže len jeho suroviny. Graf sa dá prepnúť medzi **Kruh** a **Strom**: potraviny v jedle (alebo v pláne)
+a vetvy, ktoré k nim vedú, sú zelené, ostatné potraviny stromu sivé. V strome sú predvolene rozbalené len vetvy
+so surovinami. Nad grafom je počet rôznych potravín, druhov a čeľadí, teda miera diverzity jedla či plánu.
 
 ## Model
 

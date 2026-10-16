@@ -1,6 +1,10 @@
 # závislosti
 node_modules/
 
+# plány jedál sú súkromné: do repa (a teda na verejný web) ide len ukážkový plán
+src/data/plany/*
+!src/data/plany/demo-plan/
+
 # build výstupy
 dist/
 *.tsbuildinfo

@@ -1,0 +1,17 @@
+{
+  "nazov": "Omeleta so smaženou baby zeleninou",
+  "popis": "Maslová omeleta, k nej na oleji opražená mladá zelenina.",
+  "suroviny": [
+    { "potravina": "slepačie vajcia", "mnozstvo": "3 ks" },
+    { "potravina": "kravské mlieko", "forma": "mlieko", "mnozstvo": "2 PL" },
+    { "potravina": "kravské mlieko", "forma": "maslo", "mnozstvo": "10 g" },
+    { "potravina": "repka", "forma": "repkový olej", "mnozstvo": "1 PL" },
+    { "potravina": "mrkva", "forma": "baby mrkva", "mnozstvo": "100 g" },
+    { "potravina": "cuketa", "forma": "baby cuketa", "mnozstvo": "1 ks" },
+    { "potravina": "hrášok cukrový", "mnozstvo": "80 g" },
+    { "potravina": "paprika mini", "mnozstvo": "3 ks" },
+    { "potravina": "paradajky cherry", "mnozstvo": "6 ks" },
+    { "potravina": "jarná cibuľka", "mnozstvo": "2 ks" },
+    { "potravina": "petržlenová vňať", "mnozstvo": "na posypanie" }
+  ]
+}

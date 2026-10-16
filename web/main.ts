@@ -1,64 +1,28 @@
 /// <reference types="vite/client" />
 /**
- * Webové zobrazenie stromu potravín. Číta priamo src/data/strom.ts.
+ * Webové zobrazenie stromu potravín. Číta priamo src/data/strom.ts. Druhá stránka, plánovač jedál
+ * (#planovac), je v planovac.ts.
  *
  * Dev server (npm run dev) beží v edit móde: klik na štítok dostupnosti ho posunie
  * (bežné → menej bežné → exotické → bežné) a zapíše zmenu do src/data/strom.ts. Build (npm run build) je len na prezeranie.
  */
+import { subory } from "../src/data/plany";
 import { strom } from "../src/data/strom";
 import { DOSTUPNOST, DOSTUPNOSTI, UROVNE, ZNACKY } from "../src/strom.types";
 import { dalsia } from "../src/uprava";
 import type { List, Strom } from "../src/strom.types";
 import { Kruh } from "./kruh";
-import { RISE, TRIEDA, el, nulovePocty, pocetEl, sklon, sucet, znacka } from "./spolocne";
-import type { Uzol, VUzol } from "./spolocne";
+import { Planovac } from "./planovac";
+import { DRUH, RISE, SEP, TRIEDA, el, norm, nulovePocty, pocetEl, postav, sklon, sucet, vsetky, znacka, zobraz } from "./spolocne";
+import type { Dost, Nastavenia, Uzol, VUzol } from "./spolocne";
 
-type Dost = "vsetko" | List;
 type Pohlad = "strom" | "kruh";
 
-interface Nastavenia {
-  dost: Dost;
-  q: string;
-  /** Detailný pohľad: nič sa nepreskakuje ani nezlučuje (pozri zobraz). */
-  detail: boolean;
-}
-
-const SEP = "␟";
-const ZNACKY_SET = new Set<string>(Object.values(ZNACKY));
-
-const norm = (s: string): string => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
-
-function postav(obj: { readonly [k: string]: unknown }, uroven: number, rodic: string): Uzol[] {
-  return Object.entries(obj).map(([nazov, hodnota]) => {
-    const id = rodic ? rodic + SEP + nazov : nazov;
-    const list = typeof hodnota === "string";
-    return {
-      id,
-      nazov,
-      uroven,
-      znacka: ZNACKY_SET.has(nazov),
-      hladat: norm(nazov),
-      dostupnost: list ? (hodnota as List) : undefined,
-      deti: list ? [] : postav(hodnota as { readonly [k: string]: unknown }, uroven + 1, id),
-    };
-  });
-}
-
-let koren: readonly Uzol[] = postav(strom as unknown as Strom, 0, "");
+let koren: readonly Uzol[] = postav(strom as unknown as Strom);
 
 const EDIT = import.meta.env.DEV;
 
-function* vsetky(uzly: readonly Uzol[]): Generator<Uzol> {
-  for (const u of uzly) {
-    yield u;
-    yield* vsetky(u.deti);
-  }
-}
-
 // ---------- stav ----------
-
-/** Index úrovne „druh“. Pod druhom sa zobrazujú priamo potraviny (listy). */
-const DRUH = UROVNE.indexOf("druh");
 
 const nast: Nastavenia = { dost: "vsetko", q: "", detail: false };
 /** Zbalené uzly. Predvolene je celý strom rozbalený. */
@@ -74,41 +38,6 @@ function vnutorne(hranica: number): Set<string> {
   return s;
 }
 
-// ---------- pohľad (len prezentácia, dáta sa nemenia) ----------
-
-/**
- * Jednoduchý pohľad (predvolený):
- * - uzly „-“ sa preskočia, ich potomkovia sa zobrazia o úroveň vyššie,
- * - pod druhom sa zobrazia priamo potraviny (varieta, kultivar a jedlá časť sa preskočia),
- * - druh „*“ sa preskočí, potraviny sa zobrazia priamo pod rodom,
- * - reťaz uzlov, kde každý má jediné dieťa, sa zlúči do jedného riadku s názvom najspodnejšieho
- *   (okrem ríše, tá zostáva vždy samostatne).
- *
- * Detailný pohľad zobrazí všetky uzly tak, ako sú v dátach (filter a hľadanie platia v oboch).
- */
-function zobraz(u: Uzol, pokryte: boolean, ploche: boolean): VUzol[] {
-  const zhoda = nast.q !== "" && u.hladat.includes(nast.q);
-  const pok = pokryte || zhoda || nast.q === "";
-  if (u.dostupnost) {
-    if (!pok || (nast.dost !== "vsetko" && u.dostupnost !== nast.dost)) return [];
-    return [{ u, deti: [], pocty: { ...nulovePocty(), [u.dostupnost]: 1 }, zhoda, retazec: [] }];
-  }
-  const deti = u.deti.flatMap((d) => zobraz(d, pok, ploche || u.uroven >= DRUH));
-  if (deti.length === 0) return [];
-  if (!nast.detail) {
-    const skryty =
-      ploche || u.nazov === ZNACKY.NEEXISTUJE || (u.uroven === DRUH && u.nazov === ZNACKY.NEROZLISENE);
-    if (skryty) return deti;
-    const jedine = deti.length === 1 ? deti[0] : undefined;
-    if (jedine && !jedine.u.dostupnost && u.uroven > 0) {
-      return [{ ...jedine, zhoda: zhoda || jedine.zhoda, retazec: [u, ...jedine.retazec] }];
-    }
-  }
-  const pocty = nulovePocty();
-  for (const d of deti) for (const k of DOSTUPNOSTI) pocty[k] += d.pocty[k];
-  return [{ u, deti, pocty, zhoda, retazec: [] }];
-}
-
 // ---------- DOM ----------
 
 const $ = <T extends HTMLElement>(sel: string): T => document.querySelector(sel) as T;
@@ -117,7 +46,7 @@ const stromEl = $<HTMLDivElement>("#strom");
 const infoEl = $<HTMLParagraphElement>("#info");
 const kruh = new Kruh($<HTMLDivElement>("#diagram"));
 /** Strom alebo kruhový diagram; kruh si pamätá adresa (#kruh). */
-let rezim: Pohlad = location.hash === "#kruh" ? "kruh" : "strom";
+let rezim: Pohlad = "strom";
 
 function nazovEl(u: Uzol, zhoda: boolean): HTMLElement {
   const s = el("span", "nazov");
@@ -182,7 +111,7 @@ function uzolEl(v: VUzol, zb: Set<string>): HTMLElement {
 }
 
 function vykresli(): void {
-  const pohlad = koren.flatMap((u) => zobraz(u, false, false));
+  const pohlad = koren.flatMap((u) => zobraz(u, nast));
   if (rezim === "kruh") {
     stromEl.replaceChildren();
     kruh.nastav(pohlad, koren);
@@ -258,7 +187,7 @@ stromEl.addEventListener("click", (e) => {
 
 // ---------- čiary: klik skočí na rodiča, hover ukáže jeho názov ----------
 
-const nastrojeEl = $<HTMLDivElement>(".nastroje");
+const nastrojeEl = $<HTMLDivElement>("#stranka-strom .nastroje");
 const bublina = el("div", "bublina");
 bublina.hidden = true;
 bublina.setAttribute("role", "tooltip");
@@ -379,20 +308,56 @@ detailEl.addEventListener("change", () => {
   vykresli();
 });
 
-const pohladTlacidla = document.querySelectorAll<HTMLButtonElement>("[data-pohlad]");
+const strankaStrom = $<HTMLDivElement>("#stranka-strom");
+const pohladTlacidla = strankaStrom.querySelectorAll<HTMLButtonElement>("[data-pohlad]");
+/** Odkaz na stránku stromu v navigácii vracia do posledného režimu (strom alebo kruh). */
+const odkazStrom = $<HTMLAnchorElement>('[data-stranka="strom"]');
 /** Prepne strom / kruh: ukáže prvky s data-pre="<režim>" a skryje ostatné. */
 function nastavRezim(r: Pohlad): void {
   rezim = r;
   pohladTlacidla.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset["pohlad"] === r)));
-  document.querySelectorAll<HTMLElement>("[data-pre]").forEach((e) => (e.hidden = e.dataset["pre"] !== r));
+  strankaStrom.querySelectorAll<HTMLElement>("[data-pre]").forEach((e) => (e.hidden = e.dataset["pre"] !== r));
   bublina.hidden = true;
+  odkazStrom.href = r === "kruh" ? "#kruh" : "#";
   if ((location.hash === "#kruh") !== (r === "kruh")) {
     history.replaceState(null, "", r === "kruh" ? "#kruh" : location.pathname + location.search);
   }
   vykresli();
 }
 pohladTlacidla.forEach((b) => b.addEventListener("click", () => nastavRezim((b.dataset["pohlad"] ?? "strom") as Pohlad)));
-window.addEventListener("hashchange", () => nastavRezim(location.hash === "#kruh" ? "kruh" : "strom"));
+
+// ---------- stránky: strom potravín (#, #kruh) a plánovač jedál (#planovac/…) ----------
+
+const strankaPlanovac = $<HTMLDivElement>("#stranka-planovac");
+const planovac = new Planovac(strankaPlanovac, koren, subory);
+
+const dekoduj = (s: string): string => {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+};
+
+function trasa(): void {
+  const casti = location.hash.slice(1).split("/");
+  const plan = casti[0] === "planovac";
+  strankaStrom.hidden = plan;
+  strankaPlanovac.hidden = !plan;
+  document.querySelectorAll<HTMLAnchorElement>("[data-stranka]").forEach((a) => {
+    if ((a.dataset["stranka"] === "planovac") === plan) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  document.title = plan ? "Plánovač jedál" : "Strom potravín";
+  // Edit mód (zápis dostupnosti) sa týka len stránky stromu.
+  document.documentElement.classList.toggle("edit-mod", EDIT && !plan);
+  const pasik = document.querySelector<HTMLElement>(".edit-mod-pasik");
+  if (pasik) pasik.hidden = plan;
+  bublina.hidden = true;
+  if (plan) planovac.zobraz(casti.slice(1).filter(Boolean).map(dekoduj));
+  else nastavRezim(casti[0] === "kruh" ? "kruh" : "strom");
+}
+window.addEventListener("hashchange", trasa);
 
 // ---------- edit mód (len dev server) ----------
 
@@ -431,10 +396,16 @@ if (EDIT) {
   import.meta.hot?.accept("../src/data/strom", (m) => {
     if (!m) return;
     const fokus = document.activeElement instanceof HTMLElement ? document.activeElement.dataset["id"] : undefined;
-    koren = postav((m as unknown as { strom: Strom }).strom, 0, "");
+    koren = postav((m as unknown as { strom: Strom }).strom);
     statistiky();
     vykresli();
+    planovac.nastavKoren(koren);
     if (fokus) stromEl.querySelector<HTMLButtonElement>(`button.chip[data-id="${CSS.escape(fokus)}"]`)?.focus();
+  });
+
+  // Nový, upravený alebo zmazaný súbor jedla v src/data/plany sa v plánovači prejaví hneď.
+  import.meta.hot?.accept("../src/data/plany", (m) => {
+    if (m) planovac.nastavSubory((m as unknown as { subory: Readonly<Record<string, unknown>> }).subory);
   });
 }
 
@@ -444,4 +415,4 @@ detailEl.checked = nast.detail;
 naplnUrovne();
 oznacDost();
 statistiky();
-nastavRezim(rezim);
+trasa();

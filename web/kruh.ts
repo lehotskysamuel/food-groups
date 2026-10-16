@@ -5,6 +5,7 @@
  *
  * Farba: ríša dáva odtieň (rovnaké tokeny ako strom), hĺbka svetlosť a poloha v ríši jemný posun
  * odtieňa. Poloha sa počíta z celého stromu, takže filter ani hľadanie farby neprefarbia.
+ * So zvýraznením (plánovač jedál) sú zelené výseky, ktoré obsahujú zvýraznenú potravinu, ostatné sivé.
  */
 import { ZNACKY } from "../src/strom.types";
 import { RISE, TRIEDA, el, nazovUrovne, pocetEl, sklon, sucet, znacka } from "./spolocne";
@@ -22,6 +23,16 @@ const PISMO = {
 
 const bezPohybu = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+/** Zvýraznené potraviny (suroviny jedla alebo plánu). */
+export interface Zvyraznenie {
+  /** Id zvýraznených listov (Uzol.id). */
+  readonly listy: ReadonlySet<string>;
+  /** Čo zvýraznenie znamená, napr. „v jedle“. */
+  readonly popis: string;
+  /** Text k zvýraznenej potravine do bubliny (napr. „bryndza · 250 g“). */
+  readonly detail?: (id: string) => string | undefined;
+}
+
 interface Vysek {
   readonly i: number;
   readonly v: VUzol;
@@ -37,6 +48,8 @@ interface Vysek {
   readonly kral: string;
   /** Najväčšia hĺbka v podstrome. */
   spodok: number;
+  /** Počet zvýraznených potravín v podstrome. */
+  zvyraznene: number;
   farba: string;
   /** Výsek je svetlý, text na ňom má byť tmavý. */
   tmavyText: boolean;
@@ -136,6 +149,7 @@ export class Kruh {
   private dotyk = false;
 
   private koren: readonly Uzol[] | undefined;
+  private zvyraznenie: Zvyraznenie | undefined;
   /** Stred podstromu uzla v rámci jeho ríše (0–1) podľa celého stromu. */
   private poloha = new Map<string, number>();
   /** Rozptyl odtieňa ríše v stupňoch (väčšia ríša, väčší rozptyl). */
@@ -206,12 +220,16 @@ export class Kruh {
     });
   }
 
-  /** Nový pohľad (po filtri, hľadaní, prepnutí detailu alebo zmene dát). Priblíženie sa zachová, ak uzol ešte existuje. */
-  nastav(pohlad: readonly VUzol[], koren: readonly Uzol[]): void {
+  /**
+   * Nový pohľad (po filtri, hľadaní, prepnutí detailu alebo zmene dát). Priblíženie sa zachová, ak uzol ešte existuje.
+   * So zvýraznením sú zelené výseky so zvýraznenými potravinami a ostatné sivé.
+   */
+  nastav(pohlad: readonly VUzol[], koren: readonly Uzol[], zvyraznenie?: Zvyraznenie): void {
     if (koren !== this.koren) {
       this.koren = koren;
       this.spocitajPolohy(koren);
     }
+    this.zvyraznenie = zvyraznenie;
     cancelAnimationFrame(this.animacia);
     this.plocha.classList.remove("prechod");
     this.aktivuj(undefined);
@@ -257,6 +275,7 @@ export class Kruh {
         risa: Math.max(0, RISE.indexOf(kral)),
         kral,
         spodok: hlbka,
+        zvyraznene: v.deti.length === 0 && this.zvyraznenie?.listy.has(v.u.id) ? 1 : 0,
         farba: "",
         tmavyText: false,
       };
@@ -266,6 +285,7 @@ export class Kruh {
         const c = pridaj(d, s, hlbka + 1, kral);
         s.deti.push(c);
         s.spodok = Math.max(s.spodok, c.spodok);
+        s.zvyraznene += c.zvyraznene;
       }
       return s;
     };
@@ -303,19 +323,32 @@ export class Kruh {
     const css = getComputedStyle(document.documentElement);
     const tmave = oklch(css.getPropertyValue("--bg"))[0] < 0.5;
     const zaklad = FARBY_RIS.map((p) => oklch(css.getPropertyValue(p)));
+    const zelena = oklch(css.getPropertyValue("--v-jedle"));
     const h0 = this.fokus ? this.fokus.hlbka + 1 : 0;
     const prstence = Math.max(1, (this.fokus ? this.fokus.spodok : this.spodok) - h0);
     for (const s of this.vyseky) {
-      const [L0, C0, H0] = zaklad[s.risa] ?? zaklad[0] ?? [0.55, 0.08, 170];
       const t = clamp((s.hlbka - h0) / prstence, 0, 1);
-      const L = clamp(L0 + (tmave ? -0.3 : 0.33) * t, 0.3, 0.88);
-      const C = C0 * 1.15 * (1 - 0.3 * t);
-      const H = H0 + ((this.poloha.get(s.v.u.id) ?? 0.5) - 0.5) * (this.rozptyl.get(s.kral) ?? 0);
+      let [L, C, H] = zaklad[s.risa] ?? zaklad[0] ?? [0.55, 0.08, 170];
+      if (!this.zvyraznenie) {
+        H += ((this.poloha.get(s.v.u.id) ?? 0.5) - 0.5) * (this.rozptyl.get(s.kral) ?? 0);
+        L = clamp(L + (tmave ? -0.3 : 0.33) * t, 0.3, 0.88);
+        C *= 1.15 * (1 - 0.3 * t);
+      } else if (s.zvyraznene) {
+        [L, C, H] = zelena;
+        L = clamp(L + (tmave ? -0.25 : 0.3) * t, 0.3, 0.86);
+        C *= 1 - 0.35 * t;
+      } else {
+        // Sivá s nádychom zelenej, vnútorné prstence o niečo tmavšie (v tmavom režime svetlejšie).
+        [C, H] = [0.006, zelena[2]];
+        L = tmave ? 0.34 - 0.08 * t : 0.87 + 0.06 * t;
+      }
       s.farba = `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(1)})`;
       s.tmavyText = L > 0.63;
+      const mimo = !!this.zvyraznenie && !s.zvyraznene;
       this.cesty[s.i]?.style.setProperty("fill", s.farba);
       this.texty.get(s.i)?.classList.toggle("tmavy", s.tmavyText);
       this.texty.get(s.i)?.classList.toggle("svetly", !s.tmavyText);
+      this.texty.get(s.i)?.classList.toggle("mimo", mimo);
     }
     if (this.aktivny) this.naplnBublinu(this.aktivny);
   }
@@ -398,7 +431,8 @@ export class Kruh {
       const rm = (t.r0 + t.r1) / 2;
       // Celý prstenec má štítok hore.
       const am = uhol >= TAU - 1e-6 ? 0 : (t.a0 + t.a1) / 2;
-      const e = svg("text", `${pismo === PISMO.risa ? "risa " : ""}${s.tmavyText ? "tmavy" : "svetly"}`);
+      const mimo = this.zvyraznenie && !s.zvyraznene ? " mimo" : "";
+      const e = svg("text", `${pismo === PISMO.risa ? "risa " : ""}${s.tmavyText ? "tmavy" : "svetly"}${mimo}`);
       e.dataset["i"] = String(s.i);
       if (h + 4 <= hrubka && w + 10 <= rm * uhol) {
         // Pozdĺž oblúka; v dolnej polovici opačným smerom, aby text nebol hore nohami.
@@ -451,14 +485,18 @@ export class Kruh {
     kruh.setAttribute("r", f(this.diera - 3));
     const riadky: [string, string][] = [];
     const max = this.diera * 1.6;
+    const z = this.zvyraznenie;
     if (s) {
       const n = sucet(s.v.pocty);
       riadky.push(
         ["s-hore", "↑"],
         ["s-nazov", this.skrat(stitok(s.v.u), PISMO.risa.font, max)],
         ["s-uroven", this.skrat(nazovUrovne(s.v.u), "400 10.5px 'IBM Plex Mono', monospace", max)],
-        ["s-pocet", `${n} ${sklon(n)}`],
+        ["s-pocet", z ? `${s.zvyraznene} z ${n} ${z.popis}` : `${n} ${sklon(n)}`],
       );
+    } else if (z) {
+      const n = this.vyseky.reduce((a, v) => a + (v.hlbka === 0 ? v.zvyraznene : 0), 0);
+      riadky.push(["s-cislo", String(n)], ["s-uroven", sklon(n)], ["s-pocet", z.popis]);
     } else {
       riadky.push(["s-cislo", String(this.spolu)], ["s-uroven", sklon(this.spolu)]);
     }
@@ -667,13 +705,16 @@ export class Kruh {
     }
     const pata = el("div", "pata");
     const d = s.v.u.dostupnost;
+    const z = this.zvyraznenie;
     if (d) {
+      if (z && s.zvyraznene) pata.append(el("span", "chip zelena", z.popis));
       pata.append(el("span", `chip ${TRIEDA[d]}`, d));
     } else {
       const n = sucet(s.v.pocty);
-      pata.append(pocetEl(s.v), el("span", undefined, sklon(n)));
+      pata.append(pocetEl(s.v), el("span", undefined, z ? `${sklon(n)}, ${s.zvyraznene} ${z.popis}` : sklon(n)));
       if (s.deti.length) pata.append(el("span", "rada", "klik priblíži"));
     }
-    this.bublina.replaceChildren(ol, pata);
+    const detail = d && z && s.zvyraznene ? z.detail?.(s.v.u.id) : undefined;
+    this.bublina.replaceChildren(ol, pata, ...(detail ? [el("p", "detail", detail)] : []));
   }
 }

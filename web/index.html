@@ -12,6 +12,12 @@
 <body>
 <!--obsah-->
 <div class="stranka">
+  <nav class="weby" aria-label="Stránky">
+    <a href="#" data-stranka="strom">Strom potravín</a>
+    <a href="#planovac" data-stranka="planovac">Plánovač jedál</a>
+  </nav>
+
+  <div id="stranka-strom">
   <header class="hlavicka">
     <p class="eyebrow">food-groups · 17 taxonomických úrovní</p>
     <h1>Strom potravín</h1>
@@ -56,6 +62,50 @@
     <div><span class="chip tbd">TBD</span> úroveň existuje, ešte nie je doplnená</div>
     <div><span class="pocet"><b>12</b><i style="--b:50%;--m:80%"></i></span> počet potravín, pomer bežné / <span class="menej-text">menej bežné</span> / <span class="exot-text">exotické</span></div>
   </footer>
+  </div>
+
+  <div id="stranka-planovac" hidden>
+    <header class="hlavicka">
+      <p class="eyebrow">food-groups · plánovač jedál</p>
+      <nav class="omrvinky" id="plan-omrvinky" aria-label="Kde som"></nav>
+      <h1 id="plan-nadpis">Plánovač jedál</h1>
+      <p class="podtitul" id="plan-podtitul"></p>
+    </header>
+    <div id="plan-chyby" class="chyby" role="alert" hidden></div>
+    <p id="plan-info" class="info" aria-live="polite" hidden></p>
+
+    <div id="plan-zoznam" class="karty" hidden></div>
+
+    <div id="plan-detail" hidden>
+      <nav id="plan-jedla" class="karty" aria-label="Jedlá plánu"></nav>
+      <section class="vyber" aria-labelledby="vyber-nadpis">
+        <h2 id="vyber-nadpis"></h2>
+        <p id="vyber-popis" class="vyber-popis"></p>
+        <dl id="vyber-statistiky" class="statistiky"></dl>
+        <div class="nastroje" role="toolbar" aria-label="Ovládanie grafu">
+          <div class="segment" role="group" aria-label="Zobrazenie">
+            <button type="button" data-plan-pohlad="kruh" aria-pressed="true">Kruh</button>
+            <button type="button" data-plan-pohlad="strom" aria-pressed="false">Strom</button>
+          </div>
+          <div class="skupina" id="plan-strom-nastroje" hidden>
+            <button type="button" id="plan-rozbalit">Rozbaliť všetko</button>
+            <button type="button" id="plan-len-suroviny">Rozbaliť len suroviny</button>
+          </div>
+        </div>
+        <div class="vyber-telo">
+          <ol id="suroviny" class="suroviny" aria-label="Suroviny"></ol>
+          <div class="vyber-graf">
+            <div id="plan-strom" class="strom plan-strom" hidden></div>
+            <div id="plan-diagram" class="kruh"></div>
+          </div>
+        </div>
+      </section>
+      <footer class="legenda">
+        <div><span class="bod-legenda zelena"></span> <span id="legenda-v">v jedle</span></div>
+        <div><span class="bod-legenda siva"></span> ostatné potraviny stromu</div>
+      </footer>
+    </div>
+  </div>
 </div>
 <!--/obsah-->
 <script type="module" src="./main.ts"></script>

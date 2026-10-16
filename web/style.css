@@ -21,6 +21,9 @@
   --risa-zivocichy: #9b3d4a;
   --risa-chromisty: #6b6a1e;
   --risa-bakterie: #3f5f8c;
+  --v-jedle: #2e8a4f;
+  --v-jedle-bg: #dcf0e2;
+  --v-jedle-ink: #1d6a3a;
   --risa: var(--accent);
   --serif: "Spectral", Georgia, "Times New Roman", serif;
   --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -51,6 +54,9 @@
     --risa-zivocichy: #d77c89;
     --risa-chromisty: #b7b45f;
     --risa-bakterie: #86a8d8;
+    --v-jedle: #5cbf80;
+    --v-jedle-bg: #173523;
+    --v-jedle-ink: #8edca9;
   }
 }
 :root[data-theme="dark"] {
@@ -77,6 +83,9 @@
   --risa-zivocichy: #d77c89;
   --risa-chromisty: #b7b45f;
   --risa-bakterie: #86a8d8;
+  --v-jedle: #5cbf80;
+  --v-jedle-bg: #173523;
+  --v-jedle-ink: #8edca9;
 }
 
 * { box-sizing: border-box; }
@@ -92,8 +101,27 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   padding-inline: 20px;
-  padding-block: 36px 72px;
+  padding-block: 14px 72px;
 }
+
+/* ---------- navigácia medzi stránkami ---------- */
+.weby {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--line);
+}
+.weby a {
+  margin-bottom: -1px;
+  padding: 8px 0 9px;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font: 500 13.5px var(--sans);
+  text-decoration: none;
+}
+.weby a:hover { color: var(--ink); }
+.weby a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
+.weby a:focus-visible, .karta:focus-visible, .omrvinky a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
 /* ---------- hlavička ---------- */
 .eyebrow {
@@ -139,6 +167,7 @@ kbd {
 .statistiky .risa dd { color: var(--risa); }
 .statistiky .prva-risa { margin-left: auto; }
 .statistiky .risa { padding-left: 10px; border-left: 2px solid var(--risa); }
+.statistiky .zelena dd { color: var(--v-jedle); }
 
 /* ---------- nástroje ---------- */
 .nastroje {
@@ -324,6 +353,7 @@ summary.ciel { animation: ciel 1.4s ease-out; }
 .chip.menej { background: var(--menej-bg); color: var(--menej-ink); }
 .chip.exoticke { background: var(--exot-bg); color: var(--exot-ink); }
 .chip.tbd { color: var(--tbd); border-color: currentColor; }
+.chip.zelena { background: var(--v-jedle-bg); color: var(--v-jedle-ink); }
 mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
 
 .risa-0 { --risa: var(--risa-rastliny); }
@@ -397,6 +427,8 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 .kruh .stitky text.risa { font: 600 15px var(--serif); }
 .kruh .stitky .svetly { fill: #fff; }
 .kruh .stitky .tmavy { fill: #1b2420; }
+/* Výseky bez zvýraznenej potraviny (plánovač) majú tlmený text. */
+.kruh .stitky .mimo { fill: var(--muted); }
 .kruh .stred circle { fill: var(--surface); stroke: var(--line); }
 .kruh .stred.spat { cursor: pointer; }
 .kruh .stred.spat:hover circle { fill: var(--hover); }
@@ -457,6 +489,7 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 }
 .kruh-bublina .pata .pocet { margin: 0; color: var(--ink); }
 .kruh-bublina .rada { margin-left: auto; padding-left: 10px; font-size: 11px; }
+.kruh-bublina .detail { margin: 6px 0 0; font: 400 13px/1.4 var(--sans); color: var(--v-jedle-ink); }
 
 /* ---------- legenda ---------- */
 .legenda {
@@ -473,6 +506,117 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
 .legenda .pocet { margin: 0; }
 .menej-text { color: var(--menej); }
 .exot-text { color: var(--exot); }
+
+/* ---------- plánovač jedál ---------- */
+.omrvinky {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 6px;
+  margin-top: 6px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.omrvinky a { color: var(--accent); text-decoration: none; }
+.omrvinky a:hover { text-decoration: underline; }
+.omrvinky .aktualne { color: var(--ink); font-weight: 500; }
+.chyby {
+  margin-top: 18px;
+  padding: 10px 14px;
+  border: 1px solid var(--exot);
+  border-radius: 8px;
+  background: var(--exot-bg);
+  color: var(--exot-ink);
+  font-size: 13.5px;
+}
+.chyby ul { margin: 4px 0 0; padding-left: 18px; font: 400 12.5px/1.5 var(--mono); }
+.karty {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+.karty > .info { grid-column: 1 / -1; margin: 0; }
+.karta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.12s;
+}
+.karta:hover { border-color: var(--muted); }
+.karta[aria-current="page"] { border-color: var(--v-jedle); box-shadow: inset 0 0 0 1px var(--v-jedle); }
+.karta.suhrn { background: var(--v-jedle-bg); }
+.karta-nazov { font: 600 18px/1.25 var(--serif); overflow-wrap: anywhere; }
+.karta-meta { font: 500 11px var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.karta.suhrn .karta-meta { color: var(--v-jedle-ink); }
+.karta-popis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.vyber { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+.vyber h2 { margin: 0; font: 600 30px/1.15 var(--serif); text-wrap: balance; }
+.vyber-popis { margin: 6px 0 0; max-width: 64ch; color: var(--muted); }
+.vyber-popis:empty { display: none; }
+.vyber .statistiky { margin-top: 16px; }
+.vyber .nastroje { margin-top: 18px; }
+.vyber-telo { display: grid; gap: 18px 28px; margin-top: 16px; }
+/* Na úzkej obrazovke je graf nad zoznamom surovín. */
+.vyber-graf { min-width: 0; order: -1; }
+.vyber-graf .strom { margin-top: 0; }
+@media (min-width: 820px) {
+  .vyber-telo { grid-template-columns: 250px minmax(0, 1fr); align-items: start; }
+  .vyber-graf { order: 0; }
+}
+.suroviny { margin: 0; padding: 0; list-style: none; }
+.suroviny li {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 4px;
+  padding: 5px 0 6px;
+  border-bottom: 1px solid var(--line);
+}
+.suroviny .bod { width: 7px; height: 7px; margin: 0; border-radius: 50%; background: var(--v-jedle); align-self: center; }
+.suroviny .s-nazov { font: 600 15.5px/1.3 var(--serif); overflow-wrap: anywhere; }
+.suroviny .s-mnozstvo { font: 500 12px var(--mono); color: var(--muted); text-align: right; white-space: nowrap; }
+.suroviny .s-pod { grid-column: 2 / -1; font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.suroviny li.chyba .bod { background: var(--exot); }
+.suroviny li.chyba .s-pod { color: var(--exot-ink); }
+
+/* Strom plánovača: vetvy so surovinami sú zelené, ostatné sivé. */
+.plan-strom .deti { border-left: 1px solid var(--line); }
+.plan-strom details.v-jedle > .deti { border-left-color: color-mix(in srgb, var(--v-jedle) 55%, transparent); }
+.plan-strom .caret { background: var(--line); }
+.plan-strom .v-jedle > summary > .caret { background: var(--v-jedle); }
+.plan-strom .mimo > summary .nazov,
+.plan-strom .list.mimo .nazov { color: var(--muted); font-weight: 400; }
+.plan-strom .v-jedle > summary .nazov { color: var(--v-jedle-ink); font-weight: 600; }
+.plan-strom .list .bod { background: var(--line); }
+.plan-strom .list.v-jedle .bod { width: 7px; height: 7px; margin-right: 6px; background: var(--v-jedle); }
+.plan-strom .list.v-jedle .nazov { color: var(--v-jedle-ink); }
+.plan-strom .list.mimo .chip { opacity: 0.6; }
+.s-detail { font-size: 13px; color: var(--v-jedle-ink); }
+.pocet-v {
+  margin-left: auto;
+  font: 500 12px var(--mono);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pocet-v b { color: var(--v-jedle-ink); font-weight: 600; }
+.bod-legenda { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.bod-legenda.zelena { background: var(--v-jedle); }
+.bod-legenda.siva { background: var(--hover); border: 1px solid var(--line); }
 
 @media (max-width: 560px) {
   .stranka { padding-inline: 16px; }

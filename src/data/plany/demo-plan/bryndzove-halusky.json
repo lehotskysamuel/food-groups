@@ -1,0 +1,11 @@
+{
+  "nazov": "Bryndzové halušky",
+  "popis": "Zemiakové halušky s bryndzou, opečenou slaninou a pažítkou.",
+  "suroviny": [
+    { "potravina": "zemiaky", "mnozstvo": "600 g" },
+    { "potravina": "pšenica", "forma": "hladká múka", "mnozstvo": "250 g" },
+    { "potravina": "ovčie mlieko", "forma": "bryndza", "mnozstvo": "250 g" },
+    { "potravina": "bravčový bok", "forma": "údená slanina", "mnozstvo": "150 g" },
+    { "potravina": "pažítka", "mnozstvo": "hrsť" }
+  ]
+}

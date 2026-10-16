@@ -5,6 +5,7 @@ import { dalsia, prepniList } from "./src/uprava";
 import { DOSTUPNOST, type List } from "./src/strom.types";
 
 const STROM = fileURLToPath(new URL("./src/data/strom.ts", import.meta.url));
+const PLANY = fileURLToPath(new URL("./src/data/plany", import.meta.url));
 const LOKALNE = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
 
 /**
@@ -53,6 +54,20 @@ function editMod(): Plugin {
   };
 }
 
+/**
+ * Dev server sleduje aj src/data/plany. Je mimo koreňa (web/), takže bez toho by nový plán alebo nové
+ * jedlo neprišli cez HMR, len úpravy už načítaných súborov.
+ */
+function sledujPlany(): Plugin {
+  return {
+    name: "food-groups:sleduj-plany",
+    apply: "serve",
+    configureServer(server) {
+      server.watcher.add(PLANY);
+    },
+  };
+}
+
 /** Build vloží JS a CSS priamo do index.html, aby sa dal otvoriť aj bez servera (file://). */
 function jedenSubor(): Plugin {
   return {
@@ -87,5 +102,5 @@ export default defineConfig({
   build: { outDir: "../dist", emptyOutDir: true },
   // PORT nastaví spúšťač náhľadu, keď je 5173 obsadený; inak predvolený port Vite.
   server: { port: Number(process.env["PORT"]) || 5173 },
-  plugins: [editMod(), jedenSubor()],
+  plugins: [editMod(), sledujPlany(), jedenSubor()],
 });
