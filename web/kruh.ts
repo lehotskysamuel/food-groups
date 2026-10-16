@@ -411,80 +411,36 @@ export class Kruh {
   }
 
   /**
-   * Štítok sa kreslí len tam, kde sa celý zmestí, radiálne alebo pozdĺž oblúka, podľa toho, ktorý text je
-   * bližšie k vodorovnému. Radiálny je vodorovný pri 3 a 9 hodinách, pozdĺž oblúka pri 12 a 6. Text pozdĺž
-   * oblúka sa preto vo výseku posunie čo najbližšie k 12 alebo 6 hodinám; ak by aj tak bol naklonený o viac
-   * ako 45° (na boku kruhu by bol takmer zvislý), pozdĺž oblúka sa nekreslí.
+   * Štítky sú vždy radiálne (pozdĺž polomeru, od stredu k okraju), čitateľné zľava doprava na oboch stranách
+   * kruhu. Štítok sa kreslí len tam, kde sa celý zmestí; ríša skúsi najprv väčšie písmo.
    */
   private stitky(): void {
     this.texty.clear();
     if (!this.R) return;
-    const defs = svg("defs");
-    const vysledok: SVGElement[] = [defs];
+    const vysledok: SVGElement[] = [];
     for (const s of this.vyseky) {
       const t = s.hlbka >= this.okno.h0 ? this.tvar(s) : undefined;
       if (!t) continue;
       // „–“ (úroveň neexistuje) by bol len šum, v bubline je vysvetlený.
       if (s.v.u.nazov === ZNACKY.NEEXISTUJE) continue;
-      const hrubka = t.r1 - t.r0;
-      // Ríša má väčšie písmo, ak sa zmestí do prstenca.
-      const pismo = s.hlbka === 0 && PISMO.risa.px + 6 <= hrubka ? PISMO.risa : PISMO.bezne;
       const text = stitok(s.v.u);
-      const w = this.sirka(text, pismo.font);
-      const h = pismo.px;
       const uhol = t.a1 - t.a0;
+      const pismo = (s.hlbka === 0 ? [PISMO.risa, PISMO.bezne] : [PISMO.bezne]).find(
+        (p) => this.sirka(text, p.font) + 10 <= t.r1 - t.r0 && p.px + 2 <= t.r0 * uhol,
+      );
+      if (!pismo) continue;
       const rm = (t.r0 + t.r1) / 2;
-      const am = (t.a0 + t.a1) / 2;
+      // Celý prstenec má štítok na 3 hodinách, kde je radiálny text vodorovný.
+      const am = uhol >= TAU - 1e-6 ? Math.PI / 2 : (t.a0 + t.a1) / 2;
       const mimo = this.zvyraznenie && !s.zvyraznene ? " mimo" : "";
       const e = svg("text", `${pismo === PISMO.risa ? "risa " : ""}${s.tmavyText ? "tmavy" : "svetly"}${mimo}`);
       e.dataset["i"] = String(s.i);
-      /** Pozdĺž oblúka: stred textu čo najbližšie k vodorovnej polohe, ktorá sa ešte zmestí do výseku. */
-      const oblukStred = (): number | undefined => {
-        if (h + 4 > hrubka || w + 10 > rm * uhol) return undefined;
-        // Celý prstenec má štítok hore.
-        if (uhol >= TAU - 1e-6) return 0;
-        const polText = (w + 10) / rm / 2;
-        const [od, po] = [t.a0 + polText, t.a1 - polText];
-        const stred = [0, TAU, Math.PI]
-          .map((a) => clamp(a, od, po))
-          .reduce((a, b) => (Math.abs(Math.sin(b)) < Math.abs(Math.sin(a)) - 1e-9 ? b : a));
-        return Math.abs(Math.sin(stred)) <= Math.SQRT1_2 ? stred : undefined;
-      };
-      const radialne = w + 10 <= hrubka && h + 2 <= t.r0 * uhol;
-      const stredOblukom = oblukStred();
-      // Náklon od vodorovnej (0 = vodorovne, 1 = zvislo).
-      const ao = stredOblukom !== undefined && (!radialne || Math.abs(Math.sin(stredOblukom)) < Math.abs(Math.cos(am)))
-        ? stredOblukom
-        : undefined;
-      if (ao !== undefined) {
-        // Pozdĺž oblúka; v dolnej polovici opačným smerom, aby text nebol hore nohami.
-        const dole = ao > Math.PI / 2 && ao < (3 * Math.PI) / 2;
-        const r = rm + (dole ? 0.35 : -0.35) * h;
-        // Najdlhší oblúk súmerný okolo stredu textu, ktorý je celý vo výseku (startOffset 50 % = stred).
-        const pol = uhol >= TAU - 1e-6 ? Math.PI - 0.01 : Math.min(ao - t.a0, t.a1 - ao);
-        const [z, k] = dole ? [ao + pol, ao - pol] : [ao - pol, ao + pol];
-        const oblukText = svg("path");
-        oblukText.id = `kruh-t${s.i}`;
-        oblukText.setAttribute(
-          "d",
-          `M${f(r * Math.sin(z))},${f(-r * Math.cos(z))}A${f(r)},${f(r)} 0 ${pol * 2 > Math.PI ? 1 : 0} ${dole ? 0 : 1} ${f(r * Math.sin(k))},${f(-r * Math.cos(k))}`,
-        );
-        defs.append(oblukText);
-        const tp = svg("textPath");
-        tp.setAttribute("href", `#kruh-t${s.i}`);
-        tp.setAttribute("startOffset", "50%");
-        tp.textContent = text;
-        e.append(tp);
-      } else if (radialne) {
-        // Radiálne, čitateľné zľava doprava na oboch stranách.
-        const st = (am * 180) / Math.PI;
-        const otoc = am > Math.PI ? st + 90 : st - 90;
-        e.setAttribute("transform", `rotate(${f(otoc)}) translate(${f(am > Math.PI ? -rm : rm)},0)`);
-        e.setAttribute("dy", "0.35em");
-        e.textContent = text;
-      } else {
-        continue;
-      }
+      // Na ľavej strane otočený o 180°, aby nebol hore nohami.
+      const st = (am * 180) / Math.PI;
+      const otoc = am > Math.PI ? st + 90 : st - 90;
+      e.setAttribute("transform", `rotate(${f(otoc)}) translate(${f(am > Math.PI ? -rm : rm)},0)`);
+      e.setAttribute("dy", "0.35em");
+      e.textContent = text;
       this.texty.set(s.i, e);
       vysledok.push(e);
     }

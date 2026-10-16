@@ -63,8 +63,8 @@ vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages p
   detailný ukáže celý strom bez skrývania.
   Prepínač **Strom / Kruh** ukáže ten istý pohľad ako viacúrovňový kruhový diagram (`web/kruh.ts`, adresa `#kruh`): prstenec = úroveň, veľkosť výseku =
   počet potravín, hover ukáže výsek so všetkými predkami, klik priblíži, klik do stredu oddiali o úroveň,
-  tlačidlo **Celý graf** (alebo Home) vráti celý graf. Štítok výseku je radiálne alebo pozdĺž oblúka, podľa toho,
-  čo je bližšie k vodorovnému textu
+  tlačidlo **Celý graf** (alebo Home) vráti celý graf. Štítky výsekov sú vždy radiálne (od stredu k okraju)
+  a kreslia sa len tam, kde sa celé zmestia
 - `src/jedla.ts` – typy `Jedlo` a `Surovina` a načítanie a kontrola plánov jedál
 - `src/data/plany/<plán>/<jedlo>.json` – plány jedál (pozri [Plánovač jedál](#plánovač-jedál)), `src/data/plany.ts` ich načíta
 - `web/planovac.ts` – stránka Plánovač jedál (`#planovac`)
