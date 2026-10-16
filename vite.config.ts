@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
-import { dalsia, prepniList } from "./src/uprava";
+import { ChybaUpravy, dalsia, prepniList } from "./src/uprava";
 import { DOSTUPNOST, type List } from "./src/strom.types";
 
 const STROM = fileURLToPath(new URL("./src/data/strom.ts", import.meta.url));
@@ -11,6 +11,7 @@ const LOKALNE = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
 /**
  * Edit mód: len dev server. POST /__edit/prepni { cesta, z } prepne list v src/data/strom.ts
  * na nasledujúcu hodnotu (bežné → menej bežné → exotické → bežné). Prijíma len požiadavky z tohto počítača a z tejto stránky.
+ * Chyba má okrem slovenskej správy aj kód a údaje (ChybaUpravy), web podľa nich ukáže správu vo svojom jazyku.
  */
 function editMod(): Plugin {
   return {
@@ -30,7 +31,8 @@ function editMod(): Plugin {
           !req.headers["content-type"]?.startsWith("application/json") ||
           (origin !== undefined && new URL(origin).host !== req.headers.host)
         ) {
-          odpovedz(403, { chyba: "Edit mód prijíma len lokálne požiadavky z vlastnej stránky." });
+          const e = new ChybaUpravy("zakazane");
+          odpovedz(403, { chyba: e.message, kod: e.kod });
           return;
         }
         let telo = "";
@@ -40,13 +42,15 @@ function editMod(): Plugin {
           try {
             const { cesta, z } = JSON.parse(telo) as { cesta: unknown; z: unknown };
             if (!Array.isArray(cesta) || !cesta.every((k) => typeof k === "string") || !Object.hasOwn(DOSTUPNOST, String(z))) {
-              odpovedz(400, { chyba: "Neplatná požiadavka." });
+              const e = new ChybaUpravy("neplatne");
+              odpovedz(400, { chyba: e.message, kod: e.kod });
               return;
             }
             writeFileSync(STROM, prepniList(readFileSync(STROM, "utf8"), cesta, z as List));
             odpovedz(200, { dostupnost: dalsia(z as List) });
           } catch (e) {
-            odpovedz(409, { chyba: e instanceof Error ? e.message : String(e) });
+            if (e instanceof ChybaUpravy) odpovedz(409, { chyba: e.message, kod: e.kod, ...e.udaje });
+            else odpovedz(409, { chyba: e instanceof Error ? e.message : String(e) });
           }
         });
       });

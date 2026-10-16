@@ -4,6 +4,8 @@
  * 1. Taxón (úrovne 1–14) je v strome len raz: ten istý názov nesmie byť na dvoch cestách ani na dvoch úrovniach.
  * 2. Názov potraviny (list) je v celom strome unikátny.
  * 3. Rad, čeľaď, podčeľaď a tribus sú na správnej úrovni podľa typickej prípony názvu.
+ * 8. Každý názov uzla má preklad v každom jazyku (src/data/strom.en.ts) a preklady nemajú názvy, ktoré v strome
+ *    nie sú (číslo 8, lebo 4–7 sú pravidlá jednoduchého pohľadu nižšie).
  *
  * `skontrolujZjednodusene` kontroluje jednoduchý pohľad (src/data/zjednodusene.ts):
  * 4. Potravina je v strome a patrí najviac do jednej zjednodušenej potraviny.
@@ -11,6 +13,7 @@
  * 6. Každá potravina rastlín je (cez svoju zjednodušenú potravinu) práve v jednej podkategórii svojej čeľade.
  * 7. Triedy zobrazené spolu (ryby) sú triedy zo stromu.
  */
+import { PREKLADY_STROMU, tabulkaUrovne, type PrekladStromu } from "./preklad";
 import { UROVNE, ZNACKY, type List, type Strom } from "./strom.types";
 
 type Uzol = { readonly [nazov: string]: Uzol | List };
@@ -40,9 +43,20 @@ export function skontroluj(strom: Strom): string[] {
   /** Názov listu → cesty, na ktorých je. */
   const listy = new Map<string, string[]>();
 
+  /** Tabuľka prekladu → názvy, ktoré v nej musia byť (a cesta k prvému výskytu). */
+  const prekladane = new Map<Readonly<Record<string, string>>, Map<string, string>>();
+
   const prejdi = (uzol: Uzol, cesta: readonly string[]): void => {
     const uroven = cesta.length + 1;
     for (const [nazov, hodnota] of Object.entries(uzol)) {
+      if (!ZNACKY_SET.has(nazov)) {
+        for (const preklad of Object.values<PrekladStromu>(PREKLADY_STROMU)) {
+          const tabulka = tabulkaUrovne(preklad, uroven - 1);
+          const nazvy = prekladane.get(tabulka) ?? new Map<string, string>();
+          if (!nazvy.has(nazov)) nazvy.set(nazov, [...cesta, nazov].join(" › "));
+          prekladane.set(tabulka, nazvy);
+        }
+      }
       if (typeof hodnota === "string") {
         const cesty = listy.get(nazov) ?? [];
         listy.set(nazov, [...cesty, cesta.join(" › ")]);
@@ -68,6 +82,18 @@ export function skontroluj(strom: Strom): string[] {
   }
   for (const [nazov, cesty] of listy) {
     if (cesty.length > 1) chyby.push(`[2] potravina „${nazov}“ je v strome ${cesty.length}×:\n    ${cesty.join("\n    ")}`);
+  }
+  for (const [jazyk, preklad] of Object.entries<PrekladStromu>(PREKLADY_STROMU)) {
+    for (const [cast, tabulka] of Object.entries(preklad)) {
+      const nazvy = prekladane.get(tabulka) ?? new Map<string, string>();
+      for (const [nazov, cesta] of nazvy) {
+        if (!Object.hasOwn(tabulka, nazov)) chyby.push(`[8] „${nazov}“ nemá preklad (${jazyk}, ${cast}): ${cesta}`);
+        else if (!tabulka[nazov]?.trim()) chyby.push(`[8] „${nazov}“ má prázdny preklad (${jazyk}, ${cast})`);
+      }
+      for (const nazov of Object.keys(tabulka)) {
+        if (!nazvy.has(nazov)) chyby.push(`[8] preklad „${nazov}“ (${jazyk}, ${cast}) patrí k názvu, ktorý v strome na tejto úrovni nie je`);
+      }
+    }
   }
   return chyby;
 }

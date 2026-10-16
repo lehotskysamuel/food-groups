@@ -8,7 +8,7 @@ vlastného jedálnička: čím širšie pokrytie stromu, tým diverzifikovanejš
 ```
 npm install          # jednorazovo
 npm run typecheck    # overí typy a tvar stromu (tsc --noEmit)
-npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni, že jedlá odkazujú na potraviny zo stromu a dáta jednoduchého pohľadu
+npm run kontrola     # overí, že taxóny a potraviny sú v strome len raz a na správnej úrovni, že každý uzol má anglický preklad, že jedlá odkazujú na potraviny zo stromu a dáta jednoduchého pohľadu
 npm run dev          # web v edit móde na http://localhost:5173 (číta aj zapisuje src/data/strom.ts)
 npm run build        # web vo view móde: jeden súbor dist/index.html, otvorí sa aj bez servera
 npm run preview      # dist/ cez lokálny server (nepovinné)
@@ -22,6 +22,9 @@ npm run preview      # dist/ cez lokálny server (nepovinné)
   v poradí `bežné` → `menej bežné` → `exotické` → `bežné` a zmenu zapíše priamo do `src/data/strom.ts` (mení sa len hodnota toho listu).
   Strom sa hneď prekreslí bez straty rozbalenia a filtra, rovnako aj pri ručnej úprave súboru.
   Zápis prijíma len dev server a len požiadavky z tohto počítača; do buildu sa edit kód nedostane.
+
+Web je po slovensky, alebo po anglicky (pozri [Jazyky](#jazyky)): prepínač s vlajkami vpravo v hornej lište
+alebo parameter `?lang=en` v adrese, napr. https://lehotskysamuel.github.io/food-groups/main/?lang=en.
 
 ## Nasadenie
 
@@ -55,6 +58,12 @@ vetva `gh-pages`, priečinok `/ (root)`. Repozitár musí byť verejný (Pages p
 - `src/data/zjednodusene.ts` – dáta jednoduchého pohľadu (pozri [Jednoduchý pohľad](#jednoduchý-pohľad))
 - `src/kontrola.ts` – kontroly, ktoré typy nezachytia (`npm run kontrola` cez `scripts/kontrola.mjs`)
 - `src/uprava.ts` – prepnutie jedného listu v texte `strom.ts` (používa ho edit mód, `vite.config.ts`)
+- `src/preklad.ts` – jazyky (`sk`, `en`), jazyk z `?lang=` a preklad dát: `prelozUzol(nazov, uroven, jazyk)` pre názvy
+  uzlov stromu a `text(text, jazyk)` pre texty jedál
+- `src/data/strom.en.ts` – anglické názvy všetkých uzlov stromu
+- `src/data/zjednodusene.en.ts` – anglické názvy zjednodušených potravín, podkategórií a tried jednoduchého pohľadu
+- `src/texty.ts` – všetky texty rozhrania v každom jazyku (aj chyby v súboroch jedál a v edit móde)
+- `web/jazyk.ts` – aktuálny jazyk webu, prepínač s vlajkami a preklad statických textov `index.html` (`data-t`)
 - `web/` – webové zobrazenie stromu (Vite, bez frameworku): rozbaľovanie uzlov, rozbaliť/zbaliť všetko,
   rozbalenie po zvolenú úroveň, hľadanie, prepínače bežné / menej bežné / exotické (každý sa zapína
   a vypína zvlášť, exotické sú predvolene vypnuté). Prepínač **Jednoduchý / Komplexný / Detailný** vyberie pohľad:
@@ -110,15 +119,20 @@ Jedlo (typ `Jedlo` v `src/jedla.ts`):
 | `nazov` | povinný | názov jedla |
 | `popis` | nepovinný | krátky popis |
 | `suroviny` | povinný, aspoň jedna | zoznam surovín |
-| `suroviny[].potravina` | povinný | názov potraviny (listu) v strome, presne ako v `src/data/strom.ts`; názvy listov sú unikátne |
+| `suroviny[].potravina` | povinný | slovenský názov potraviny (listu) v strome, presne ako v `src/data/strom.ts`; názvy listov sú unikátne. Po anglicky sa zobrazí sám (preklad stromu) |
 | `suroviny[].forma` | nepovinný | produkt, ak to nie je samotná potravina (`bryndza`, `tofu`, `hladká múka`); zobrazí sa namiesto názvu potraviny |
 | `suroviny[].mnozstvo` | nepovinný | voľný text (`250 g`, `2 ks`, `hrsť`) |
+
+`nazov`, `popis`, `forma` aj `mnozstvo` môžu mať preklad: namiesto textu objekt so slovenčinou a angličtinou,
+napr. `"forma": { "sk": "hladká múka", "en": "plain flour" }`. `sk` je povinné, `en` nepovinné; bez prekladu
+sa aj v anglickom webe ukáže slovenský text. Názov plánu je názov priečinka a neprekladá sa. Ukážkový plán
+má preklady všade.
 
 Surovina odkazuje na potravinu podľa rovnakých pravidiel ako strom ([Mimo stromu](#mimo-stromu)): bryndza je
 ovčie mlieko, slanina bravčový bok, olej semeno, tofu aj sójová omáčka sójové bôby. Viac surovín môže odkazovať
 na tú istú potravinu (mlieko a maslo). Soľ, voda a iné neživé suroviny sa nezapisujú. Iné kľúče, chýbajúca
-potravina či neexistujúca potravina sú chyba: `npm run kontrola` (a teda aj nasadenie) zlyhá a web ich ukáže
-v červenom rámčeku.
+potravina, neexistujúca potravina či neznámy jazyk v preklade sú chyba: `npm run kontrola` (a teda aj nasadenie)
+zlyhá a web ich ukáže v červenom rámčeku.
 
 Na stránke: zoznam plánov → klik na plán ukáže jeho jedlá a **Celý plán** (súhrn surovín všetkých jedál) → klik
 na jedlo ukáže len jeho suroviny. Graf sa dá prepnúť medzi **Kruh** a **Strom**: potraviny v jedle (alebo v pláne)
@@ -155,6 +169,50 @@ Všetko je v `src/data/zjednodusene.ts`:
 `npm run kontrola` overí, že každá potravina je najviac v jednej zjednodušenej potravine a všetky jej
 potraviny sú v tej istej čeľadi, že každá potravina rastlín je práve v jednej podkategórii svojej čeľade
 a že `triedy` obsahujú len triedy zo stromu. Novú potravinu rastlín treba preto zaradiť aj do podkategórie.
+Nová zjednodušená potravina, podkategória či trieda potrebuje aj anglický názov v `src/data/zjednodusene.en.ts`
+(inak zlyhá `npm run typecheck`, pozri [Jazyky](#jazyky)).
+
+## Jazyky
+
+Predvolený jazyk webu je slovenčina. Angličtinu zapne prepínač s vlajkami v hornej lište alebo `?lang=en` v adrese;
+prepínač mení jazyk bez načítania stránky (rozbalenie, filter aj priblíženie kruhu zostanú) a zapíše `?lang=en`
+do adresy, takže odkaz aj obnovenie stránky jazyk zachovajú. Iná alebo chýbajúca hodnota `lang` znamená slovenčinu.
+
+Preložené je celé rozhranie (`src/texty.ts`, typ `Texty` vynúti, že angličtina má každý text slovenčiny) aj dáta:
+
+- **Názvy uzlov stromu** sú v `src/data/strom.en.ts` v štyroch tabuľkách: taxóny (úrovne 1–14), kultivary (15),
+  jedlé časti (16) a potraviny (17). Ten istý slovenský názov totiž na rôznych úrovniach znamená niečo iné:
+  potravina „cibuľa“ je *onion*, jedlá časť „cibuľa“ je *bulb* a rod „cesnak“ je *Allium*, no potravina „cesnak“
+  *garlic*. Preklad robí `prelozUzol(nazov, uroven, jazyk)` v `src/preklad.ts`.
+- **Jednoduchý pohľad** (zjednodušené potraviny, podkategórie rastlín, ryby) má názvy v `src/data/zjednodusene.en.ts`,
+  preklad robí `prelozZjednodusene(nazov, druh, jazyk)`.
+- **Texty jedál** sa prekladajú priamo v JSON súbore (pozri [Plánovač jedál](#plánovač-jedál)).
+- Hľadanie v strome hľadá v zobrazenom jazyku.
+
+Nová potravina v strome či zjednodušená potravina, podkategória a trieda jednoduchého pohľadu bez anglického názvu
+je chyba `npm run typecheck`, nový taxón, kultivar či jedlá časť bez prekladu (aj preklad názvu, ktorý už v strome
+nie je) chyba `npm run kontrola` [8].
+
+Anglické názvy (britská angličtina, ako na obaloch v EÚ):
+
+| Úroveň | Pravidlo | Príklad |
+|---|---|---|
+| ríša | anglicky | plants, fungi, animals |
+| 2–7 | ustálený anglický názov presne pre ten taxón, inak latinsky | angiosperms, eudicots, rosids, mammals; Boreoeutheria |
+| rad, čeľaď, podčeľaď, tribus, rod | latinsky (angličtina pre ne nemá ustálené mená) | Brassicales, Brassicaceae, Brassica |
+| druh | latinský binom | Brassica oleracea, Allium cepa |
+| varieta / skupina odrôd | anglický názov, latinský epiteton zostáva | broccoli, onion; durum |
+| kultivar / plemeno | vlastné mená zostávajú, opisné sa prekladajú | Gala, Mangalica; red, white |
+| jedlá časť | anglický botanický či anatomický termín | fruit, seed, bulb, breast |
+| potravina | bežný obchodný názov; číslo ako v slovenčine, hromadné podstatné mená v množnom čísle | onion, potatoes, grapes, pork belly |
+
+Na posúdenie: „buľva“ je *swollen hypocotyl*; „treska škvrnitá“ je *Gadus morhua* (cod), hoci česká „treska
+skvrnitá“ je treska jednoškvrnná; „paprika jabĺčková“ je doslovne *apple-shaped pepper*; „krevety vannamei“
+sú *vannamei prawns* (britské obchody ich predávajú ako *king prawns*).
+
+Nový jazyk: kód do `JAZYKY` v `src/preklad.ts`, texty do `TEXTY` v `src/texty.ts`, preklad stromu
+do `PREKLADY_STROMU`, jednoduchého pohľadu do `PREKLADY_ZJEDNODUSENYCH` a tlačidlo s vlajkou do hornej lišty
+v `web/index.html`.
 
 ## Model
 
@@ -345,10 +403,10 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 ## Manuálne overenie
 
 `npm run typecheck` stráži **tvar** stromu (hĺbka 17, list = `"bežné"` / `"menej bežné"` / `"exotické"`, značka nie je názvom
-potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
-potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
-úrovni (napr. tribus -eae nie je v slote podčeľade), a pravidlá [jednoduchého pohľadu](#jednoduchý-pohľad).
-Obe kontroly bežia aj v CI pred nasadením.
+potraviny) a to, že každá potravina aj zjednodušená potravina má anglický názov. `npm run kontrola` stráži, že každý taxón
+(úrovne 1–14) je v strome len raz, názov potraviny je v celom strome unikátny, rad, čeľaď, podčeľaď a tribus sú podľa
+prípony na správnej úrovni (napr. tribus -eae nie je v slote podčeľade), každý uzol má preklad, a pravidlá
+[jednoduchého pohľadu](#jednoduchý-pohľad). Obe kontroly bežia aj v CI pred nasadením.
 **Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (október 2026): 261 bežné, 84 menej
 bežné, 95 exotické. Pri 97 potravinách platí ručná úprava v edit móde, ktorá má prednosť
 pred revíziou. Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland,

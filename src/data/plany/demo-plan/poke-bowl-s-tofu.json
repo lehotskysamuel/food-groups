@@ -1,20 +1,23 @@
 {
-  "nazov": "Poke bowl s tofu",
-  "popis": "Sushi ryža s marinovaným tofu, zeleninou, mangom a sezamom.",
+  "nazov": { "sk": "Poke bowl s tofu", "en": "Tofu poke bowl" },
+  "popis": {
+    "sk": "Sushi ryža s marinovaným tofu, zeleninou, mangom a sezamom.",
+    "en": "Sushi rice with marinated tofu, vegetables, mango and sesame."
+  },
   "suroviny": [
-    { "potravina": "ryža", "forma": "sushi ryža", "mnozstvo": "80 g" },
+    { "potravina": "ryža", "forma": { "sk": "sushi ryža", "en": "sushi rice" }, "mnozstvo": "80 g" },
     { "potravina": "sójové bôby", "forma": "tofu", "mnozstvo": "150 g" },
-    { "potravina": "sójové bôby", "forma": "sójová omáčka", "mnozstvo": "2 PL" },
+    { "potravina": "sójové bôby", "forma": { "sk": "sójová omáčka", "en": "soy sauce" }, "mnozstvo": { "sk": "2 PL", "en": "2 tbsp" } },
     { "potravina": "edamame", "mnozstvo": "50 g" },
-    { "potravina": "avokádo", "mnozstvo": "½ ks" },
-    { "potravina": "uhorka šalátová", "mnozstvo": "½ ks" },
-    { "potravina": "mrkva", "mnozstvo": "1 ks" },
+    { "potravina": "avokádo", "mnozstvo": { "sk": "½ ks", "en": "½" } },
+    { "potravina": "uhorka šalátová", "mnozstvo": { "sk": "½ ks", "en": "½" } },
+    { "potravina": "mrkva", "mnozstvo": { "sk": "1 ks", "en": "1" } },
     { "potravina": "kapusta červená", "mnozstvo": "50 g" },
-    { "potravina": "mango", "mnozstvo": "½ ks" },
-    { "potravina": "jarná cibuľka", "mnozstvo": "1 ks" },
-    { "potravina": "sezamové semená", "mnozstvo": "1 PL" },
-    { "potravina": "nori", "mnozstvo": "1 plát" },
-    { "potravina": "zázvor", "forma": "nakladaný zázvor", "mnozstvo": "1 PL" },
-    { "potravina": "limeta", "forma": "limetková šťava", "mnozstvo": "½ limety" }
+    { "potravina": "mango", "mnozstvo": { "sk": "½ ks", "en": "½" } },
+    { "potravina": "jarná cibuľka", "mnozstvo": { "sk": "1 ks", "en": "1" } },
+    { "potravina": "sezamové semená", "mnozstvo": { "sk": "1 PL", "en": "1 tbsp" } },
+    { "potravina": "nori", "mnozstvo": { "sk": "1 plát", "en": "1 sheet" } },
+    { "potravina": "zázvor", "forma": { "sk": "nakladaný zázvor", "en": "pickled ginger" }, "mnozstvo": { "sk": "1 PL", "en": "1 tbsp" } },
+    { "potravina": "limeta", "forma": { "sk": "limetková šťava", "en": "lime juice" }, "mnozstvo": { "sk": "½ limety", "en": "½ lime" } }
   ]
 }

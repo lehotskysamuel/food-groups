@@ -15,5 +15,16 @@
   </head>
   <body>
     <p>Otváram <a href="./main/">hlavnú verziu</a>…</p>
+    <script>
+      // ?lang=en: text po anglicky (presmerovanie parameter zachová).
+      if (/[?&]lang=en(&|$)/i.test(location.search)) {
+        document.documentElement.lang = 'en';
+        document.title = 'Food tree';
+        var a = document.querySelector('a');
+        a.href = './main/' + location.search;
+        a.textContent = 'the main version';
+        a.parentNode.replaceChildren('Opening ', a, '…');
+      }
+    </script>
   </body>
 </html>

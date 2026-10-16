@@ -12,41 +12,67 @@
 <body>
 <!--obsah-->
 <div class="stranka">
-  <nav class="weby" aria-label="Stránky">
-    <a href="#" data-stranka="strom">Strom potravín</a>
-    <a href="#planovac" data-stranka="planovac">Plánovač jedál</a>
-  </nav>
+  <div class="lista">
+    <nav class="weby" aria-label="Stránky" data-t-aria-label="stranky.aria">
+      <a href="#" data-stranka="strom" data-t="stranky.strom">Strom potravín</a>
+      <a href="#planovac" data-stranka="planovac" data-t="stranky.planovac">Plánovač jedál</a>
+    </nav>
+    <div class="jazyky" role="group" aria-label="Jazyk" data-t-aria-label="prepinacJazyka">
+      <button type="button" data-jazyk="sk" lang="sk" aria-pressed="true">
+        <svg class="vlajka" viewBox="0 0 900 600" aria-hidden="true">
+          <clipPath id="vlajka-sk-stit"><path d="M182 136H418V330Q418 436 300 490Q182 436 182 330Z"/></clipPath>
+          <path d="M0 0H900V600H0Z" fill="#fff"/>
+          <path d="M0 200H900V600H0Z" fill="#0b4ea2"/>
+          <path d="M0 400H900V600H0Z" fill="#ee1c25"/>
+          <path d="M166 120H434V330Q434 448 300 508Q166 448 166 330Z" fill="#fff"/>
+          <path d="M182 136H418V330Q418 436 300 490Q182 436 182 330Z" fill="#ee1c25"/>
+          <path d="M150 432Q215 360 262 412Q300 352 338 412Q385 360 450 432V520H150Z" fill="#0b4ea2" clip-path="url(#vlajka-sk-stit)"/>
+          <path d="M287 168H313V396H287ZM242 214H358V240H242ZM222 274H378V302H222Z" fill="#fff"/>
+        </svg>SK
+      </button>
+      <button type="button" data-jazyk="en" lang="en" aria-pressed="false">
+        <svg class="vlajka" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <clipPath id="vlajka-uk-orez"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath>
+          <path d="M0 0v30h60V0z" fill="#012169"/>
+          <path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/>
+          <path d="M0 0l60 30m0-30L0 30" clip-path="url(#vlajka-uk-orez)" stroke="#c8102e" stroke-width="4"/>
+          <path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/>
+          <path d="M30 0v30M0 15h60" stroke="#c8102e" stroke-width="6"/>
+        </svg>EN
+      </button>
+    </div>
+  </div>
 
   <div id="stranka-strom">
   <header class="hlavicka">
-    <p class="eyebrow">food-groups · 17 taxonomických úrovní</p>
-    <h1>Strom potravín</h1>
+    <p class="eyebrow" data-t="strom.eyebrow">food-groups · 17 taxonomických úrovní</p>
+    <h1 data-t="strom.nadpis">Strom potravín</h1>
     <p class="podtitul">
-      <span data-pre="strom">Klik na uzol ho zbalí alebo rozbalí, so <kbd>Shift</kbd> celý podstrom.</span>
-      <span data-pre="kruh" hidden>Veľkosť výseku zodpovedá počtu potravín. Klik na výsek ho priblíži, klik do stredu oddiali.</span>
+      <span data-pre="strom"><span data-t="strom.klikPred">Klik na uzol ho zbalí alebo rozbalí, so</span> <kbd>Shift</kbd> <span data-t="strom.klikPo">celý podstrom.</span></span>
+      <span data-pre="kruh" hidden data-t="strom.kruhPodtitul">Veľkosť výseku zodpovedá počtu potravín. Klik na výsek ho priblíži, klik do stredu oddiali.</span>
     </p>
     <dl class="statistiky" id="statistiky"></dl>
   </header>
 
-  <div class="nastroje" role="toolbar" aria-label="Ovládanie stromu">
-    <div class="segment" role="group" aria-label="Zobrazenie">
-      <button type="button" data-pohlad="strom" aria-pressed="true">Strom</button>
-      <button type="button" data-pohlad="kruh" aria-pressed="false">Kruh</button>
+  <div class="nastroje" role="toolbar" aria-label="Ovládanie stromu" data-t-aria-label="strom.nastrojeAria">
+    <div class="segment" role="group" aria-label="Zobrazenie" data-t-aria-label="strom.pohladAria">
+      <button type="button" data-pohlad="strom" aria-pressed="true" data-t="strom.pohladStrom">Strom</button>
+      <button type="button" data-pohlad="kruh" aria-pressed="false" data-t="strom.pohladKruh">Kruh</button>
     </div>
-    <div class="dostupnosti" role="group" aria-label="Dostupnosť">
-      <label class="prepinac bezne"><input type="checkbox" data-dost="bežné" autocomplete="off"> Bežné</label>
-      <label class="prepinac menej"><input type="checkbox" data-dost="menej bežné" autocomplete="off"> Menej bežné</label>
-      <label class="prepinac exoticke"><input type="checkbox" data-dost="exotické" autocomplete="off"> Exotické</label>
+    <div class="dostupnosti" role="group" aria-label="Dostupnosť" data-t-aria-label="filter.aria">
+      <label class="prepinac bezne"><input type="checkbox" data-dost="bežné" autocomplete="off"> <span data-t="filter.bežné">Bežné</span></label>
+      <label class="prepinac menej"><input type="checkbox" data-dost="menej bežné" autocomplete="off"> <span data-t="filter.menej bežné">Menej bežné</span></label>
+      <label class="prepinac exoticke"><input type="checkbox" data-dost="exotické" autocomplete="off"> <span data-t="filter.exotické">Exotické</span></label>
     </div>
-    <div class="segment" id="podrobnost" role="group" aria-label="Podrobnosť"></div>
+    <div class="segment" id="podrobnost" role="group" aria-label="Podrobnosť" data-t-aria-label="podrobnost.aria"></div>
     <div class="skupina" data-pre="strom">
-      <button type="button" id="rozbalit-vsetko">Rozbaliť všetko</button>
-      <button type="button" id="zbalit-vsetko">Zbaliť všetko</button>
-      <select id="rozbalit-po" aria-label="Rozbaliť po úroveň">
-        <option value="">Rozbaliť po úroveň…</option>
+      <button type="button" id="rozbalit-vsetko" data-t="strom.rozbalitVsetko">Rozbaliť všetko</button>
+      <button type="button" id="zbalit-vsetko" data-t="strom.zbalitVsetko">Zbaliť všetko</button>
+      <select id="rozbalit-po" aria-label="Rozbaliť po úroveň" data-t-aria-label="strom.rozbalitPo">
+        <option value="" data-t="strom.rozbalitPoVyzva">Rozbaliť po úroveň…</option>
       </select>
     </div>
-    <input type="search" id="hladat" class="hladat" placeholder="Hľadať potravinu alebo taxón…" autocomplete="off" aria-label="Hľadať">
+    <input type="search" id="hladat" class="hladat" placeholder="Hľadať potravinu alebo taxón…" autocomplete="off" aria-label="Hľadať" data-t-placeholder="strom.hladatVyzva" data-t-aria-label="strom.hladat">
   </div>
 
   <p id="info" class="info" aria-live="polite"></p>
@@ -54,15 +80,15 @@
   <div id="diagram" class="kruh" data-pre="kruh" hidden></div>
 
   <footer class="legenda">
-    <div><span class="chip tbd">TBD</span> úroveň existuje, ešte nie je doplnená</div>
-    <div><span class="pocet"><b>12</b><i style="--b:50%;--m:80%"></i></span> počet potravín, pomer bežné / <span class="menej-text">menej bežné</span> / <span class="exot-text">exotické</span></div>
+    <div><span class="chip tbd">TBD</span> <span data-t="strom.legendaTbd">úroveň existuje, ešte nie je doplnená</span></div>
+    <div><span class="pocet"><b>12</b><i style="--b:50%;--m:80%"></i></span> <span data-t="strom.legendaPomer">počet potravín, pomer</span> <span data-t="dostupnost.bežné">bežné</span> / <span class="menej-text" data-t="dostupnost.menej bežné">menej bežné</span> / <span class="exot-text" data-t="dostupnost.exotické">exotické</span></div>
   </footer>
   </div>
 
   <div id="stranka-planovac" hidden>
     <header class="hlavicka">
-      <p class="eyebrow">food-groups · plánovač jedál</p>
-      <nav class="omrvinky" id="plan-omrvinky" aria-label="Kde som"></nav>
+      <p class="eyebrow" data-t="planovac.eyebrow">food-groups · plánovač jedál</p>
+      <nav class="omrvinky" id="plan-omrvinky" aria-label="Kde som" data-t-aria-label="planovac.omrvinkyAria"></nav>
       <h1 id="plan-nadpis">Plánovač jedál</h1>
       <p class="podtitul" id="plan-podtitul"></p>
     </header>
@@ -72,31 +98,31 @@
     <div id="plan-zoznam" class="karty" hidden></div>
 
     <div id="plan-detail" hidden>
-      <nav id="plan-jedla" class="karty" aria-label="Jedlá plánu"></nav>
+      <nav id="plan-jedla" class="karty" aria-label="Jedlá plánu" data-t-aria-label="planovac.jedlaAria"></nav>
       <section class="vyber" aria-labelledby="vyber-nadpis">
         <h2 id="vyber-nadpis"></h2>
         <p id="vyber-popis" class="vyber-popis"></p>
         <dl id="vyber-statistiky" class="statistiky"></dl>
-        <div class="nastroje" role="toolbar" aria-label="Ovládanie grafu">
-          <div class="segment" role="group" aria-label="Zobrazenie">
-            <button type="button" data-plan-pohlad="kruh" aria-pressed="true">Kruh</button>
-            <button type="button" data-plan-pohlad="strom" aria-pressed="false">Strom</button>
+        <div class="nastroje" role="toolbar" aria-label="Ovládanie grafu" data-t-aria-label="planovac.nastrojeAria">
+          <div class="segment" role="group" aria-label="Zobrazenie" data-t-aria-label="planovac.pohladAria">
+            <button type="button" data-plan-pohlad="kruh" aria-pressed="true" data-t="planovac.pohladKruh">Kruh</button>
+            <button type="button" data-plan-pohlad="strom" aria-pressed="false" data-t="planovac.pohladStrom">Strom</button>
           </div>
-          <div class="dostupnosti" role="group" aria-label="Dostupnosť">
-            <label class="prepinac bezne"><input type="checkbox" data-dost="bežné" autocomplete="off"> Bežné</label>
-            <label class="prepinac menej"><input type="checkbox" data-dost="menej bežné" autocomplete="off"> Menej bežné</label>
-            <label class="prepinac exoticke"><input type="checkbox" data-dost="exotické" autocomplete="off"> Exotické</label>
+          <div class="dostupnosti" role="group" aria-label="Dostupnosť" data-t-aria-label="filter.aria">
+            <label class="prepinac bezne"><input type="checkbox" data-dost="bežné" autocomplete="off"> <span data-t="filter.bežné">Bežné</span></label>
+            <label class="prepinac menej"><input type="checkbox" data-dost="menej bežné" autocomplete="off"> <span data-t="filter.menej bežné">Menej bežné</span></label>
+            <label class="prepinac exoticke"><input type="checkbox" data-dost="exotické" autocomplete="off"> <span data-t="filter.exotické">Exotické</span></label>
           </div>
-          <div class="segment" id="plan-podrobnost" role="group" aria-label="Podrobnosť"></div>
+          <div class="segment" id="plan-podrobnost" role="group" aria-label="Podrobnosť" data-t-aria-label="podrobnost.aria"></div>
           <div class="skupina" id="plan-strom-nastroje" hidden>
-            <button type="button" id="plan-rozbalit">Rozbaliť všetko</button>
-            <button type="button" id="plan-len-suroviny">Rozbaliť len suroviny</button>
+            <button type="button" id="plan-rozbalit" data-t="planovac.rozbalitVsetko">Rozbaliť všetko</button>
+            <button type="button" id="plan-len-suroviny" data-t="planovac.lenSuroviny">Rozbaliť len suroviny</button>
           </div>
         </div>
         <div class="vyber-telo">
-          <ol id="suroviny" class="suroviny" aria-label="Suroviny"></ol>
+          <ol id="suroviny" class="suroviny" aria-label="Suroviny" data-t-aria-label="planovac.surovinyAria"></ol>
           <div class="vyber-graf">
-            <p id="plan-prazdne" class="info" hidden>Žiadna potravina nezodpovedá filtru dostupnosti.</p>
+            <p id="plan-prazdne" class="info" hidden data-t="planovac.nicVoFiltri">Žiadna potravina nezodpovedá filtru dostupnosti.</p>
             <div id="plan-strom" class="strom plan-strom" hidden></div>
             <div id="plan-diagram" class="kruh"></div>
           </div>
@@ -104,7 +130,7 @@
       </section>
       <footer class="legenda">
         <div><span class="bod-legenda zelena"></span> <span id="legenda-v">v jedle</span></div>
-        <div><span class="bod-legenda siva"></span> ostatné potraviny stromu</div>
+        <div><span class="bod-legenda siva"></span> <span data-t="planovac.ostatne">ostatné potraviny stromu</span></div>
       </footer>
     </div>
   </div>
