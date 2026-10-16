@@ -517,6 +517,9 @@ export const strom = {
                               "*": {
                                 "nezrelé semeno": {
                                   "edamame": "menej bežné"
+                                },
+                                "semeno": {
+                                  "sójové bôby": "bežné"
                                 }
                               }
                             }
