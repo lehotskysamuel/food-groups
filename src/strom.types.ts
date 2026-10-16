@@ -25,15 +25,16 @@ export type Znacka = (typeof ZNACKY)[keyof typeof ZNACKY];
 type Uzly<Dalsia> = { readonly [nazov: string]: Dalsia };
 
 /**
- * Hodnoty listu: ako ľahko sa potravina zoženie v bežnom supermarkete na Slovensku, v poradí
- * od najdostupnejšej. Hodnotí sa v akejkoľvek podobe, v ktorej je hlavnou zložkou (čerstvá, sušená,
- * mrazená, sterilizovaná…), sezónna potravina v sezóne. „Menej bežné“ hovorí o dostupnosti, nie
- * o pôvode, patria sem aj domáce potraviny, ktoré sa ťažko zháňajú (egreš). Pravidlá sú v README.
+ * Hodnoty listu: ako ľahko sa potravina zoženie v bežnom supermarkete na Slovensku (z pohľadu
+ * krajského mesta mimo Bratislavy), v poradí od najdostupnejšej. Hodnotí sa v akejkoľvek podobe,
+ * v ktorej je hlavnou zložkou (čerstvá, sušená, mrazená, sterilizovaná…), sezónna potravina v sezóne.
+ * „Menej bežné“ hovorí o dostupnosti, nie o pôvode, patria sem aj domáce potraviny, ktoré sa ťažko
+ * zháňajú (egreš). Pravidlá sú v README.
  */
 export const DOSTUPNOST = {
   bežné: "v podstate v každom supermarkete",
-  "menej bežné": "len vo väčších predajniach, hypermarketoch, e-shopoch a podobne",
-  exotické: "nedá sa kúpiť alebo len v špecializovanom obchode",
+  "menej bežné": "len vo väčších predajniach a hypermarketoch alebo len občas",
+  exotické: "nedá sa kúpiť alebo len v špecializovanom obchode či gastro veľkoobchode",
 } as const;
 
 /** Hodnota listu: dostupnosť potraviny. */

@@ -42,13 +42,18 @@ Strom je jeden vnorený objekt s pevnou hĺbkou 17. Kľúč = názov uzla, hodno
 uzly nasledujúcej úrovne. Hodnota listu (úroveň 17) hovorí, či je potravina na slovenskom
 trhu **`"bežné"`**, **`"menej bežné"`** alebo **`"exotické"`**. Rank uzla vyplýva z hĺbky.
 
-Dostupnosť hovorí, ako ľahko sa potravina zoženie v bežnom supermarkete:
+Dostupnosť hovorí, ako ľahko sa potravina zoženie v bežnom supermarkete. Hodnotí sa z pohľadu
+krajského mesta mimo Bratislavy (Banská Bystrica): bežné reťazce, hypermarket, trhovisko a drogéria áno,
+bratislavské e-shopy s rozvozom (Košík) a gastro veľkoobchod (Metro) nie.
 
 - **bežné** (sivé) – v podstate v každom supermarkete (Lidl, Kaufland, Billa, Tesco),
-- **menej bežné** (oranžové) – len vo väčších predajniach a hypermarketoch, v e-shopoch (Košík),
-  v Metre a podobne, alebo len občas (akciový týždeň). Ide o dostupnosť, nie o pôvod, patria sem aj
+- **menej bežné** (oranžové) – len vo väčších predajniach a hypermarketoch, v drogérii, na trhu
+  alebo len občas (sezóna, akciový týždeň, Vianoce). Ide o dostupnosť, nie o pôvod, patria sem aj
   domáce potraviny, ktoré sa ťažko zháňajú (egreš, ringloty),
-- **exotické** (červené) – nedá sa kúpiť vôbec alebo len v špecializovanom obchode.
+- **exotické** (červené) – nedá sa kúpiť vôbec alebo len v špecializovanom obchode (ázijské potraviny,
+  rybárstvo, predajňa zveriny), v gastro veľkoobchode či cez bratislavský e-shop. Patria sem
+  mikrozelenina a klíčky, gastro pyré (bergamot, yuzu), ázijské huby okrem shiitake, ustrice a väčšina
+  morských plodov okrem kreviet, kalmárov a chobotnice, danielie a srnčie mäso.
 
 Pravidlá hodnotenia:
 
@@ -223,15 +228,14 @@ mäso mix, čevabčiči), surimi (krabie tyčinky) a napodobeniny kaviáru.
 potraviny). `npm run kontrola` stráži, že každý taxón (úrovne 1–14) je v strome len raz, názov
 potraviny je v celom strome unikátny a rad, čeľaď, podčeľaď a tribus sú podľa prípony na správnej
 úrovni (napr. tribus -eae nie je v slote podčeľade). Obe kontroly bežia aj v CI pred nasadením.
-**Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (25. 9. 2026): 255 bežné, 181 menej
-bežné, 4 exotické. Každá potravina bola vyhľadaná na Košíku (čo tam je, je aspoň menej bežné).
-Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland, Billa, Tesco, Coop Jednota)
-a cez sortiment Metra. Pôvodná heuristika (čo má Tesco v ovocí a zelenine, je bežné, čo pribudlo až
+**Dostupnosť** je ručne prejdená podľa [pravidiel](#model) (október 2026): 254 bežné, 109 menej
+bežné, 77 exotické. Hraničné prípady boli overené cez letáky a e-shopy reťazcov (Lidl, Kaufland,
+Billa, Tesco, Coop Jednota). Prvá verzia revízie brala všetko, čo predáva Košík, ako aspoň menej
+bežné. Tým sa medzi menej bežné dostal aj gastro sortiment Metra, ktorý sa mimo Bratislavy nezoženie,
+a exotické zostali len štyri potraviny. Pôvodná heuristika (čo má Tesco v ovocí a zelenine, je bežné, čo pribudlo až
 z Košíka, je exotické) mala systematické chyby. Sušené bylinky, chren, sterilizovaná kukurica, dyňa
 či zelená paprika boli exotické, lebo chýbali v čerstvom sortimente Tesca. Naopak, bežné boli aj
-potraviny, ktoré Tesco malo len ako prímes v zmesi (moruše, rebarbora, dračie ovocie). Exotické
-zostali len tie, ktoré sa nepodarilo kúpiť nikde okrem špecializovaných predajní: slanorožec,
-samostatné kačacie krídla, tolstolobik a halibut atlantický.
+potraviny, ktoré Tesco malo len ako prímes v zmesi (moruše, rebarbora, dračie ovocie).
 
 ### Otvorené body na overenie
 
@@ -331,10 +335,9 @@ samostatné kačacie krídla, tolstolobik a halibut atlantický.
   *Limnospira*, strom sa drží *Arthrospira platensis*. Kombu môže byť aj z iných druhov *Saccharina*
   či *Laminaria*.
 - **Dostupnosť:**
-  - Košík predáva aj sortiment Metra, preto sú menej bežné aj gastro položky: ovocné pyré
-    (bergamot, calamansi, yuzu, acai, marhule Bergeron, višne Oblačinské), klíčky a mikrozelenina,
-    ustrice, hrebenatky, britvovky či sépiový atrament. Ak by sa gastro sortiment nemal počítať,
-    patria medzi exotické;
+  - na hranici menej bežné / exotické: kumquat, mladý kokos, brokolica stonková, karfiol oranžový,
+    mango Kent a Palmer (odroda na štítku), mečúň, bažant, hovädzí bok a chvost. Hranicu určuje,
+    či ich bystrický hypermarket aspoň občas má;
   - na hranici bežné / menej bežné: jablko Pink Lady, bravčový lalok, šalvia, medvedí cesnak
     (čerstvý len na jar, inak sušený), papája (krájaná), černice, machovka, rebarbora, jablko Šampion,
     šalát Lollo Rosso a Lollo Biondo, shiitake. Najslabšie je overený Lidl, jeho web ukazuje len
